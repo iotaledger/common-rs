@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "packable",
+  "packable-derive",
+]
+
+resolver = "2"
