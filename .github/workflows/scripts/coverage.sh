@@ -9,7 +9,7 @@ mkdir coverage
 echo "Running instrumented unit tests..."
 RUSTFLAGS="-Zinstrument-coverage" LLVM_PROFILE_FILE="common-rs-%m.profraw" cargo +nightly test --tests --all --all-features
 
-# Merge all .profraw files into "ee.profdata"
+# Merge all .profraw files into "common-rs.profdata"
 echo "Merging coverage data..."
 PROFRAW=""
 for file in $(find . -type f -name "*.profraw");
