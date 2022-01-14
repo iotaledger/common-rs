@@ -1,0 +1,25 @@
+[package]
+name = "packable-derive-test"
+version = "0.1.0"
+authors = [ "IOTA Stiftung" ]
+edition = "2021"
+description = "Test suite for the `packable-derive` crate."
+readme = "README.md"
+repository = "https://github.com/iotaledger/common-rs"
+license = "Apache-2.0"
+publish = false
+keywords = [ "iota", "serialization", "framework", "packable" ]
+homepage = "https://www.iota.org"
+
+[[test]]
+name = "tests"
+path = "tests/lib.rs"
+
+[dev-dependencies]
+packable = { version = "=0.1.0", path = "../packable", default-features = false }
+
+rustversion = { version = "1.0.5", default-features = false }
+trybuild = { version = "1.0.50", default-features = false, features = [ "diff" ] }
+
+[package.metadata.cargo-udeps.ignore]
+development = [ "packable" ]
