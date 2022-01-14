@@ -25,6 +25,7 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
 
         for item in array.iter_mut() {
             let unpacked = T::unpack::<_, VERIFY>(unpacker)?;
+
             // Safety: each `item` is only visited once so we are never overwriting nor dropping values that are already
             // initialized.
             unsafe {

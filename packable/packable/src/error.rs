@@ -49,6 +49,7 @@ impl<T, U, V> UnpackErrorExt<T, U, V> for Result<T, UnpackError<U, V>> {
         })
     }
 }
+
 /// Error type raised when [`Packable::unpack`](crate::Packable::unpack) fails.
 ///
 /// If you need to do error coercion use [`UnpackErrorExt`].
