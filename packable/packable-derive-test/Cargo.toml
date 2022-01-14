@@ -15,9 +15,8 @@ homepage = "https://www.iota.org"
 name = "tests"
 path = "tests/lib.rs"
 
-[dependencies]
+[dev-dependencies]
 packable = { version = "=0.1.0", path = "../packable", default-features = false }
-packable-derive = { version = "=0.1.0", path = "../packable-derive", default-features = false }
 
 rustversion = { version = "1.0.5", default-features = false }
 trybuild = { version = "1.0.50", default-features = false, features = [ "diff" ] }
