@@ -2,19 +2,8 @@
 
 accepted = [
     "Apache-2.0",
-    "BSD-2-Clause",
     "BSD-3-Clause",
-    "CC0-1.0",
-    "CDDL-1.0",
-    "ISC",
     "MIT",
-    "MPL-2.0",
-    "OpenSSL",
-]
-
-workarounds = [
-    # Non-standard license file, actually is ISC AND OpenSSL AND MIT.
-    "ring",
 ]
 
 # For now, we include these so that the number of gathered crates matches the number of crates in `Cargo.lock`.
