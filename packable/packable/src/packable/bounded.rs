@@ -3,6 +3,7 @@
 
 //! Types and utilities related to bounded integers.
 
+use crate as packable_crate;
 use crate::Packable;
 
 use core::{
