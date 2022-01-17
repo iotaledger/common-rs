@@ -85,6 +85,60 @@ jobs:
           command: test
           args: --workspace --all-targets --all-features --release
 
+  no_std:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust: [nightly, beta, stable]
+        crates: [
+          "stable-sorted",
+        ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install ${{ matrix.rust }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: riscv64gc-unknown-none-elf
+          override: true
+
+      - name: Cache cargo state
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-cargo
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+          key: ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-build
+          restore-keys: |
+            ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-
+            ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-
+            ubuntu-latest-${{ matrix.rust }}-
+            ubuntu-latest-
+      - name: Cache target dir
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-target
+        with:
+          path: |
+            target/
+          key: ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-build
+          restore-keys: |
+            ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-
+            ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-
+            ubuntu-latest-${{ matrix.rust }}-
+            ubuntu-latest-
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --release --target=riscv64gc-unknown-none-elf --manifest-path ${{ matrix.crates }}/Cargo.toml
+
   format:
     runs-on: ubuntu-latest
     steps:
