@@ -3,6 +3,7 @@ members = [
   "packable/packable",
   "packable/packable-derive",
   "packable/packable-derive-test",
+  "stable-sorted",
 ]
 
 # The resolver is a global setting for a workspace, and the setting is ignored

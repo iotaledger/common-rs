@@ -1,0 +1,11 @@
+[package]
+name = "stable-sorted"
+version = "0.1.0"
+authors = [ "IOTA Stiftung" ]
+edition = "2021"
+description = "Stable functions for checking iterator sorting."
+readme = "README.md"
+repository = "https://github.com/iotaledger/common-rs"
+license = "Apache-2.0"
+keywords = [ "iota", "iterator", "sorted", "stable" ]
+homepage = "https://www.iota.org"
