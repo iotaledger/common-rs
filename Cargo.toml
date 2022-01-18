@@ -1,7 +1,7 @@
 [workspace]
 members = [
+  "fern-logger",
   "iterator-sorted",
-  "logger",
   "packable/packable",
   "packable/packable-derive",
   "packable/packable-derive-test",
