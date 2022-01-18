@@ -5,7 +5,9 @@
 
 mod config;
 
-pub use config::{LoggerConfig, LoggerConfigBuilder, LoggerOutputConfig, LoggerOutputConfigBuilder};
+pub use config::{
+    LoggerConfig, LoggerConfigBuilder, LoggerOutputConfig, LoggerOutputConfigBuilder,
+};
 
 use fern::{
     colors::{Color, ColoredLevelConfig},
