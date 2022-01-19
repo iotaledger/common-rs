@@ -1,9 +1,11 @@
 [workspace]
 members = [
+  "fern-logger",
   "iterator-sorted",
   "packable/packable",
   "packable/packable-derive",
   "packable/packable-derive-test",
+  "time-helper",
 ]
 
 # The resolver is a global setting for a workspace, and the setting is ignored
