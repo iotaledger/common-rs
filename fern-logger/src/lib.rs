@@ -34,7 +34,7 @@ macro_rules! log_format {
     ($target:expr, $level:expr, $message:expr, $target_width:expr, $level_width:expr) => {
         format_args!(
             "{} {:target_width$} {:level_width$} {}",
-            time_util::format(&time_util::now_utc()),
+            time_helper::format(&time_helper::now_utc()),
             $target,
             $level,
             $message,

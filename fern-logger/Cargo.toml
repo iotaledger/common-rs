@@ -11,7 +11,7 @@ keywords = [ "iota", "logger", "log" ]
 homepage = "https://www.iota.org"
 
 [dependencies]
-time-util = { version = "0.1.0", path = "../time-util", default-features = false }
+time-helper = { version = "0.1.0", path = "../time-helper", default-features = false }
 
 fern = { version = "0.6.0", default-features = false, features = [ "colored" ] }
 log = { version = "0.4.14", default-features = false, features = [ "serde" ] }
