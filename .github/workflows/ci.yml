@@ -92,7 +92,7 @@ jobs:
       matrix:
         rust: [nightly, beta, stable]
         crates: [
-          "stable-sorted",
+          "iterator-sorted",
         ]
 
     steps:
