@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Represents registered JSON Web Token Claims.
-/// https://tools.ietf.org/html/rfc7519#section-4.1
+/// <https://tools.ietf.org/html/rfc7519#section-4.1>
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     /// Issuer.
@@ -65,7 +65,7 @@ impl Claims {
 }
 
 /// Represents a JSON Web Token.
-/// https://tools.ietf.org/html/rfc7519
+/// <https://tools.ietf.org/html/rfc7519>
 #[derive(Clone, Debug)]
 pub struct JsonWebToken(String);
 
