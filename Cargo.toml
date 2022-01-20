@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "auth-helper",
   "fern-logger",
   "iterator-sorted",
   "packable/packable",

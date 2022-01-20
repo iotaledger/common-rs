@@ -1,0 +1,17 @@
+[package]
+name = "auth-helper"
+version = "0.1.0"
+authors = [ "IOTA Stiftung" ]
+edition = "2021"
+description = "Authorization tools"
+readme = "README.md"
+repository = "https://github.com/iotaledger/common-rs"
+license = "Apache-2.0"
+keywords = [ "iota", "auth" ]
+homepage = "https://www.iota.org"
+
+[dependencies]
+jsonwebtoken = { version = "7.2.0", default-features = false }
+rand = { version = "0.8.4", default-features = false, features = [ "std" ] }
+rust-argon2 = { version = "0.8.3", default-features = false }
+serde = { version = "1.0.30", default-features = false, features = [ "std", "derive" ] }
