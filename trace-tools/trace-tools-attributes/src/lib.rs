@@ -16,7 +16,7 @@ use syn::{
 
 /// Attribute macro for extending functions and futures with the `Observe` trait.
 ///
-/// This instruments the function or future with a `tracing` span with the `bee::observe` target, so that
+/// This instruments the function or future with a `tracing` span with the `trace_tools::observe` target, so that
 /// it can be filtered by subscribers. It also records the location of the calling code to the span as
 /// fields. This is assigned to `loc.file`, `loc.line` and `loc.col` fields, similar to how `tokio` instruments
 /// tasks internally.

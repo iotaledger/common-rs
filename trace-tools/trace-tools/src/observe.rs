@@ -11,14 +11,14 @@ pub(crate) const FILE_FIELD_NAME: &str = "loc.file";
 pub(crate) const LINE_FIELD_NAME: &str = "loc.line";
 
 /// The target of the wrapping [`Span`](tracing::Span).
-pub const SPAN_TARGET: &str = "bee::observe";
+pub const SPAN_TARGET: &str = "trace_tools::observe";
 
 /// The name of the wrapping [`Span`](tracing::Span).
 pub const SPAN_NAME: &str = "observed";
 
 /// Instruments a future with a `tracing` span.
 ///
-/// This span is given the `bee::observe` target, so that it can be more easily filtered
+/// This span is given the `trace_tools::observe` target, so that it can be more easily filtered
 /// in any subscribers or subscriber layers. It also records the future's calling location
 /// in its fields.
 pub trait Observe: Sized {

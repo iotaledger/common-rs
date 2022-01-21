@@ -1,11 +1,11 @@
 // Copyright 2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-//! Diagnostics components for `bee`.
+//! Diagnostics components for async.
 
 #![deny(missing_docs)]
 
-/// Contains [`tracing::Subscriber`] implementation for `bee` node diagnostics.
+/// Contains [`tracing::Subscriber`] implementation for [`span`](`tracing::Span`) diagnostics.
 pub mod subscriber;
 /// Contains diagnostic utilities that are separate from [`tracing`].
 pub mod util;
