@@ -54,7 +54,7 @@ pub fn flamegraph_layer<P: AsRef<Path>>(
 
         meta.target().starts_with("runtime")
             || meta.target().starts_with("tokio")
-            || meta.target() == "bee::observe"
+            || meta.target() == "trace_tools::observe"
     }
 
     let filter = FilterFn::new(filter_fn as for<'r, 's> fn(&'r tracing::Metadata<'s>) -> bool);
@@ -67,7 +67,7 @@ pub fn flamegraph_layer<P: AsRef<Path>>(
 /// Creates a new [`LogLayer`], using the parameters provided by the given [`LoggerConfig`].
 ///
 /// This should allow the subscriber to perform logging in an identical fashion to the functionality provided
-/// in [`bee_common`].
+/// in [`fern_logger`].
 ///
 /// # Errors
 /// This function can fail in the following ways:
