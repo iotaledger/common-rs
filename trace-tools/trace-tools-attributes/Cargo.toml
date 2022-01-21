@@ -1,0 +1,25 @@
+[package]
+name = "trace-tools-attributes"
+version = "0.1.0"
+authors = [ "IOTA Stiftung" ]
+edition = "2021"
+description = "Procedural macros for trace-tools"
+readme = "README.md"
+repository = "https://github.com/iotaledger/common-rs"
+license = "Apache-2.0"
+keywords = [ "iota", "tangle", "task", "trace" ]
+homepage = "https://www.iota.org"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = { version = "1.0.28", default-features = false }
+quote = { version = "1.0.9", default-features = false }
+syn = { version = "1.0.75", default-features = false, features = [ "full", "extra-traits", "parsing", "printing", "derive", "proc-macro", "clone-impls" ] }
+
+[dev-dependencies]
+trace-tools = { path = "../trace-tools", default-features = false }
+
+[package.metadata.cargo-udeps.ignore]
+development = [ "trace-tools" ]
