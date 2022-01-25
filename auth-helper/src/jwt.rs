@@ -94,6 +94,7 @@ impl ClaimsBuilder {
     }
 
     /// Specifies that this token will expire, and provides an expiry timestamp.
+    #[must_use]
     pub fn with_expiry(mut self, exp: u64) -> Self {
         self.exp = Some(exp);
         self
