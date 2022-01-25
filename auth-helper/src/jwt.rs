@@ -72,6 +72,36 @@ impl Claims {
                 .as_secs() as u64,
         }
     }
+
+    /// Returns the issuer of the JWT.
+    pub fn issuer(&self) -> &str {
+        &self.iss
+    }
+
+    /// Returns the subject of the JWT.
+    pub fn subject(&self) -> &str {
+        &self.sub
+    }
+
+    /// Returns the audience of the JWT.
+    pub fn audience(&self) -> &str {
+        &self.aud
+    }
+
+    /// Returns the expiration time of the JWT, if it has been specified.
+    pub fn expiry(&self) -> Option<u64> {
+        self.exp
+    }
+
+    /// Returns the "nbf" field of the JWT.
+    pub fn not_before(&self) -> u64 {
+        self.nbf
+    }
+
+    /// Returns the issue timestamp of the JWT.
+    pub fn issued_at(&self) -> u64 {
+        self.iat
+    }
 }
 
 /// Builder for the [`Claims`] structure.
@@ -93,7 +123,7 @@ impl ClaimsBuilder {
         }
     }
 
-    /// Specifies that this token will expire, and provides an expiry timestamp.
+    /// Specifies that this token will expire, and provides an expiry time (offset from issue time).
     #[must_use]
     pub fn with_expiry(mut self, exp: u64) -> Self {
         self.exp = Some(exp);
@@ -110,14 +140,19 @@ impl ClaimsBuilder {
         let mut claims = Claims::new(self.iss, self.sub, self.aud, now);
 
         if let Some(exp) = self.exp {
-            if now.checked_add(exp).is_none() {
-                return Err(Error::InvalidExpiry {
-                    issued_at: now,
-                    expiry: exp,
-                });
-            }
+            let exp_timestamp = now.checked_add(exp);
 
-            claims.exp = self.exp;
+            match exp_timestamp {
+                Some(_) => {
+                    claims.exp = exp_timestamp;
+                }
+                _ => {
+                    return Err(Error::InvalidExpiry {
+                        issued_at: now,
+                        expiry: exp,
+                    });
+                }
+            }
         }
 
         Ok(claims)

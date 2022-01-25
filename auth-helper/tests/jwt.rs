@@ -164,6 +164,8 @@ fn jwt_invalid_expired() {
 
     let jwt = jwt::JsonWebToken::new(claims, b"secret").unwrap();
 
+    std::thread::sleep(std::time::Duration::from_secs(1));
+
     assert!(jwt
         .validate(
             String::from("issuer"),
