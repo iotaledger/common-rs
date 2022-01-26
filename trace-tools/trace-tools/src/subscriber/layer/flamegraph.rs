@@ -1,4 +1,4 @@
-// Copyright 2021 IOTA Stiftung
+// Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{subscriber::visitors::LocationVisitor, util::Flamegrapher, Error};
@@ -129,7 +129,7 @@ impl FlamegraphLayer {
                     None => "unknown".to_string(),
                 };
 
-                write!(stack_str, "; {}", location).expect("writing to String should never fail");
+                write!(stack_str, "; {}", location).expect("writing to `String` should never fail");
             }
         }
 

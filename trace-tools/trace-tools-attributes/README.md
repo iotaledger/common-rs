@@ -1,3 +1,3 @@
 # trace-tools-attributes
 
-Procedural macros for `trace-tools`.
+Attribute macro for extending functions and futures with the `Observe` trait.

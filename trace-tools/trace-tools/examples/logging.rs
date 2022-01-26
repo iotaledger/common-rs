@@ -1,4 +1,4 @@
-// Copyright 2021 IOTA Stiftung
+// Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use fern_logger::{LoggerConfig, LoggerOutputConfigBuilder};
@@ -36,22 +36,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 pub fn log() {
-    log::info!("This should not log, it is not filtered");
+    log::info!("This should not log, it is not captured by the filter.");
 }
 
 mod filtered {
     pub fn log() {
-        log::trace!("This should not log, it is not at INFO level");
-        log::debug!("This should not log, it is not at INFO level");
-        log::info!("This should log at the INFO level");
-        log::warn!("This should log at the WARN level");
-        log::error!("This should log at the ERROR level");
+        log::trace!("This should not log, it is not at INFO level.");
+        log::debug!("This should not log, it is not at INFO level.");
+        log::info!("This should log at the INFO level.");
+        log::warn!("This should log at the WARN level.");
+        log::error!("This should log at the ERROR level.");
     }
 
     pub mod excluded {
         pub fn log() {
-            log::warn!("This should only log to \"warn.log\", it has been excluded from stdout");
-            log::error!("This should only log to \"warn.log\", it has been excluded from stdout");
+            log::warn!("This should only log to \"warn.log\", it has been excluded from stdout.");
+            log::error!("This should only log to \"warn.log\", it has been excluded from stdout.");
         }
     }
 }

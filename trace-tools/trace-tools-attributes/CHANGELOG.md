@@ -24,4 +24,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
  - Initial crate:
-   - `#[observe]` attribute macro
+   - `#[observe]` attribute macro;
