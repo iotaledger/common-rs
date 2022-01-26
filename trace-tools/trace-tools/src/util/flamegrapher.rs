@@ -25,8 +25,6 @@ impl Flamegrapher {
 
     /// Returns a [`Flamegrapher`] with the given folded stack file name.
     ///
-    /// This file will be given the extension of `.folded`.
-    ///
     /// # Errors
     /// This method may fail in the following ways:
     ///  - The given stack file does not exist.

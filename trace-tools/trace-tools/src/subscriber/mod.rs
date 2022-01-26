@@ -35,7 +35,7 @@ pub fn collect_logs() -> Result<(), log::SetLoggerError> {
 
 /// [`Layered`](tracing_subscriber::layer::Layered) type describing the composition of the subscriber constructed
 /// by the [`trace_tools`](crate) crate.
-pub type BeeSubscriber =
+pub type TraceSubscriber =
     Layered<Option<layer::LogLayer>, Layered<Option<layer::FlamegraphFilteredLayer>, Registry>>;
 
 /// Builder for the [`trace_tools`](crate) subscriber.
@@ -67,7 +67,7 @@ impl SubscriberBuilder {
         self
     }
 
-    /// Builds and returns the [`BeeSubscriber`].
+    /// Builds and returns the [`TraceSubscriber`].
     ///
     /// # Errors
     ///  - Creation of the [`FlamegraphFilteredLayer`](layer::FlamegraphFilteredLayer) failed.
@@ -79,7 +79,7 @@ impl SubscriberBuilder {
     /// may no longer function as expected.
     ///  - This method does *not* set the global subscriber. As such, a call to `finish` can be used to
     /// further extend the return subscriber with external [`Layer`](tracing_subscriber::Layer)s.
-    pub fn finish(mut self) -> Result<(BeeSubscriber, Option<Flamegrapher>), Error> {
+    pub fn finish(mut self) -> Result<(TraceSubscriber, Option<Flamegrapher>), Error> {
         let (flamegraph_layer, flamegrapher) = self.build_flamegraph_layer()?;
         let log_layer = self.build_log_layer()?;
 
@@ -90,7 +90,7 @@ impl SubscriberBuilder {
         Ok((subscriber, flamegrapher))
     }
 
-    /// Builds the [`BeeSubscriber`] and sets it as the global default subscriber.
+    /// Builds the [`TraceSubscriber`] and sets it as the global default subscriber.
     ///
     /// Returns a `Result` over an [`Option<Flamegrapher>`](Flamegrapher). The returned option is `Some` if
     /// the [`LogLayer`](layer::LogLayer) is enabled and has been successfully initialised. If the

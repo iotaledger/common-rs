@@ -19,15 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
-## 0.1.0 - 2022-01-18
-
-### Added
-
-- Initial features;
-
 ## 0.2.0 - 2022-01-26
 
 ### Added
 
 - Set target exclusions in `LoggerOutputConfigBuilder`;
 - Accessors for `LoggerOutputConfig` fields;
+
+## 0.1.0 - 2022-01-18
+
+### Added
+
+- Initial features;

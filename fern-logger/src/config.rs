@@ -58,7 +58,7 @@ impl LoggerOutputConfigBuilder {
             target_filters
                 .iter()
                 .map(ToString::to_string)
-                .collect::<Vec<String>>(),
+                .collect::<Vec<_>>(),
         );
         self
     }
