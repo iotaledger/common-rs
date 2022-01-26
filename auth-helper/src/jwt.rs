@@ -140,10 +140,13 @@ impl ClaimsBuilder {
         let mut claims = Claims::new(self.iss, self.sub, self.aud, now);
 
         if let Some(exp) = self.exp {
-            claims.exp = now.checked_add(exp).ok_or_else(|| Error::InvalidExpiry {
-                issued_at: now,
-                expiry: exp,
-            })?;
+            claims.exp = now
+                .checked_add(exp)
+                .ok_or_else(|| Error::InvalidExpiry {
+                    issued_at: now,
+                    expiry: exp,
+                })
+                .map(|exp| Some(exp))?;
         }
 
         Ok(claims)
