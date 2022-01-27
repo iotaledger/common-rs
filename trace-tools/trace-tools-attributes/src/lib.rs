@@ -29,7 +29,7 @@ use syn::{
 /// # Examples
 ///
 /// A future or function can be wrapped in a `tracing` span with the following:
-/// ```rust
+/// ```ignore
 /// use trace_tools::observe;
 ///
 /// #[observe]
