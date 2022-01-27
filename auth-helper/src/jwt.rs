@@ -3,14 +3,23 @@
 
 //! A module that provides JSON Web Token utilities.
 
+pub use jsonwebtoken::TokenData;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-pub use jsonwebtoken::{
-    errors::{Error, ErrorKind},
-    TokenData,
-};
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 use std::time::{SystemTime, UNIX_EPOCH};
+
+/// JsonWebToken error.
+#[derive(Error, Debug)]
+pub enum Error {
+    /// Provided an invalid expiry date.
+    #[error("invalid expiry time {expiry} from issue time {issued_at}")]
+    InvalidExpiry { issued_at: u64, expiry: u64 },
+    /// An error occured in the [`jsonwebtoken`] crate.
+    #[error(transparent)]
+    Jwt(#[from] jsonwebtoken::errors::Error),
+}
 
 /// Represents registered JSON Web Token Claims.
 /// <https://tools.ietf.org/html/rfc7519#section-4.1>
@@ -35,7 +44,8 @@ pub struct Claims {
     /// the "exp" claim requires that the current date/time MUST be before the expiration date/time listed in the "exp"
     /// claim. Implementers MAY provide for some small leeway, usually no more than a few minutes, to account for clock
     /// skew.
-    exp: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    exp: Option<u64>,
     /// Not Before.
     /// Identifies the time before which the JWT MUST NOT be accepted for processing. The processing of the "nbf" claim
     /// requires that the current date/time MUST be after or equal to the not-before date/time listed in the "nbf"
@@ -49,18 +59,96 @@ pub struct Claims {
 
 impl Claims {
     /// Creates a new set of claims.
-    pub fn new(iss: String, sub: String, aud: String, exp: u64, nbf: u64) -> Self {
+    fn new(iss: String, sub: String, aud: String, nbf: u64) -> Self {
         Self {
             iss,
             sub,
             aud,
-            exp,
+            exp: None,
             nbf,
             iat: SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .expect("Clock may have gone backwards")
                 .as_secs() as u64,
         }
+    }
+
+    /// Returns the issuer of the JWT.
+    pub fn issuer(&self) -> &str {
+        &self.iss
+    }
+
+    /// Returns the subject of the JWT.
+    pub fn subject(&self) -> &str {
+        &self.sub
+    }
+
+    /// Returns the audience of the JWT.
+    pub fn audience(&self) -> &str {
+        &self.aud
+    }
+
+    /// Returns the expiration time of the JWT, if it has been specified.
+    pub fn expiry(&self) -> Option<u64> {
+        self.exp
+    }
+
+    /// Returns the "nbf" field of the JWT.
+    pub fn not_before(&self) -> u64 {
+        self.nbf
+    }
+
+    /// Returns the issue timestamp of the JWT.
+    pub fn issued_at(&self) -> u64 {
+        self.iat
+    }
+}
+
+/// Builder for the [`Claims`] structure.
+pub struct ClaimsBuilder {
+    iss: String,
+    sub: String,
+    aud: String,
+    exp: Option<u64>,
+}
+
+impl ClaimsBuilder {
+    /// Creates a new [`ClaimsBuilder`] with the given mandatory parameters.
+    pub fn new(iss: String, sub: String, aud: String) -> Self {
+        Self {
+            iss,
+            sub,
+            aud,
+            exp: None,
+        }
+    }
+
+    /// Specifies that this token will expire, and provides an expiry time (offset from issue time).
+    #[must_use]
+    pub fn with_expiry(mut self, exp: u64) -> Self {
+        self.exp = Some(exp);
+        self
+    }
+
+    /// Builds and returns a [`Claims`] structure using the given builder options.
+    pub fn build(self) -> Result<Claims, Error> {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Clock may have gone backwards")
+            .as_secs() as u64;
+
+        let mut claims = Claims::new(self.iss, self.sub, self.aud, now);
+
+        if let Some(exp) = self.exp {
+            let expiry = now.checked_add(exp).ok_or(Error::InvalidExpiry {
+                issued_at: now,
+                expiry: exp,
+            })?;
+
+            claims.exp = Some(expiry);
+        }
+
+        Ok(claims)
     }
 }
 
@@ -83,18 +171,7 @@ impl std::fmt::Display for JsonWebToken {
 
 impl JsonWebToken {
     /// Creates a new JSON Web Token.
-    pub fn new(
-        issuer: String,
-        subject: String,
-        audience: String,
-        session_timeout: u64,
-        secret: &[u8],
-    ) -> Result<Self, Error> {
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Clock may have gone backwards")
-            .as_secs() as u64;
-        let claims = Claims::new(issuer, subject, audience, now + session_timeout, now);
+    pub fn new(claims: Claims, secret: &[u8]) -> Result<Self, Error> {
         let token = encode(
             &Header::default(),
             &claims,
@@ -110,15 +187,21 @@ impl JsonWebToken {
         issuer: String,
         subject: String,
         audience: String,
+        expires: bool,
         secret: &[u8],
     ) -> Result<TokenData<Claims>, Error> {
         let mut validation = Validation {
             iss: Some(issuer),
             sub: Some(subject),
+            validate_exp: expires,
             ..Default::default()
         };
         validation.set_audience(&[audience]);
 
-        decode::<Claims>(&self.0, &DecodingKey::from_secret(secret), &validation)
+        Ok(decode::<Claims>(
+            &self.0,
+            &DecodingKey::from_secret(secret),
+            &validation,
+        )?)
     }
 }

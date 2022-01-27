@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.2.0 - 2022-01-25
+
+### Added
+
+ - Capability to create tokens that do not expire;
+ - `jwt::Error` type;
+ - `ClaimsBuilder` for optional claims;
+
+### Changed
+
+ - `JsonWebToken` interface changes;
+
 ## 0.1.0 - 2022-01-20
 
 ### Added
