@@ -57,8 +57,20 @@ impl LoggerOutputConfigBuilder {
         self.target_filters = Some(
             target_filters
                 .iter()
-                .map(|f| f.to_string())
-                .collect::<Vec<String>>(),
+                .map(ToString::to_string)
+                .collect::<Vec<_>>(),
+        );
+        self
+    }
+
+    /// Sets a collection of exclusions of a logger output.
+    /// A message is logged only if one of the exclusions is *not* part of the log's metadata target.
+    pub fn target_exclusions(mut self, target_exclusions: &[&str]) -> Self {
+        self.target_exclusions = Some(
+            target_exclusions
+                .iter()
+                .map(ToString::to_string)
+                .collect::<Vec<_>>(),
         );
         self
     }
@@ -105,6 +117,33 @@ pub struct LoggerOutputConfig {
     pub(crate) target_exclusions: Vec<String>,
     /// Color flag of the output.
     pub(crate) color_enabled: bool,
+}
+
+impl LoggerOutputConfig {
+    /// Returns the name of the output file, or `stdout` for standard output.
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    /// Returns the log level of the output.
+    pub fn level_filter(&self) -> LevelFilter {
+        self.level_filter
+    }
+
+    /// Returns the target filters of the output.
+    pub fn target_filters(&self) -> &[String] {
+        &self.target_filters
+    }
+
+    /// Returns the target exclusions of the output.
+    pub fn target_exclusions(&self) -> &[String] {
+        &self.target_exclusions
+    }
+
+    /// Returns the color flag of the output.
+    pub fn color_enabled(&self) -> bool {
+        self.color_enabled
+    }
 }
 
 /// Builder for a logger configuration.
