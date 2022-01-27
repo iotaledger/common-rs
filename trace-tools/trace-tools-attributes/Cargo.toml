@@ -18,9 +18,3 @@ proc-macro = true
 proc-macro2 = { version = "1.0.28", default-features = false }
 quote = { version = "1.0.9", default-features = false }
 syn = { version = "1.0.75", default-features = false, features = [ "full", "extra-traits", "parsing", "printing", "derive", "proc-macro", "clone-impls" ] }
-
-[dev-dependencies]
-trace-tools = { version = "0.1.0", path = "../trace-tools", default-features = false }
-
-[package.metadata.cargo-udeps.ignore]
-development = [ "trace-tools" ]
