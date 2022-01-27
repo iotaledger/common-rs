@@ -133,7 +133,7 @@ impl FlamegraphLayer {
             }
         }
 
-        let _ = write!(stack_str, " {}", delta.as_micros());
+        write!(stack_str, " {}", delta.as_micros()).expect("writing to `String` should never fail");
         stack_str
     }
 
@@ -216,9 +216,9 @@ impl Display for SpanLocation {
 }
 
 impl TryFrom<LocationVisitor> for SpanLocation {
-    // This is a bit odd, but since a `LocationVisitor` can fail to record any location information,
-    // constructing a `SpanLocation` from one can fail. We don't need a specific error though, because
-    // `SpanLocation::from_attributes` will just return `None` instead.
+    /// This is a bit odd, but since a `LocationVisitor` can fail to record any location information,
+    /// constructing a `SpanLocation` from one can fail. We don't need a specific error though, because
+    /// `SpanLocation::from_attributes` will just return `None` instead.
     type Error = ();
 
     fn try_from(visitor: LocationVisitor) -> Result<Self, Self::Error> {
