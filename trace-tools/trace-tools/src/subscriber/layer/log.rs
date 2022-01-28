@@ -60,7 +60,7 @@ enum LogDest {
 /// Describes a target destination of a [`log`] event, combined with filters that only permit
 /// specific events to be logged to that target.
 struct LogTarget {
-    /// Target filters. Enables/disables `Span`s based on their target and level.
+    /// Target filters. Enables/disables [`Span`](tracing::Span)s based on their target and level.
     filter: Targets,
     /// The output destination of the event, if it passes through the filter.
     dest: LogDest,
@@ -90,7 +90,7 @@ impl LogTargetMakeWriter {
     }
 }
 
-impl<'a> MakeWriter for &'a LogTargetMakeWriter {
+impl<'a> MakeWriter<'a> for &'a LogTargetMakeWriter {
     type Writer = LogOutput<'a>;
 
     fn make_writer(&self) -> Self::Writer {
@@ -101,8 +101,8 @@ impl<'a> MakeWriter for &'a LogTargetMakeWriter {
     }
 }
 
-/// A [`tracing_subscriber::Layer`] for replicating the logging functionality in [`fern_logger`] without
-/// using the [`log`] crate as the global subscriber.
+/// A [`tracing_subscriber::Layer`] for replicating the logging functionality in
+/// [`fern_logger`] without using the [`log`] crate as the global subscriber.
 ///
 /// Without this layer, enabling this crate's [`Subscriber`] will disable all logging of any kind, since
 /// it will be used as the global subscriber for the lifetime of the program, and all [`log`] events will

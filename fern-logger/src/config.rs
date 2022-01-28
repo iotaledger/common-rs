@@ -221,6 +221,12 @@ pub struct LoggerConfig {
     pub(crate) outputs: Vec<LoggerOutputConfig>,
 }
 
+impl Default for LoggerConfig {
+    fn default() -> Self {
+        LoggerConfigBuilder::default().finish()
+    }
+}
+
 impl LoggerConfig {
     /// Creates a builder for a logger config.
     pub fn build() -> LoggerConfigBuilder {
