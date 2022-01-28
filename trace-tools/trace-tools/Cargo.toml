@@ -16,7 +16,8 @@ time-helper = { version = "0.1.0", path = "../../time-helper", default-features 
 trace-tools-attributes = { version = "0.1.0", path = "../trace-tools-attributes", default-features = false }
 
 colored = { version = "2.0.0", default-features = false }
-console-subscriber = { git = "https://github.com/tokio-rs/console.git", rev = "c4e3302", default-features = false, features = [ "parking_lot" ], optional = true }
+console-subscriber = { version = "0.1.0", default-features = false, features = [ "parking_lot" ], optional = true }
+# console-subscriber = { git = "https://github.com/tokio-rs/console.git", rev = "c4e3302", default-features = false, features = [ "parking_lot" ], optional = true }
 inferno = { version = "0.10.6", default-features = false }
 lazy_static = { version = "1.4.0", default-features = false }
 log = { version = "0.4.14", default-features = false }
@@ -31,4 +32,5 @@ tracing-subscriber = { version = "0.3.0", default-features = false, features = [
 tokio = { version = "1.13.0", default-features = false, features = [ "full", "rt", "tracing" ] }
 
 [features]
+default = [ ]
 tokio-console = [ "console-subscriber", "tokio" ]

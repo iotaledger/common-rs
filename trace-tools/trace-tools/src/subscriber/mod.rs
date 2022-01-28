@@ -56,7 +56,7 @@ pub type TraceSubscriber = BaseSubscriber;
 /// by the [`trace_tools`](crate) crate.
 #[cfg(feature = "tokio-console")]
 pub type TraceSubscriber = Layered<
-    Filtered<Option<console_subscriber::TasksLayer>, FilterFn, BaseSubscriber>,
+    Filtered<Option<console_subscriber::ConsoleLayer>, FilterFn, BaseSubscriber>,
     BaseSubscriber,
 >;
 

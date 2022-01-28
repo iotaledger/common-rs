@@ -75,14 +75,14 @@ pub(crate) fn log_filter(meta: &tracing::Metadata<'_>) -> bool {
 
 /// Creates a new [`console_subscriber::TasksLayer`].
 #[cfg(feature = "tokio-console")]
-pub fn console_layer() -> Result<console_subscriber::TasksLayer, Error> {
+pub fn console_layer() -> Result<console_subscriber::ConsoleLayer, Error> {
     #![allow(clippy::assertions_on_constants)]
     assert!(
         cfg!(tokio_unstable),
         "task tracing requires building with RUSTFLAGS=\"--cfg tokio_unstable\"!"
     );
 
-    let (layer, server) = console_subscriber::TasksLayer::builder()
+    let (layer, server) = console_subscriber::ConsoleLayer::builder()
         .with_default_env()
         .build();
 
