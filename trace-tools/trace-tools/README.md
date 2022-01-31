@@ -28,8 +28,9 @@ Crucially, this span contains identical fields to those generated internally by 
 ## Subscriber implementation
 
 `trace-tools` provides a subscriber and two `Layer`s for dealing with spans and events:
- 1) **Flamegraph** layer, produces a folded stack file detailing instrumented span stacks (either instrumented internally by `tokio` or by `trace-tools`) that can be used to generate a flamegraph of all *observed* code.
- 2) **Logging** layer, allows `log` records to be converted into `tracing` events, and recreates full logging functionality (equivalent to `fern-logger`) within the subscriber itself, since it is impossible to set two loggers/subscribers at once. This means that logging remains consistent whether using `trace-tools` or not.
+ 1) **Flamegraph** layer: produces a folded stack file detailing instrumented span stacks (either instrumented internally by `tokio` or by `trace-tools`) that can be used to generate a flamegraph of all *observed* code.
+ 2) **Logging** layer: allows `log` records to be converted into `tracing` events, and recreates full logging functionality (equivalent to `fern-logger`) within the subscriber itself, since it is impossible to set two loggers/subscribers at once. This means that logging remains consistent whether using `trace-tools` or not.
+ 3) **Console** layer (enabled by the `tokio-console` feature): builds a `console_subscriber::ConsoleLayer` (from tokio's [`console`](https://github.com/tokio-rs/console) project) to collect task metrics and broadcast them. With this layer enabled, you can run the `console` [binary](https://crates.io/crates/tokio-console) and observe all asynchronous tasks in real-time. *Note:* only spans associated with *tasks* are observed in this way, not all spans; `trace_tools::observe` spans will not appear.
 
 The subscriber can be initialised through a builder that can either set the global subscriber or return a `Layered` instance that can be further extended with more `Layer`s.
 
@@ -99,6 +100,10 @@ trace_tools::Observe(say_hello(), "say_hello").await;
 ```
 
 This macro can be used with regular, non-`async` functions too, unlike the `Observe` trait.
+
+## `tokio-console` feature
+
+The `tokio-console` feature enables the console layer. Note that this makes use of unstable `tokio` features in order to work. As such, this also crate must be built with `RUSTFLAGS="--cfg tokio_unstable"` to use the feature. 
 
 ## Examples
 
