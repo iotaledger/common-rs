@@ -64,6 +64,7 @@ pub type TraceSubscriber = Layered<
 ///
 /// This can be used to enable/disable [`Layer`](tracing_subscriber::Layer)s provided by this crate.
 #[derive(Default)]
+#[must_use]
 pub struct SubscriberBuilder {
     #[cfg(feature = "tokio-console")]
     console_enabled: bool,
