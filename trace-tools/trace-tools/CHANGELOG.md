@@ -23,11 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
- - Console layer
+ - Console layer;
 
 ### Changed
 
- - `TraceSubscriber` type alias and `SubscriberBuilder` type now accomodate for the new layer.
+ - `TraceSubscriber` type alias and `SubscriberBuilder` type now accomodate for the new layer;
 
 ## 0.1.0 - 2021-01-21
 
