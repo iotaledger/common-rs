@@ -87,8 +87,10 @@ impl<U> UnpackError<Infallible, U> {
 
 /// Error type raised when an unknown tag is found while unpacking.
 #[derive(Debug)]
-#[cfg_attr(feature = "std", derive(thiserror::Error))]
 pub struct UnknownTagError<T>(pub T);
+
+#[cfg(feature = "std")]
+impl<T> std::error::Error for UnknownTagError<T> where T: std::error::Error {}
 
 impl<T> From<Infallible> for UnknownTagError<T> {
     fn from(err: Infallible) -> Self {
@@ -105,13 +107,15 @@ impl<T: fmt::Display> fmt::Display for UnknownTagError<T> {
 /// Error type to be raised when [`&[u8]`] does not have enough bytes to unpack something or when
 /// [`SlicePacker`]('crate::packer::SlicePacker') does not have enough space to pack something.
 #[derive(Debug)]
-#[cfg_attr(feature = "std", derive(thiserror::Error))]
 pub struct UnexpectedEOF {
     /// The required number of bytes.
     pub required: usize,
     /// The number of bytes the unpacker had or the number of bytes the packer can receive.
     pub had: usize,
 }
+
+#[cfg(feature = "std")]
+impl std::error::Error for UnexpectedEOF {}
 
 impl fmt::Display for UnexpectedEOF {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

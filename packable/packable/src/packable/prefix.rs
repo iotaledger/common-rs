@@ -24,7 +24,6 @@ use core::{
 /// Semantic error raised while unpacking a dynamically-sized sequences that use a type different than `usize` for their
 /// length-prefix.
 #[derive(Debug)]
-#[cfg_attr(feature = "std", derive(thiserror::Error))]
 pub enum UnpackPrefixError<T, E> {
     /// Semantic error raised while unpacking an element of the sequence.
     /// Typically this is [`Packable::UnpackError`](crate::Packable::UnpackError).
@@ -40,6 +39,14 @@ impl<T: fmt::Display, E: fmt::Display> fmt::Display for UnpackPrefixError<T, E> 
             Self::Prefix(err) => write!(f, "cannot unpack prefix: {}", err),
         }
     }
+}
+
+#[cfg(feature = "std")]
+impl<T, E> std::error::Error for UnpackPrefixError<T, E>
+where
+    T: std::error::Error,
+    E: std::error::Error,
+{
 }
 
 impl<E> UnpackPrefixError<Infallible, E> {

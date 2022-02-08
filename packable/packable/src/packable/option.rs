@@ -14,13 +14,15 @@ use core::fmt;
 
 /// Error type raised when a semantic error occurs while unpacking an option.
 #[derive(Debug)]
-#[cfg_attr(feature = "std", derive(thiserror::Error))]
 pub enum UnpackOptionError<E> {
     /// The tag found while unpacking is not valid.
     UnknownTag(u8),
     /// A semantic error for the underlying type was raised.
     Inner(E),
 }
+
+#[cfg(feature = "std")]
+impl<E> std::error::Error for UnpackOptionError<E> where E: std::error::Error {}
 
 impl<E> From<E> for UnpackOptionError<E> {
     fn from(err: E) -> Self {
