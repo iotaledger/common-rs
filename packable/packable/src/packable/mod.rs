@@ -15,9 +15,9 @@ mod r#box;
 mod num;
 #[cfg(feature = "primitive-types")]
 mod primitive_types;
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 mod string;
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 mod vec;
 
 use crate::{

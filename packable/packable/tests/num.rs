@@ -26,9 +26,9 @@ impl_packable_test_for_num!(packable_i32, i32, 0x6F7BD423);
 impl_packable_test_for_num!(packable_u32, u32, 0x6F7BD423);
 impl_packable_test_for_num!(packable_i64, i64, 0x6F7BD423100423DB);
 impl_packable_test_for_num!(packable_u64, u64, 0x6F7BD423100423DB);
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 impl_packable_test_for_num!(packable_isize, isize, 0x6F7BD423);
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 impl_packable_test_for_num!(packable_usize, usize, 0x6F7BD423);
 #[cfg(has_i128)]
 impl_packable_test_for_num!(packable_i128, i128, 0x6F7BD423100423DBFF127B91CA0AB123);

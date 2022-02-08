@@ -43,14 +43,14 @@ impl_packable_for_num!(i128);
 impl_packable_for_num!(f32);
 impl_packable_for_num!(f64);
 
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 impl Packable for usize {
     type UnpackError = core::num::TryFromIntError;
 
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         const _: () = {
             if core::mem::size_of::<usize>() > core::mem::size_of::<u64>() {
-                panic!("The \"ptrsize\" feature cannot be used for targets with a pointer size larger than 64 bits.");
+                panic!("The \"usize\" feature cannot be used for targets with a pointer size larger than 64 bits.");
             }
         };
 
@@ -66,7 +66,7 @@ impl Packable for usize {
     }
 }
 
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 impl Packable for isize {
     type UnpackError = core::num::TryFromIntError;
 

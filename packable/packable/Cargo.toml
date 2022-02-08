@@ -12,8 +12,8 @@ homepage = "https://www.iota.org"
 
 [features]
 io = [ "std" ]
-ptrsize = [ ]
 std = [ ]
+usize = [ ]
 
 [build-dependencies]
 autocfg = { version = "1.0.1", default-features = false }

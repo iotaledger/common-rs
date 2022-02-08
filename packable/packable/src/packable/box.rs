@@ -23,7 +23,7 @@ impl<T: Packable> Packable for Box<T> {
     }
 }
 
-#[cfg(feature = "ptrsize")]
+#[cfg(feature = "usize")]
 impl<T: Packable> Packable for Box<[T]> {
     type UnpackError =
         crate::prefix::UnpackPrefixError<T::UnpackError, <usize as Packable>::UnpackError>;
