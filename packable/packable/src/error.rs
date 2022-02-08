@@ -3,7 +3,7 @@
 
 //! Errors related to packable operations.
 
-use core::convert::Infallible;
+use core::{convert::Infallible, fmt};
 
 mod sealed {
     use crate::error::UnpackError;
@@ -89,9 +89,18 @@ impl<U> UnpackError<Infallible, U> {
 #[derive(Debug)]
 pub struct UnknownTagError<T>(pub T);
 
+#[cfg(feature = "std")]
+impl<T> std::error::Error for UnknownTagError<T> where T: std::error::Error {}
+
 impl<T> From<Infallible> for UnknownTagError<T> {
     fn from(err: Infallible) -> Self {
         match err {}
+    }
+}
+
+impl<T: fmt::Display> fmt::Display for UnknownTagError<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "unknown tag value {}", self.0)
     }
 }
 
@@ -103,4 +112,17 @@ pub struct UnexpectedEOF {
     pub required: usize,
     /// The number of bytes the unpacker had or the number of bytes the packer can receive.
     pub had: usize,
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for UnexpectedEOF {}
+
+impl fmt::Display for UnexpectedEOF {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "not enough bytes, required {} but had {}",
+            self.required, self.had
+        )
+    }
 }

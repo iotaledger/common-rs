@@ -11,7 +11,8 @@ keywords = [ "iota", "serialization", "framework", "packable" ]
 homepage = "https://www.iota.org"
 
 [features]
-io = [ ]
+io = [ "std" ]
+std = [ ]
 
 [build-dependencies]
 autocfg = { version = "1.0.1", default-features = false }

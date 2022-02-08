@@ -10,6 +10,8 @@ use crate::{
     Packable,
 };
 
+use core::fmt;
+
 /// Error type raised when a semantic error occurs while unpacking an option.
 #[derive(Debug)]
 pub enum UnpackOptionError<E> {
@@ -19,9 +21,21 @@ pub enum UnpackOptionError<E> {
     Inner(E),
 }
 
+#[cfg(feature = "std")]
+impl<E> std::error::Error for UnpackOptionError<E> where E: std::error::Error {}
+
 impl<E> From<E> for UnpackOptionError<E> {
     fn from(err: E) -> Self {
         Self::Inner(err)
+    }
+}
+
+impl<E: fmt::Display> fmt::Display for UnpackOptionError<E> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnknownTag(tag) => write!(f, "unknown tag value {} for option", tag),
+            Self::Inner(err) => write!(f, "cannot unpack some variant: {}", err),
+        }
     }
 }
 

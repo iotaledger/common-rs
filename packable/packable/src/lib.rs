@@ -60,10 +60,10 @@
 //!
 //! Check the [`Packable`] `impl` section for further information.
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 
-#[cfg(doc)]
+#[cfg(any(doc, feature = "std"))]
 extern crate std;
 
 mod packable;

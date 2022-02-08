@@ -91,6 +91,9 @@ macro_rules! bounded {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, )]
         pub struct $invalid_error<const MIN: $ty, const MAX: $ty>(pub $ty);
 
+        #[cfg(feature = "std")]
+        impl<const MIN: $ty, const MAX: $ty> std::error::Error for $invalid_error<MIN, MAX> {}
+
         impl<const MIN: $ty, const MAX: $ty> Display for $invalid_error<MIN, MAX> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 write!(f, "the integer `{}` is out of bounds (`{}..={}`)", self.0, MIN, MAX)
@@ -113,12 +116,15 @@ macro_rules! bounded {
 
         #[doc = concat!("Error encountered when attempting to convert a [`usize`] into a [`", stringify!($wrapper),"`].")]
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub enum $try_error<const MIN: $ty, const MAX: $ty>{
+        pub enum $try_error<const MIN: $ty, const MAX: $ty> {
             #[doc = concat!("The `usize` could be converted into a [`", stringify!($ty),"`] but it is not within the given bounds.")]
             Invalid($ty),
             #[doc = concat!("The `usize` could not be converted into a [`", stringify!($ty),"`].")]
             Truncated(usize),
         }
+
+        #[cfg(feature = "std")]
+        impl<const MIN: $ty, const MAX: $ty> std::error::Error for $try_error<MIN, MAX> {}
 
         impl<const MIN: $ty, const MAX: $ty> Display for $try_error<MIN, MAX> {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

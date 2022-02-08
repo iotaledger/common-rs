@@ -16,7 +16,7 @@ use crate::{
 use alloc::{boxed::Box, vec::Vec};
 use core::{
     convert::Infallible,
-    fmt::Debug,
+    fmt,
     marker::PhantomData,
     ops::{Deref, DerefMut, Range},
 };
@@ -30,6 +30,23 @@ pub enum UnpackPrefixError<T, E> {
     Packable(T),
     /// Semantic error raised when the length prefix cannot be unpacked.
     Prefix(E),
+}
+
+impl<T: fmt::Display, E: fmt::Display> fmt::Display for UnpackPrefixError<T, E> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Packable(err) => write!(f, "cannot unpack item: {}", err),
+            Self::Prefix(err) => write!(f, "cannot unpack prefix: {}", err),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T, E> std::error::Error for UnpackPrefixError<T, E>
+where
+    T: std::error::Error,
+    E: std::error::Error,
+{
 }
 
 impl<E> UnpackPrefixError<Infallible, E> {
@@ -114,8 +131,8 @@ impl<T, B> Packable for VecPrefix<T, B>
 where
     T: Packable,
     B: Bounded + Packable,
-    <B::Bounds as TryInto<B>>::Error: Debug,
-    <B as TryFrom<usize>>::Error: Debug,
+    <B::Bounds as TryInto<B>>::Error: fmt::Debug,
+    <B as TryFrom<usize>>::Error: fmt::Debug,
     Range<B::Bounds>: Iterator<Item = B::Bounds>,
 {
     type UnpackError = UnpackPrefixError<T::UnpackError, B::UnpackError>;
@@ -225,8 +242,8 @@ impl<T, B> Packable for BoxedSlicePrefix<T, B>
 where
     T: Packable,
     B: Bounded + Packable,
-    <B::Bounds as TryInto<B>>::Error: Debug,
-    <B as TryFrom<usize>>::Error: Debug,
+    <B::Bounds as TryInto<B>>::Error: fmt::Debug,
+    <B as TryFrom<usize>>::Error: fmt::Debug,
     Range<B::Bounds>: Iterator<Item = B::Bounds>,
 {
     type UnpackError = <VecPrefix<T, B> as Packable>::UnpackError;
