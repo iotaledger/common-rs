@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- derive `Error` for all the error types if the `std` feature is enabled.
+- Derive `Error` for all the error types if the `std` feature is enabled;
 
 ## 0.1.0 - 2022-01-13
 
