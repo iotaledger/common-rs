@@ -41,3 +41,5 @@ impl_packable_test_for_integer!(
         0x6F7BD423100423DB
     ])
 );
+impl_packable_test_for_integer!(packable_f32, f32, core::f32::consts::PI);
+impl_packable_test_for_integer!(packable_f64, f64, core::f64::consts::PI);

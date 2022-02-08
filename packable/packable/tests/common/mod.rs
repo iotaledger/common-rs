@@ -11,7 +11,7 @@ use core::fmt::Debug;
 
 fn generic_test_pack_to_slice_unpack_verified<P>(packable: &P)
 where
-    P: Packable + Eq + Debug,
+    P: Packable + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     let mut vec = vec![0; packable.packed_len()];
@@ -31,7 +31,7 @@ where
 
 fn generic_test_pack_to_vec_unpack_verified<P>(packable: &P) -> (Vec<u8>, P)
 where
-    P: Packable + Eq + Debug,
+    P: Packable + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     let vec = packable.pack_to_vec();
@@ -45,7 +45,7 @@ where
 
 pub fn generic_test<P>(packable: &P) -> (Vec<u8>, P)
 where
-    P: Packable + Eq + Debug,
+    P: Packable + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     // Tests for `Vec` and `&[u8]`
