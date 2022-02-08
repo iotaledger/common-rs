@@ -39,5 +39,46 @@ impl_packable_for_num!(i32);
 impl_packable_for_num!(i64);
 #[cfg(has_i128)]
 impl_packable_for_num!(i128);
+
 impl_packable_for_num!(f32);
 impl_packable_for_num!(f64);
+
+#[cfg(feature = "usize")]
+impl Packable for usize {
+    type UnpackError = core::num::TryFromIntError;
+
+    fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
+        const _: () = {
+            if core::mem::size_of::<usize>() > core::mem::size_of::<u64>() {
+                panic!("The \"usize\" feature cannot be used for targets with a pointer size larger than 64 bits.");
+            }
+        };
+
+        (*self as u64).pack(packer)
+    }
+
+    fn unpack<U: Unpacker, const VERIFY: bool>(
+        unpacker: &mut U,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        use crate::error::UnpackErrorExt;
+        Self::try_from(u64::unpack::<_, VERIFY>(unpacker).infallible()?)
+            .map_err(UnpackError::Packable)
+    }
+}
+
+#[cfg(feature = "usize")]
+impl Packable for isize {
+    type UnpackError = core::num::TryFromIntError;
+
+    fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
+        (*self as i64).pack(packer)
+    }
+
+    fn unpack<U: Unpacker, const VERIFY: bool>(
+        unpacker: &mut U,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        use crate::error::UnpackErrorExt;
+        Self::try_from(i64::unpack::<_, VERIFY>(unpacker).infallible()?)
+            .map_err(UnpackError::Packable)
+    }
+}
