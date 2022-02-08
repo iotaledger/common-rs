@@ -11,7 +11,8 @@ keywords = [ "iota", "serialization", "framework", "packable" ]
 homepage = "https://www.iota.org"
 
 [features]
-io = [ ]
+io = [ "std" ]
+std = [ "thiserror" ]
 
 [build-dependencies]
 autocfg = { version = "1.0.1", default-features = false }
@@ -21,3 +22,4 @@ packable-derive = { version = "=0.1.0", path = "../packable-derive", default-fea
 
 primitive-types = { version = "0.10.1", default-features = false, optional = true }
 serde = { version = "1.0.130", default-features = false, features = [ "derive", "std" ], optional = true }
+thiserror = { version = "1.0.0", default-features = false, optional = true }

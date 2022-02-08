@@ -89,6 +89,7 @@ macro_rules! bounded {
 
         #[doc = concat!("Error encountered when attempting to wrap a  [`", stringify!($ty),"`] that is not within the given bounds.")]
         #[derive(Debug, Clone, Copy, PartialEq, Eq, )]
+        #[cfg_attr(feature = "std", derive(thiserror::Error))]
         pub struct $invalid_error<const MIN: $ty, const MAX: $ty>(pub $ty);
 
         impl<const MIN: $ty, const MAX: $ty> Display for $invalid_error<MIN, MAX> {
@@ -113,6 +114,7 @@ macro_rules! bounded {
 
         #[doc = concat!("Error encountered when attempting to convert a [`usize`] into a [`", stringify!($wrapper),"`].")]
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+        #[cfg_attr(feature = "std", derive(thiserror::Error))]
         pub enum $try_error<const MIN: $ty, const MAX: $ty>{
             #[doc = concat!("The `usize` could be converted into a [`", stringify!($ty),"`] but it is not within the given bounds.")]
             Invalid($ty),

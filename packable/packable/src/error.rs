@@ -3,7 +3,7 @@
 
 //! Errors related to packable operations.
 
-use core::convert::Infallible;
+use core::{convert::Infallible, fmt};
 
 mod sealed {
     use crate::error::UnpackError;
@@ -87,6 +87,7 @@ impl<U> UnpackError<Infallible, U> {
 
 /// Error type raised when an unknown tag is found while unpacking.
 #[derive(Debug)]
+#[cfg_attr(feature = "std", derive(thiserror::Error))]
 pub struct UnknownTagError<T>(pub T);
 
 impl<T> From<Infallible> for UnknownTagError<T> {
@@ -95,12 +96,29 @@ impl<T> From<Infallible> for UnknownTagError<T> {
     }
 }
 
+impl<T: fmt::Display> fmt::Display for UnknownTagError<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "unknown tag value {}", self.0)
+    }
+}
+
 /// Error type to be raised when [`&[u8]`] does not have enough bytes to unpack something or when
 /// [`SlicePacker`]('crate::packer::SlicePacker') does not have enough space to pack something.
 #[derive(Debug)]
+#[cfg_attr(feature = "std", derive(thiserror::Error))]
 pub struct UnexpectedEOF {
     /// The required number of bytes.
     pub required: usize,
     /// The number of bytes the unpacker had or the number of bytes the packer can receive.
     pub had: usize,
+}
+
+impl fmt::Display for UnexpectedEOF {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "not enough bytes, required {} but had {}",
+            self.required, self.had
+        )
+    }
 }
