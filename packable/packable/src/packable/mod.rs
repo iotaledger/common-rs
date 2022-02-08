@@ -15,6 +15,10 @@ mod r#box;
 mod num;
 #[cfg(feature = "primitive-types")]
 mod primitive_types;
+#[cfg(feature = "ptrsize")]
+mod string;
+#[cfg(feature = "ptrsize")]
+mod vec;
 
 use crate::{
     error::{UnexpectedEOF, UnpackError},

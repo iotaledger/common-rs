@@ -12,6 +12,7 @@ homepage = "https://www.iota.org"
 
 [features]
 io = [ "std" ]
+ptrsize = [ ]
 std = [ ]
 
 [build-dependencies]
