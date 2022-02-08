@@ -5,7 +5,7 @@ use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 use core::convert::Infallible;
 
-macro_rules! impl_packable_for_integer {
+macro_rules! impl_packable_for_num {
     ($ty:ty) => {
         impl Packable for $ty {
             type UnpackError = Infallible;
@@ -26,16 +26,18 @@ macro_rules! impl_packable_for_integer {
     };
 }
 
-impl_packable_for_integer!(u8);
-impl_packable_for_integer!(u16);
-impl_packable_for_integer!(u32);
-impl_packable_for_integer!(u64);
+impl_packable_for_num!(u8);
+impl_packable_for_num!(u16);
+impl_packable_for_num!(u32);
+impl_packable_for_num!(u64);
 #[cfg(has_u128)]
-impl_packable_for_integer!(u128);
+impl_packable_for_num!(u128);
 
-impl_packable_for_integer!(i8);
-impl_packable_for_integer!(i16);
-impl_packable_for_integer!(i32);
-impl_packable_for_integer!(i64);
+impl_packable_for_num!(i8);
+impl_packable_for_num!(i16);
+impl_packable_for_num!(i32);
+impl_packable_for_num!(i64);
 #[cfg(has_i128)]
-impl_packable_for_integer!(i128);
+impl_packable_for_num!(i128);
+impl_packable_for_num!(f32);
+impl_packable_for_num!(f64);
