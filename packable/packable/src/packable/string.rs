@@ -11,8 +11,10 @@ use crate::{
     Packable,
 };
 
-use alloc::string::{FromUtf8Error, String};
-use alloc::vec::Vec;
+use alloc::{
+    string::{FromUtf8Error, String},
+    vec::Vec,
+};
 
 impl Packable for String {
     type UnpackError = UnpackPrefixError<FromUtf8Error, <usize as Packable>::UnpackError>;
