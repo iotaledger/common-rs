@@ -63,8 +63,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 
-#[cfg(doc)]
-#[cfg(feature = "std")]
+#[cfg(any(doc, feature = "std"))]
 extern crate std;
 
 mod packable;
