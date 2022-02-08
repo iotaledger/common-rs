@@ -1,6 +1,6 @@
 [package]
 name = "fern-logger"
-version = "0.2.0"
+version = "0.3.0"
 authors = [ "IOTA Stiftung" ]
 edition = "2021"
 description = "Convenient and configurable multi-output logger"
