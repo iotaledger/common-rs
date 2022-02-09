@@ -7,7 +7,7 @@ mkdir coverage
 
 # Run tests with profiling instrumentation
 echo "Running instrumented unit tests..."
-RUSTFLAGS="-Zinstrument-coverage" LLVM_PROFILE_FILE="common-rs-%m.profraw" cargo +nightly test --tests --all --all-features
+RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="common-rs-%m.profraw" cargo +nightly test --tests --all --all-features
 
 # Merge all .profraw files into "common-rs.profdata"
 echo "Merging coverage data..."
@@ -43,7 +43,7 @@ cargo +nightly cov -- export ${BINARIES} \
   --ignore-filename-regex="/.cargo|rustc|target|tests|/.rustup" \
   --format=lcov --Xdemangler=rustfilt \
   >> coverage/coverage.info
-  
+
 
 # Ensure intermediate coverage files are deleted
 echo "Removing intermediate files..."
