@@ -134,7 +134,7 @@ jobs:
             ubuntu-latest-${{ matrix.rust }}-${{ env.cache-name }}-
             ubuntu-latest-${{ matrix.rust }}-
             ubuntu-latest-
-  
+
       - name: Check
         uses: actions-rs/cargo@v1
         with:
@@ -312,7 +312,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: doc
-          args: --no-deps --document-private-items
+          args: --no-deps --document-private-items --all-features
 
   missing-files:
     runs-on: ubuntu-latest
