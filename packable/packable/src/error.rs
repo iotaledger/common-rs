@@ -77,11 +77,31 @@ impl<T, U> From<U> for UnpackError<T, U> {
 impl<U> UnpackError<Infallible, U> {
     /// Get the [`Packer`](UnpackError::Unpacker) variant if the [`Packable`](UnpackError::Packable) variant is
     /// [`Infallible`].
-    pub fn into_unpacker(self) -> U {
+    pub fn into_unpacker_err(self) -> U {
         match self {
             Self::Packable(err) => match err {},
             Self::Unpacker(err) => err,
         }
+    }
+}
+
+impl<T> UnpackError<T, Infallible> {
+    /// Get the [`Packable`](UnpackError::Packable) variant if the [`Unpacker`](UnpackError::Unpacker) variant is
+    /// [`Infallible`].
+    pub fn into_packable_err(self) -> T {
+        match self {
+            Self::Packable(err) => err,
+            Self::Unpacker(err) => match err {},
+        }
+    }
+}
+
+/// We cannot provide a [`From`] implementation because [`Infallible`] is not from this crate.
+#[allow(clippy::from_over_into)]
+impl Into<Infallible> for UnpackError<Infallible, Infallible> {
+    fn into(self) -> Infallible {
+        let (Self::Packable(err) | Self::Unpacker(err)) = self;
+        match err {}
     }
 }
 
