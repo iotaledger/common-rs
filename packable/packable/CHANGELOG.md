@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement `Packable` for `f32` and `f64`;
 - Implement `Packable` for `usize`, `isize`, `Vec<T>`, `Box<[T]>` and `String` under the `usize` feature;
 - Implement `Into<Infallible>` for `UnpackError<Infallible, Infallible>` and `UnpackPrefixError<Infallible, Infallible>`;
-- Add the `UnpackError::into_packable_err` and `UnpackPrefixError::into_item_err` methods.
+- Add the `UnpackError::into_packable_err` and `UnpackPrefixError::into_item_err` methods;
 
 ### Changed
 
