@@ -108,23 +108,21 @@ use core::{convert::AsRef, fmt::Debug};
 /// The derive implementation can be tweaked using `#[packable(...)]` attributes.
 ///
 /// ## Tags for enums
-///
 /// A very common pattern when implementing `Packable` for enums consists in introducing a prefix
 /// value to differentiate each variant of the enumeration when unpacking, this prefix value is
 /// known as a `tag`. The type of the `tag` is specified with the `#[packable(tag_type = ...)]`
-/// attribute and it can only be one of `u8`, `u16`, `u32` or `u64`. The `tag` value used for each
-/// variant is specified with the `#[packable(tag = ...)]` attribute and can only contain integer
-/// literal without any type prefixes (e.g. `42` is valid but `42u8` is not).
+/// attribute and it can only be one of `[u8]`, `[u16]`, `[u32]` or `[u64]`. The `tag` value used
+/// for each variant is specified with the `#[packable(tag = ...)]` attribute and can only contain
+/// integer literal without any type prefixes (e.g. `42` is valid but `42u8` is not).
 ///
-/// In the example above, the `tag` type is `u8`, the `Nothing` variant has a `tag` value of `0`
+/// In the example above, the `tag` type is `[u8]`, the `Nothing` variant has a `tag` value of `0`
 /// and the `Just` variant has a `tag` value of `1`. This means that the packed version of
-/// `Maybe::Nothing` is `[0u8]` and the packed version of `Maybe::Just(7)` is `[1u8, 0u8, 0u8, 0u8,
-/// 7u8]`.
+/// `Maybe::Nothing` is `[0]` and the packed version of `Maybe::Just(7)` is `[1, 0, 0, 0, 7]`.
 ///
 /// The `tag_type` and `tag` attributes are mandatory for enums unless the enum has a
-/// `#[repr(...)]` attribute identifiern which case the `repr` type will be used as the `tag_type` and each
-/// variant discriminant will be used as the `tag`. The `tag_type` and `tag` attributes take
-/// precedence over the `repr` attribute.
+/// `#[repr(...)]` attribute identifier, in which case the `repr` type will be used as the
+/// `tag_type` and each variant discriminant will be used as the `tag`. The `tag_type` and `tag`
+/// attributes take precedence over the `repr` attribute.
 ///
 /// ## The `UnpackError` associated type
 ///
@@ -132,11 +130,13 @@ use core::{convert::AsRef, fmt::Debug};
 /// specify the `UnpackError` associated type. The macro also provides sensible defaults for cases
 /// when the attribute is not used.
 ///
-/// For structs, the default `UnpackError` type is the `UnpackError` of any of the fields or
-/// `core::convert::Infallible` in case the struct has no fields.
+/// For structs, the default [`UnpackError`](Packable::UnpackError) type is the
+/// [`UnpackError`](Packable::UnpackError) of any of the fields type or
+/// [`Infallible`](core::convert::Infallible) in case the struct has no fields.
 ///
-/// For enums, the default `UnpackError` type is `UnknownTagError<T>` where `T` is the type
-/// specified according to the `tag_type` or `repr` attributes.
+/// For enums, the default  [`UnpackError`](Packable::UnpackError) type is
+/// [`UnknownTagError<T>`](crate::error::UnknownTagError) where `T` is the type specified according
+/// to the `tag_type` or `repr` attributes.
 ///
 /// Following the example above, `Maybe::UnpackError` is `UnknownTagError<u8>` because no
 /// `unpack_error` attribute was specified.
