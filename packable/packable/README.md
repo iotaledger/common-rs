@@ -36,10 +36,26 @@ syntactical checks to guarantee that the deserialized values are in-bounds. It i
 to serialize and deserialize sequences of values by using the types provided in the [`prefix`]
 module, which represent linear sequences of valeus with a length prefix.
 
-Additional implementations of [`Packable`] are provided for [`usize`], [`isize`],
-[`Vec<T>`](std::vec::Vec), `Box<[T]>`, [`String`](std::string::String) are provided under the
-`usize` feature flag which allows packing pointer sized integers as 64-bit integers.
-
 Check the [`Packable`] `impl` section for further information.
+
+## Features
+
+### `std`
+
+This feature implements [`Error`](std::error::Error) for all the error types provided by this
+crate.
+
+### `io`
+
+This feature provides the types [`IoPacker`](packer::IoPacker) and
+[`IoUnpacker`](unpacker::IoUnpacker) which allow packing and unpacking from values whose types
+implement [`Write`](std::io::Write) and [`Read`](std::io::Read) respectively.
+
+### `usize`
+
+This featue implements [`Packable`] for [`usize`], [`isize`], [`Vec<T>`](std::vec::Vec),
+`Box<[T]>`, [`String`](std::string::String) this is done serializing and deserializing pointer
+sized integers as 64-bit integers. This feature will not work for targets with a pointer width
+larger than 64.
 
 License: Apache-2.0
