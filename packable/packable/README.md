@@ -51,9 +51,9 @@ respectively.
 
 ### `usize`
 
-This feature implements `Packable` for `usize`, `isize`, `Vec<T>`, `Box<[T]>`,
-`String` this is done serializing and deserializing pointer sized integers as
-64-bit integers. This feature will not work for targets with a pointer width
+This feature implements `Packable` for `usize`, `isize`, `Vec<T>`, `Box<[T]>`
+and `String`. This is done serializing and deserializing pointer sized integers
+as 64-bit integers. This feature will not work for targets with a pointer width
 larger than 64.
 
 License: Apache-2.0
