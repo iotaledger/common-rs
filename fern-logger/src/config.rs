@@ -109,7 +109,7 @@ impl LoggerOutputConfigBuilder {
 }
 
 /// Logger output configuration.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct LoggerOutputConfig {
     /// Name of an output file, or `stdout` for standard output.
     pub(crate) name: String,
@@ -217,7 +217,7 @@ impl LoggerConfigBuilder {
 }
 
 /// Logger configuration.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct LoggerConfig {
     /// Width of the target section of a log.
     pub(crate) target_width: usize,
