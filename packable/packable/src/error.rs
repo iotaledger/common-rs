@@ -96,6 +96,27 @@ impl<T> UnpackError<T, Infallible> {
     }
 }
 
+impl<T, U> fmt::Display for UnpackError<T, U>
+where
+    T: fmt::Display,
+    U: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Packable(err) => write!(f, "packable error while unpacking: {}", err),
+            Self::Unpacker(err) => write!(f, "unpacker error while unpacking: {}", err),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T, U> std::error::Error for UnpackError<T, U>
+where
+    T: std::error::Error,
+    U: std::error::Error,
+{
+}
+
 /// We cannot provide a [`From`] implementation because [`Infallible`] is not from this crate.
 #[allow(clippy::from_over_into)]
 impl Into<Infallible> for UnpackError<Infallible, Infallible> {
@@ -110,7 +131,7 @@ impl Into<Infallible> for UnpackError<Infallible, Infallible> {
 pub struct UnknownTagError<T>(pub T);
 
 #[cfg(feature = "std")]
-impl<T> std::error::Error for UnknownTagError<T> where T: std::error::Error {}
+impl<T> std::error::Error for UnknownTagError<T> where T: fmt::Display + fmt::Debug {}
 
 impl<T> From<Infallible> for UnknownTagError<T> {
     fn from(err: Infallible) -> Self {
@@ -124,7 +145,7 @@ impl<T: fmt::Display> fmt::Display for UnknownTagError<T> {
     }
 }
 
-/// Error type to be raised when [`&[u8]`] does not have enough bytes to unpack something or when
+/// Error type to be raised when `&[u8]` does not have enough bytes to unpack something or when
 /// [`SlicePacker`]('crate::packer::SlicePacker') does not have enough space to pack something.
 #[derive(Debug)]
 pub struct UnexpectedEOF {

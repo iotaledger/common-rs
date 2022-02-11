@@ -19,11 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
-## 0.X.X - 2022-XX-XX
+## 0.2.1 - 2022-02-11
+
+### Added
+
+- Make the `Error` implementation for `UnknownTagError` less restricted;
+- Implement `Error` for `UnpackError`;
+- Document the `serde` and `primitive-types` features;
 
 ### Changed
 
 - Make `String` packing more performant by using `Packer::pack_bytes` directly;
+- Fix documentation of `UnexpectedEOF` and `UnpackPrefixError`;
 
 ## 0.2.0 - 2022-02-09
 

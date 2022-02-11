@@ -39,15 +39,25 @@ Check the `Packable` `impl` section for further information.
 
 ## Features
 
-### `std`
-
-This feature implements `Error` for all the error types provided by this crate.
-
 ### `io`
 
 This feature provides the types `IoPacker` and `IoUnpacker` which allow packing
 and unpacking from values whose types implement `Write` and `Read`
 respectively.
+
+### `primitive-types`
+
+This feature implements `Packable` for `U256` encoding its values as arrays of
+bytes in little-endian order.
+
+### `serde`
+
+This feature derives `Serialize` and `Deserialize` for the types provided in
+the `bounded` and `prefix` modules
+
+### `std`
+
+This feature implements `Error` for all the error types provided by this crate.
 
 ### `usize`
 

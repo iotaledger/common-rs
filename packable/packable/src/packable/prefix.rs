@@ -21,8 +21,7 @@ use core::{
     ops::{Deref, DerefMut, Range},
 };
 
-/// Semantic error raised while unpacking a dynamically-sized sequences that use a type different than `usize` for their
-/// length-prefix.
+/// Semantic error raised while unpacking dynamically-sized sequences.
 #[derive(Debug)]
 pub enum UnpackPrefixError<T, E> {
     /// Semantic error raised while unpacking an item of the sequence. Typically this is
