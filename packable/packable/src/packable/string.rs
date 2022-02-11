@@ -24,9 +24,7 @@ impl Packable for String {
         // This cast is fine because we know `usize` is not larger than `64` bits.
         (bytes.len() as u64).pack(packer)?;
 
-        for item in bytes.iter() {
-            item.pack(packer)?;
-        }
+        packer.pack_bytes(bytes)?;
 
         Ok(())
     }
