@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Make `String` packing more performant by using `Packer::pack_bytes` directly;
+- Fix documentation of `UnexpectedEOF` and `UnpackPrefixError`;
 
 ## 0.2.0 - 2022-02-09
 

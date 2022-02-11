@@ -145,7 +145,7 @@ impl<T: fmt::Display> fmt::Display for UnknownTagError<T> {
     }
 }
 
-/// Error type to be raised when [`&[u8]`] does not have enough bytes to unpack something or when
+/// Error type to be raised when `&[u8]` does not have enough bytes to unpack something or when
 /// [`SlicePacker`]('crate::packer::SlicePacker') does not have enough space to pack something.
 #[derive(Debug)]
 pub struct UnexpectedEOF {
