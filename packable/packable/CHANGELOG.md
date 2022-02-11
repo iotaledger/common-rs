@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.X.X - 2022-XX-XX
 
+### Added
+
+- Make the `Error` implementation for `UnknownTagError` less restricted;
+
 ### Changed
 
 - Make `String` packing more performant by using `Packer::pack_bytes` directly;

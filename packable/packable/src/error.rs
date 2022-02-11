@@ -110,7 +110,7 @@ impl Into<Infallible> for UnpackError<Infallible, Infallible> {
 pub struct UnknownTagError<T>(pub T);
 
 #[cfg(feature = "std")]
-impl<T> std::error::Error for UnknownTagError<T> where T: std::error::Error {}
+impl<T> std::error::Error for UnknownTagError<T> where T: fmt::Display + fmt::Debug {}
 
 impl<T> From<Infallible> for UnknownTagError<T> {
     fn from(err: Infallible) -> Self {
