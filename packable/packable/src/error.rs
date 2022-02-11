@@ -96,6 +96,27 @@ impl<T> UnpackError<T, Infallible> {
     }
 }
 
+impl<T, U> fmt::Display for UnpackError<T, U>
+where
+    T: fmt::Display,
+    U: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Packable(err) => write!(f, "packable error while unpacking: {}", err),
+            Self::Unpacker(err) => write!(f, "unpacker error while unpacking: {}", err),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T, U> std::error::Error for UnpackError<T, U>
+where
+    T: std::error::Error,
+    U: std::error::Error,
+{
+}
+
 /// We cannot provide a [`From`] implementation because [`Infallible`] is not from this crate.
 #[allow(clippy::from_over_into)]
 impl Into<Infallible> for UnpackError<Infallible, Infallible> {
