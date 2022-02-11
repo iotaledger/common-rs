@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Make the `Error` implementation for `UnknownTagError` less restricted;
 - Implement `Error` for `UnpackError`;
+- Document the `serde` and `primitive-types` features;
 
 ### Changed
 

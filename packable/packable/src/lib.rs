@@ -41,16 +41,26 @@
 //!
 //! # Features
 //!
-//! ## `std`
-//!
-//! This feature implements [`Error`](std::error::Error) for all the error types provided by this
-//! crate.
-//!
 //! ## `io`
 //!
 //! This feature provides the types [`IoPacker`](packer::IoPacker) and
 //! [`IoUnpacker`](unpacker::IoUnpacker) which allow packing and unpacking from values whose types
 //! implement [`Write`](std::io::Write) and [`Read`](std::io::Read) respectively.
+//!
+//! ## `primitive-types`
+//!
+//! This feature implements [`Packable`] for [`U256`](primitive_types::U256) encoding its values as
+//! arrays of bytes in little-endian order.
+//!
+//! ## `serde`
+//!
+//! This feature derives [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize)
+//! for the types provided in the [`mod@bounded`] and [`prefix`] modules
+//!
+//! ## `std`
+//!
+//! This feature implements [`Error`](std::error::Error) for all the error types provided by this
+//! crate.
 //!
 //! ## `usize`
 //!
