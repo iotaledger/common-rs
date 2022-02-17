@@ -169,7 +169,7 @@ use core::{convert::AsRef, fmt::Debug};
 /// where `F` is the type of the field being verified, `P` is the type of the `struct` or `enum`
 /// and `VERIFY` is the same constant parameter used inside `Packable::unpack`. This verification
 /// function will be run immediately after unpacking the field.
-pub trait Packable: Sized {
+pub trait Packable: Sized + 'static {
     /// The error type that can be returned if some semantic error occurs while unpacking.
     ///
     /// It is recommended to use [`Infallible`](core::convert::Infallible) if this kind of error is impossible or
