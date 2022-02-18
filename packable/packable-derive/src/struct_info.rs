@@ -11,12 +11,7 @@ pub(crate) struct StructInfo {
 }
 
 impl StructInfo {
-    pub(crate) fn new(
-        path: Path,
-        fields: &Fields,
-        attrs: &[Attribute],
-        crate_name: &Ident,
-    ) -> Result<Self> {
+    pub(crate) fn new(path: Path, fields: &Fields, attrs: &[Attribute], crate_name: &Ident) -> Result<Self> {
         let filtered_attrs = filter_attrs(attrs);
 
         let unpack_error = UnpackErrorInfo::new(filtered_attrs, || match fields.iter().next() {
@@ -26,9 +21,6 @@ impl StructInfo {
 
         let inner = RecordInfo::new(path, fields, &unpack_error.with)?;
 
-        Ok(Self {
-            unpack_error,
-            inner,
-        })
+        Ok(Self { unpack_error, inner })
     }
 }

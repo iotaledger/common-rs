@@ -61,8 +61,7 @@ impl Packable for usize {
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
-        Self::try_from(u64::unpack::<_, VERIFY>(unpacker).infallible()?)
-            .map_err(UnpackError::Packable)
+        Self::try_from(u64::unpack::<_, VERIFY>(unpacker).infallible()?).map_err(UnpackError::Packable)
     }
 }
 
@@ -78,7 +77,6 @@ impl Packable for isize {
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
-        Self::try_from(i64::unpack::<_, VERIFY>(unpacker).infallible()?)
-            .map_err(UnpackError::Packable)
+        Self::try_from(i64::unpack::<_, VERIFY>(unpacker).infallible()?).map_err(UnpackError::Packable)
     }
 }

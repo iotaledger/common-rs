@@ -5,8 +5,8 @@ mod common;
 
 use packable::{
     bounded::{
-        BoundedU16, BoundedU32, BoundedU64, BoundedU8, InvalidBoundedU16, InvalidBoundedU32,
-        InvalidBoundedU64, InvalidBoundedU8, TryIntoBoundedU32Error,
+        BoundedU16, BoundedU32, BoundedU64, BoundedU8, InvalidBoundedU16, InvalidBoundedU32, InvalidBoundedU64,
+        InvalidBoundedU8, TryIntoBoundedU32Error,
     },
     error::UnpackError,
     prefix::{UnpackPrefixError, VecPrefix},
@@ -34,11 +34,9 @@ macro_rules! impl_packable_test_for_vec_prefix {
         #[test]
         fn $packable_vec_prefix() {
             assert_eq!(
-                common::generic_test(
-                    &<VecPrefix<Option<u32>, $ty>>::try_from(vec![Some(0u32), None]).unwrap()
-                )
-                .0
-                .len(),
+                common::generic_test(&<VecPrefix<Option<u32>, $ty>>::try_from(vec![Some(0u32), None]).unwrap())
+                    .0
+                    .len(),
                 core::mem::size_of::<$ty>()
                     + (core::mem::size_of::<u8>() + core::mem::size_of::<u32>())
                     + core::mem::size_of::<u8>()
@@ -53,11 +51,7 @@ macro_rules! impl_packable_test_for_bounded_vec_prefix {
         fn $packable_vec_prefix() {
             assert_eq!(
                 common::generic_test(
-                    &<VecPrefix<Option<u32>, $bounded<$min, $max>>>::try_from(vec![
-                        Some(0u32),
-                        None
-                    ])
-                    .unwrap()
+                    &<VecPrefix<Option<u32>, $bounded<$min, $max>>>::try_from(vec![Some(0u32), None]).unwrap()
                 )
                 .0
                 .len(),
@@ -80,34 +74,16 @@ macro_rules! impl_packable_test_for_bounded_vec_prefix {
 
             assert!(matches!(
                 prefixed,
-                Err(UnpackError::Packable(UnpackPrefixError::Prefix($err(
-                    LEN_AS_TY
-                )))),
+                Err(UnpackError::Packable(UnpackPrefixError::Prefix($err(LEN_AS_TY)))),
             ));
         }
     };
 }
 
-impl_packable_test_for_vec_prefix!(
-    packable_vec_prefix_u8,
-    packable_vec_prefix_invalid_length_u8,
-    u8
-);
-impl_packable_test_for_vec_prefix!(
-    packable_vec_prefix_u16,
-    packable_vec_prefix_invalid_length_u16,
-    u16
-);
-impl_packable_test_for_vec_prefix!(
-    packable_vec_prefix_u32,
-    packable_vec_prefix_invalid_length_u32,
-    u32
-);
-impl_packable_test_for_vec_prefix!(
-    packable_vec_prefix_u64,
-    packable_vec_prefix_invalid_length_u64,
-    u64
-);
+impl_packable_test_for_vec_prefix!(packable_vec_prefix_u8, packable_vec_prefix_invalid_length_u8, u8);
+impl_packable_test_for_vec_prefix!(packable_vec_prefix_u16, packable_vec_prefix_invalid_length_u16, u16);
+impl_packable_test_for_vec_prefix!(packable_vec_prefix_u32, packable_vec_prefix_invalid_length_u32, u32);
+impl_packable_test_for_vec_prefix!(packable_vec_prefix_u64, packable_vec_prefix_invalid_length_u64, u64);
 
 impl_packable_test_for_bounded_vec_prefix!(
     packable_vec_prefix_bounded_u8,

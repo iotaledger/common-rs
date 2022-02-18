@@ -63,10 +63,7 @@ use syn::{
 /// .await;
 /// ```
 #[proc_macro_attribute]
-pub fn observe(
-    _args: proc_macro::TokenStream,
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
+pub fn observe(_args: proc_macro::TokenStream, input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let observe_impl = parse_macro_input!(input as ObserveImpl);
     observe_impl.gen_tokens().into()
 }

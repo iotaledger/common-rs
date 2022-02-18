@@ -131,11 +131,7 @@ where
                 if make_writer.enabled(&metadata, &ctx) {
                     let mut writer = make_writer.make_writer();
 
-                    if self
-                        .fmt_events
-                        .format_event(&mut buf, &writer, event)
-                        .is_ok()
-                    {
+                    if self.fmt_events.format_event(&mut buf, &writer, event).is_ok() {
                         let _ = io::Write::write(&mut writer, buf.as_bytes());
                     }
 
@@ -175,26 +171,18 @@ impl LogLayer {
                 };
 
                 for exclusion in output_config.target_exclusions() {
-                    targets =
-                        targets.with_target(exclusion.clone().to_lowercase(), LevelFilter::OFF);
+                    targets = targets.with_target(exclusion.clone().to_lowercase(), LevelFilter::OFF);
                 }
 
                 let dest = match output_config.name() {
                     Self::STDOUT_NAME => LogDest::Stdout(output_config.color_enabled()),
                     name => {
-                        let file = OpenOptions::new()
-                            .write(true)
-                            .create(true)
-                            .append(true)
-                            .open(name)?;
+                        let file = OpenOptions::new().write(true).create(true).append(true).open(name)?;
                         LogDest::File(Mutex::new(file))
                     }
                 };
 
-                Ok(LogTargetMakeWriter::new(LogTarget {
-                    filter: targets,
-                    dest,
-                }))
+                Ok(LogTargetMakeWriter::new(LogTarget { filter: targets, dest }))
             })
             .collect::<Result<_, io::Error>>()
             .map_err(|err| Error::LogLayer(err.into()))?;
@@ -246,12 +234,7 @@ impl LogFormatter {
     ///
     /// Formatting can change depending on the output target of the writer, and so this must also be
     /// provided. An output that writes to `stdout` can potentially be formatted with text colors.
-    fn format_event<W>(
-        &self,
-        writer: &mut W,
-        output: &LogOutput,
-        event: &Event<'_>,
-    ) -> std::fmt::Result
+    fn format_event<W>(&self, writer: &mut W, output: &LogOutput, event: &Event<'_>) -> std::fmt::Result
     where
         W: std::fmt::Write,
     {

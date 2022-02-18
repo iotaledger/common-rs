@@ -3,8 +3,7 @@
 
 use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
-use core::any::TypeId;
-use core::mem::MaybeUninit;
+use core::{any::TypeId, mem::MaybeUninit};
 
 impl<T: Packable, const N: usize> Packable for [T; N] {
     type UnpackError = T::UnpackError;
@@ -39,8 +38,8 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
             for item in array.iter_mut() {
                 let unpacked = T::unpack::<_, VERIFY>(unpacker)?;
 
-                // Safety: each `item` is only visited once so we are never overwriting nor dropping values that are already
-                // initialized.
+                // Safety: each `item` is only visited once so we are never overwriting nor dropping values that are
+                // already initialized.
                 unsafe {
                     item.as_mut_ptr().write(unpacked);
                 }

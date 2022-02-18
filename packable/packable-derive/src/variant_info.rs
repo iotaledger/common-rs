@@ -24,10 +24,7 @@ impl Parse for ExprTag {
         match ExprLit::parse(input) {
             Ok(lit) => Ok(Self::Lit(lit)),
             Err(_) => Ok(Self::Path(ExprPath::parse(input).map_err(|err| {
-                Error::new(
-                    err.span(),
-                    "Tags for variants can only be literal or path expressions.",
-                )
+                Error::new(err.span(), "Tags for variants can only be literal or path expressions.")
             })?)),
         }
     }
@@ -48,17 +45,11 @@ pub(crate) struct VariantInfo {
 }
 
 impl VariantInfo {
-    pub(crate) fn new(
-        variant: &Variant,
-        enum_ident: &syn::Ident,
-        default_unpack_error_with: &Expr,
-    ) -> Result<Self> {
+    pub(crate) fn new(variant: &Variant, enum_ident: &syn::Ident, default_unpack_error_with: &Expr) -> Result<Self> {
         let variant_ident = variant.ident.clone();
 
         for attr in filter_attrs(&variant.attrs) {
-            if let Some(tag) =
-                attr.parse_args_with(|stream: ParseStream| parse_kv("tag", stream))?
-            {
+            if let Some(tag) = attr.parse_args_with(|stream: ParseStream| parse_kv("tag", stream))? {
                 return Ok(Self {
                     tag,
                     inner: RecordInfo::new(

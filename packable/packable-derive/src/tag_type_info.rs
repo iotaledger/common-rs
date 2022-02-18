@@ -4,9 +4,7 @@
 use crate::parse::{parse_kv, parse_kv_after_comma, skip_stream};
 
 use quote::ToTokens;
-use syn::{
-    parse::ParseStream, parse_quote, spanned::Spanned, Attribute, Error, Expr, Ident, Result, Type,
-};
+use syn::{parse::ParseStream, parse_quote, spanned::Spanned, Attribute, Error, Expr, Ident, Result, Type};
 
 const VALID_TAG_TYPES: &[&str] = &["u8", "u16", "u32", "u64"];
 
@@ -23,34 +21,27 @@ impl TagTypeInfo {
         crate_name: &Ident,
     ) -> Result<Self> {
         for attr in filtered_attrs {
-            let opt_info = attr.parse_args_with(|stream: ParseStream| {
-                match parse_kv::<Type>("tag_type", stream)? {
-                    Some(tag_type) => {
-                        if !VALID_TAG_TYPES
-                            .contains(&tag_type.to_token_stream().to_string().as_str())
-                        {
-                            return Err(Error::new(
-                                tag_type.span(),
-                                "Tags for enums can only be of type `u8`, `u16`, `u32` or `u64`.",
-                            ));
-                        }
+            let opt_info = attr.parse_args_with(|stream: ParseStream| match parse_kv::<Type>("tag_type", stream)? {
+                Some(tag_type) => {
+                    if !VALID_TAG_TYPES.contains(&tag_type.to_token_stream().to_string().as_str()) {
+                        return Err(Error::new(
+                            tag_type.span(),
+                            "Tags for enums can only be of type `u8`, `u16`, `u32` or `u64`.",
+                        ));
+                    }
 
-                        let with_error = match parse_kv_after_comma("with_error", stream)? {
-                            Some(with_error) => with_error,
-                            None => {
-                                skip_stream(stream)?;
-                                parse_quote!(#crate_name::error::UnknownTagError)
-                            }
-                        };
-                        Ok(Some(Self {
-                            tag_type,
-                            with_error,
-                        }))
-                    }
-                    None => {
-                        skip_stream(stream)?;
-                        Ok(None)
-                    }
+                    let with_error = match parse_kv_after_comma("with_error", stream)? {
+                        Some(with_error) => with_error,
+                        None => {
+                            skip_stream(stream)?;
+                            parse_quote!(#crate_name::error::UnknownTagError)
+                        }
+                    };
+                    Ok(Some(Self { tag_type, with_error }))
+                }
+                None => {
+                    skip_stream(stream)?;
+                    Ok(None)
                 }
             });
 

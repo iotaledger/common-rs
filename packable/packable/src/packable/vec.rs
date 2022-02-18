@@ -11,8 +11,7 @@ use crate::{
     Packable,
 };
 
-use alloc::vec;
-use alloc::vec::Vec;
+use alloc::{vec, vec::Vec};
 use core::any::TypeId;
 
 impl<T> Packable for Vec<T>

@@ -32,10 +32,7 @@ pub(crate) fn parse_kv<T: Parse>(ident: &'static str, stream: ParseStream) -> Re
     }
 }
 
-pub(crate) fn parse_kv_after_comma<T: Parse>(
-    ident: &'static str,
-    stream: ParseStream,
-) -> Result<Option<T>> {
+pub(crate) fn parse_kv_after_comma<T: Parse>(ident: &'static str, stream: ParseStream) -> Result<Option<T>> {
     if stream.is_empty() {
         return Ok(None);
     }
@@ -60,9 +57,6 @@ fn validate_ident(ident: &Ident) -> Result<()> {
     if KNOWN_IDENTS.iter().any(|known_ident| ident == known_ident) {
         Ok(())
     } else {
-        Err(Error::new(
-            ident.span(),
-            format!("Unknown identifier `{}`.", ident),
-        ))
+        Err(Error::new(ident.span(), format!("Unknown identifier `{}`.", ident)))
     }
 }

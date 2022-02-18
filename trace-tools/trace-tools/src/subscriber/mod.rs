@@ -55,10 +55,8 @@ pub type TraceSubscriber = BaseSubscriber;
 /// [`Layered`](tracing_subscriber::layer::Layered) type describing the composition of the subscriber constructed
 /// by the [`trace_tools`](crate) crate.
 #[cfg(feature = "tokio-console")]
-pub type TraceSubscriber = Layered<
-    Filtered<Option<console_subscriber::ConsoleLayer>, FilterFn, BaseSubscriber>,
-    BaseSubscriber,
->;
+pub type TraceSubscriber =
+    Layered<Filtered<Option<console_subscriber::ConsoleLayer>, FilterFn, BaseSubscriber>, BaseSubscriber>;
 
 /// Builder for the [`trace_tools`](crate) subscriber.
 ///
@@ -191,14 +189,11 @@ impl SubscriberBuilder {
             .map_or(Ok(None), |res| res.map(Some))
     }
 
-    fn build_flamegraph_layer(
-        &mut self,
-    ) -> Result<(Option<layer::FlamegraphLayer>, Option<Flamegrapher>), Error> {
+    fn build_flamegraph_layer(&mut self) -> Result<(Option<layer::FlamegraphLayer>, Option<Flamegrapher>), Error> {
         self.flamegraph_stack_file
             .take()
             .map_or(Ok((None, None)), |stack_file| {
-                layer::flamegraph_layer(stack_file)
-                    .map(|(layer, flamegrapher)| (Some(layer), Some(flamegrapher)))
+                layer::flamegraph_layer(stack_file).map(|(layer, flamegrapher)| (Some(layer), Some(flamegrapher)))
             })
     }
 }

@@ -91,11 +91,7 @@ impl fmt::Display for FlamegrapherErrorKind {
             Self::Inferno(err) => write!(f, "{}", err),
             Self::Io(err) => write!(f, "{}", err),
             Self::MissingField(field) => write!(f, "flamegrapher builder missing field: {}", field),
-            Self::StackFileNotFound(path) => write!(
-                f,
-                "folded stack file {} does not exist",
-                path.to_string_lossy()
-            ),
+            Self::StackFileNotFound(path) => write!(f, "folded stack file {} does not exist", path.to_string_lossy()),
         }
     }
 }

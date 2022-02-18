@@ -29,8 +29,7 @@ impl<T: Packable> Packable for Box<T> {
 
 #[cfg(feature = "usize")]
 impl<T: Packable> Packable for Box<[T]> {
-    type UnpackError =
-        crate::prefix::UnpackPrefixError<T::UnpackError, <usize as Packable>::UnpackError>;
+    type UnpackError = crate::prefix::UnpackPrefixError<T::UnpackError, <usize as Packable>::UnpackError>;
 
     #[inline(always)]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {

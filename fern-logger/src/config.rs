@@ -58,24 +58,14 @@ impl LoggerOutputConfigBuilder {
     /// Sets a collection of filters of a logger output.
     /// A message is logged only if one of the filters is part of the log's metadata target.
     pub fn target_filters(mut self, target_filters: &[&str]) -> Self {
-        self.target_filters = Some(
-            target_filters
-                .iter()
-                .map(ToString::to_string)
-                .collect::<Vec<_>>(),
-        );
+        self.target_filters = Some(target_filters.iter().map(ToString::to_string).collect::<Vec<_>>());
         self
     }
 
     /// Sets a collection of exclusions of a logger output.
     /// A message is logged only if one of the exclusions is *not* part of the log's metadata target.
     pub fn target_exclusions(mut self, target_exclusions: &[&str]) -> Self {
-        self.target_exclusions = Some(
-            target_exclusions
-                .iter()
-                .map(ToString::to_string)
-                .collect::<Vec<_>>(),
-        );
+        self.target_exclusions = Some(target_exclusions.iter().map(ToString::to_string).collect::<Vec<_>>());
         self
     }
 
@@ -188,13 +178,10 @@ impl LoggerConfigBuilder {
         let name = name.into();
 
         if let Some(outputs) = self.outputs.as_deref_mut() {
-            if let Some(stdout) = outputs
-                .iter_mut()
-                .find(|output| match output.name.as_ref() {
-                    Some(output_name) => output_name[..] == name,
-                    None => false,
-                })
-            {
+            if let Some(stdout) = outputs.iter_mut().find(|output| match output.name.as_ref() {
+                Some(output_name) => output_name[..] == name,
+                None => false,
+            }) {
                 stdout.level_filter.replace(level);
             }
         }
