@@ -24,12 +24,16 @@ pub struct LoggerOutputConfigBuilder {
     /// Name of an output file, or `stdout` for standard output.
     name: Option<String>,
     /// Log level filter of an output.
+    #[serde(alias = "levelFilter")]
     level_filter: Option<LevelFilter>,
     /// Log target filters of an output.
+    #[serde(alias = "targetFilters")]
     target_filters: Option<Vec<String>>,
     /// Log target exclusions of an output.
+    #[serde(alias = "targetExclusions")]
     target_exclusions: Option<Vec<String>>,
     /// Color flag of an output.
+    #[serde(alias = "colorEnabled")]
     color_enabled: Option<bool>,
 }
 
@@ -105,7 +109,7 @@ impl LoggerOutputConfigBuilder {
 }
 
 /// Logger output configuration.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct LoggerOutputConfig {
     /// Name of an output file, or `stdout` for standard output.
     pub(crate) name: String,
@@ -151,8 +155,10 @@ impl LoggerOutputConfig {
 #[must_use]
 pub struct LoggerConfigBuilder {
     /// Width of the target section of a log.
+    #[serde(alias = "targetWidth")]
     target_width: Option<usize>,
     /// Width of the level section of a log.
+    #[serde(alias = "levelWidth")]
     level_width: Option<usize>,
     /// Outputs of the logger.
     outputs: Option<Vec<LoggerOutputConfigBuilder>>,
@@ -211,7 +217,7 @@ impl LoggerConfigBuilder {
 }
 
 /// Logger configuration.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct LoggerConfig {
     /// Width of the target section of a log.
     pub(crate) target_width: usize,

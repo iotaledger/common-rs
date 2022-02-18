@@ -1,69 +1,78 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-//! A crate that provides a [`Packable`] trait to serialize and deserialize types.
+//! Packable is a binary serialization and deserialization framework.
 //!
-//! For more information about the design of this crate please read the [`Packable`], [`unpacker`], [`packer`],
-//! [`UnpackError`](error::UnpackError) and [`UnpackErrorExt`](error::UnpackErrorExt) documentation.
+//! # Design
 //!
-//! # Motivation
+//! Values of a type can be serialized and deserialized if the type implements the [`Packable`]
+//! trait. The serialization strategy used for each type is up to the user. However, [`Packable`]
+//! can also be derived, this provides a consistent serialization strategy.
 //!
-//! This crate was written as a `no_std` replacement for the
-//! [`Packable` serialization framework](https://github.com/iotaledger/bee/blob/c08f1bac7170fe5cb650ddc347ac4d483bb9036a/bee-common/bee-common/src/packable.rs)
-//! used in the Bee node implementation for Chrysalis Part 2.
+//! For more information about the design of this crate please read the [`Packable`], [`unpacker`],
+//! [`packer`], [`UnpackError`](error::UnpackError) and [`UnpackErrorExt`](error::UnpackErrorExt)
+//! documentation.
 //!
-//! ## The old `Packable` trait
+//! # `no_std` compatibility
 //!
-//! The need for a serialization API existed before Coordicide. Efforts to satisfy this need culminated with the
-//! introduction of the `Packable` trait in the `bee-common` crate during the Chrysalis part 2 period.
-//! Most of the design decisions behind this crate were done to simplify the serialization of the
-//! [IOTA protocol messages](https://github.com/iotaledger/protocol-rfcs/pull/0017).
-//! The proposed trait was the following:
-//!
-//! ```
-//! use std::io::{Read, Write};
-//!
-//! pub trait Packable {
-//!     type Error: std::fmt::Debug;
-//!
-//!     fn packed_len(&self) -> usize;
-//!
-//!     fn pack<W: Write>(&self, writer: &mut W) -> Result<(), Self::Error>;
-//!
-//!     fn unpack_inner<R: Read + ?Sized, const CHECK: bool>(reader: &mut R) -> Result<Self, Self::Error>
-//!     where
-//!         Self: Sized;
-//! }
-//! ```
-//! The main issue with this trait is that it cannot be used in a `no_std` environment because it depends explicitly on
-//! the [`std::io`] API, whose transition to the [`core`] crate has not been decided yet.
-//! Another issue is that the `Error` type is used to represent three different kinds of errors:
-//!
-//! - Writing errors: Raised when there are issues while writing bytes.
-//! - Reading errors: Raised when there are issues while reading bytes.
-//! - Deserialization errors: Raised when the bytes being used to create a value are invalid for the data layout of such
-//! value.
-//!
-//! # Replacing [`std::io`]
-//!
-//! We introduced the [`Packer`](packer::Packer) and [`Unpacker`](unpacker::Unpacker) taits to abstract away any IO
-//! operation without relying on [`std::io`]. This has the additional benefit of allowing us to pack and unpack values
-//! from different kinds of buffers.
+//! Packable is `no_std` compatible. This is achieved by introducing the [`Packer`](packer::Packer)
+//! and [`Unpacker`](unpacker::Unpacker) traits to abstract away any IO operation without relying on
+//! [`std::io`]. This has the additional benefit of allowing us to pack and unpack values from
+//! different kinds of buffers.
 //!
 //! # Types that implement [`Packable`]
 //!
-//! The [`Packable`] trait is implemented for every integer type by encoding the value as an array of bytes in
-//! little-endian order. Booleans are packed following Rust's data layout, meaning that `true` is packed as a `1` byte
-//! and `false` as a `0` byte. However, boolean unpacking is less strict and unpacks any non-zero byte as `true`.
-//! Additional implementations of [`Packable`] are provided for [`Vec<T>`](std::vec::Vec), `Box<[T]>`, `[T; N]` and
-//! [`Option<T>`] if T implements [`Packable`].
+//! The [`Packable`] trait is implemented for every sized integer type by encoding the value as an
+//! array of bytes in little-endian order.
+//!
+//! Booleans are packed following Rust's data layout, meaning that `true` is packed as a `1` byte
+//! and `false` as a `0` byte. However, boolean unpacking is less strict and unpacks any non-zero
+//! byte as `true`.
+//!
+//! Types such as `Box<[T]>`, `[T; N]` and [`Option<T>`] implement [`Packable`] if `T` implements
+//! [`Packable`].
+//!
+//! This crate also provides bounded integers under the [`mod@bounded`] module which have additional
+//! syntactical checks to guarantee that the deserialized values are in-bounds. It is also possible
+//! to serialize and deserialize sequences of values by using the types provided in the [`prefix`]
+//! module, which represent linear sequences of values with a length prefix.
 //!
 //! Check the [`Packable`] `impl` section for further information.
+//!
+//! # Features
+//!
+//! ## `io`
+//!
+//! This feature provides the types [`IoPacker`](packer::IoPacker) and
+//! [`IoUnpacker`](unpacker::IoUnpacker) which allow packing and unpacking from values whose types
+//! implement [`Write`](std::io::Write) and [`Read`](std::io::Read) respectively.
+//!
+//! ## `primitive-types`
+//!
+//! This feature implements [`Packable`] for [`U256`](primitive_types::U256) encoding its values as
+//! arrays of bytes in little-endian order.
+//!
+//! ## `serde`
+//!
+//! This feature derives [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize)
+//! for the types provided in the [`mod@bounded`] and [`prefix`] modules
+//!
+//! ## `std`
+//!
+//! This feature implements [`Error`](std::error::Error) for all the error types provided by this
+//! crate.
+//!
+//! ## `usize`
+//!
+//! This feature implements [`Packable`] for [`usize`], [`isize`], [`Vec<T>`](std::vec::Vec),
+//! `Box<[T]>` and [`String`](std::string::String). This is done serializing and deserializing
+//! pointer sized integers as 64-bit integers. This feature will not work for targets with a
+//! pointer width larger than 64.
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 
-#[cfg(doc)]
+#[cfg(any(doc, feature = "std"))]
 extern crate std;
 
 mod packable;

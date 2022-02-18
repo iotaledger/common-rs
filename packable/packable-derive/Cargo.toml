@@ -1,13 +1,13 @@
 [package]
 name = "packable-derive"
-version = "0.1.0"
+version = "0.2.1"
 authors = [ "IOTA Stiftung" ]
 edition = "2021"
 description = "Derive macro for the `packable` crate."
 readme = "README.md"
 repository = "https://github.com/iotaledger/common-rs"
 license = "Apache-2.0"
-keywords = [ "iota", "serialization", "framework", "packable" ]
+keywords = [ "binary", "no_std", "serialization", "packable" ]
 homepage = "https://www.iota.org"
 
 [lib]

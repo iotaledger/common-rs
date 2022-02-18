@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.3.0 - 2022-02-09
+
+### Added
+
+- `serde` aliases to `LoggerOutputConfigBuilder` and `LoggerConfigBuilder` fields;
+- Derive `PartialEq` on `LoggerOutputConfig` and `LoggerConfig`;
+
 ## 0.2.0 - 2022-01-26
 
 ### Added

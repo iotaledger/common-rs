@@ -19,6 +19,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.2.1 - 2022-02-11
+
+### Added
+
+- Make the `Error` implementation for `UnknownTagError` less restricted;
+- Implement `Error` for `UnpackError`;
+- Document the `serde` and `primitive-types` features;
+
+### Changed
+
+- Make `String` packing more performant by using `Packer::pack_bytes` directly;
+- Fix documentation of `UnexpectedEOF` and `UnpackPrefixError`;
+
+## 0.2.0 - 2022-02-09
+
+### Added
+
+- Derive `Error` for all the error types if the `std` feature is enabled;
+- Implement `Packable` for `f32` and `f64`;
+- Implement `Packable` for `usize`, `isize`, `Vec<T>`, `Box<[T]>` and `String` under the `usize` feature;
+- Implement `Into<Infallible>` for `UnpackError<Infallible, Infallible>` and `UnpackPrefixError<Infallible, Infallible>`;
+- Add the `UnpackError::into_packable_err` and `UnpackPrefixError::into_item_err` methods;
+
+### Changed
+
+- Rename `UnpackError::into_unpacker` to `UnpackError::into_unpacker_err`;
+- Rename `UnpackPrefixError::Packable` to `UnpackPrefixError::Item`;
+- Rename `UnpackPrefixError::into_prefix` to `UnpackPrefixError::into_prefix_err`;
+- Rename `UnpackPrefixError::unwrap_packable_or_else` to `UnpackPrefixError::unwrap_item_err_or_else`;
+
 ## 0.1.0 - 2022-01-13
 
 ### Added
