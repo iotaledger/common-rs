@@ -73,7 +73,7 @@ pub(crate) fn log_filter(meta: &tracing::Metadata<'_>) -> bool {
     meta.is_event()
 }
 
-/// Creates a new [`console_subscriber::TasksLayer`].
+/// Creates a new [`console_subscriber::ConsoleLayer`].
 #[cfg(feature = "tokio-console")]
 pub fn console_layer() -> Result<console_subscriber::ConsoleLayer, Error> {
     #![allow(clippy::assertions_on_constants)]

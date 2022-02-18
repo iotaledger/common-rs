@@ -97,7 +97,7 @@ impl SubscriberBuilder {
         self
     }
 
-    /// Enables the [`console_subscriber::TasksLayer`] for this subscriber.
+    /// Enables the [`console_subscriber::ConsoleLayer`] for this subscriber.
     #[cfg(feature = "tokio-console")]
     pub fn with_console_layer(mut self) -> Self {
         self.console_enabled = true;
