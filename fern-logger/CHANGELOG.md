@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.4.0 - 2022-02-18
+
+### Added
+
+- Derive `Default` on `LoggerConfig`;
+
 ## 0.3.0 - 2022-02-09
 
 ### Added
