@@ -19,11 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
-## 0.2.0 - 2022-XX-XX
+## 0.2.0 - 2021-02-18
+
+### Added
+
+ - Console layer;
 
 ### Changed
 
-- Update dependencies;
+ - `TraceSubscriber` type alias and `SubscriberBuilder` type now accomodates for the new layer;
+ - Updated dependencies;
 
 ## 0.1.0 - 2021-01-21
 
