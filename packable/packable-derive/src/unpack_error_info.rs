@@ -32,8 +32,8 @@ impl UnpackErrorInfo {
         default_unpack_error: impl FnOnce() -> syn::Type,
     ) -> Result<Self> {
         for attr in filtered_attrs {
-            let opt_info = attr.parse_args_with(|stream: ParseStream| {
-                match parse_kv::<Type>("unpack_error", stream)? {
+            let opt_info =
+                attr.parse_args_with(|stream: ParseStream| match parse_kv::<Type>("unpack_error", stream)? {
                     Some(Type(unpack_error)) => {
                         let with = match parse_kv_after_comma("with", stream)? {
                             Some(with) => with,
@@ -46,8 +46,7 @@ impl UnpackErrorInfo {
                         skip_stream(stream)?;
                         Ok(None)
                     }
-                }
-            })?;
+                })?;
 
             if let Some(info) = opt_info {
                 return Ok(info);

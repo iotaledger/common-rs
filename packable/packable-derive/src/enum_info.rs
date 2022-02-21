@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
-    parse::filter_attrs, tag_type_info::TagTypeInfo, unpack_error_info::UnpackErrorInfo,
-    variant_info::VariantInfo,
+    parse::filter_attrs, tag_type_info::TagTypeInfo, unpack_error_info::UnpackErrorInfo, variant_info::VariantInfo,
 };
 
 use syn::{parse_quote, Attribute, DataEnum, Ident, Result, Type};
@@ -15,12 +14,7 @@ pub(crate) struct EnumInfo {
 }
 
 impl EnumInfo {
-    pub(crate) fn new(
-        ident: Ident,
-        data: DataEnum,
-        attrs: &[Attribute],
-        crate_name: &Ident,
-    ) -> Result<Self> {
+    pub(crate) fn new(ident: Ident, data: DataEnum, attrs: &[Attribute], crate_name: &Ident) -> Result<Self> {
         let repr_type = attrs
             .iter()
             .find(|attr| attr.path.is_ident("repr"))

@@ -7,14 +7,8 @@ use packable::{Packable, PackableExt};
 
 #[test]
 fn packable_bool() {
-    assert_eq!(
-        common::generic_test(&false).0.len(),
-        core::mem::size_of::<u8>()
-    );
-    assert_eq!(
-        common::generic_test(&true).0.len(),
-        core::mem::size_of::<u8>()
-    );
+    assert_eq!(common::generic_test(&false).0.len(), core::mem::size_of::<u8>());
+    assert_eq!(common::generic_test(&true).0.len(), core::mem::size_of::<u8>());
 }
 
 #[test]

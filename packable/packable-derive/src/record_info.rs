@@ -15,11 +15,7 @@ pub(crate) struct RecordInfo {
 }
 
 impl RecordInfo {
-    pub(crate) fn new(
-        path: Path,
-        fields: &Fields,
-        default_unpack_error_with: &Expr,
-    ) -> Result<Self> {
+    pub(crate) fn new(path: Path, fields: &Fields, default_unpack_error_with: &Expr) -> Result<Self> {
         let len = fields.len();
         let mut fields_unpack_error_with = Vec::with_capacity(len);
         let mut fields_verify_with = Vec::with_capacity(len);

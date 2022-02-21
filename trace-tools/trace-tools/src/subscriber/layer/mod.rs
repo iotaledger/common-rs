@@ -30,9 +30,7 @@ use std::path::Path;
 ///
 /// # Panics
 /// This function will panic if the program is not built with `--cfg tokio_unstable`.
-pub fn flamegraph_layer<P: AsRef<Path>>(
-    stack_filename: P,
-) -> Result<(FlamegraphLayer, Flamegrapher), Error> {
+pub fn flamegraph_layer<P: AsRef<Path>>(stack_filename: P) -> Result<(FlamegraphLayer, Flamegrapher), Error> {
     #![allow(clippy::assertions_on_constants)]
     assert!(
         cfg!(tokio_unstable),
@@ -51,9 +49,7 @@ pub(crate) fn flamegraph_filter(meta: &Metadata<'_>) -> bool {
         return false;
     }
 
-    meta.name().starts_with("runtime")
-        || meta.target().starts_with("tokio")
-        || meta.target() == "trace_tools::observe"
+    meta.name().starts_with("runtime") || meta.target().starts_with("tokio") || meta.target() == "trace_tools::observe"
 }
 
 /// Creates a new [`LogLayer`], using the parameters provided by the given [`LoggerConfig`].
@@ -82,9 +78,7 @@ pub fn console_layer() -> Result<console_subscriber::ConsoleLayer, Error> {
         "task tracing requires building with RUSTFLAGS=\"--cfg tokio_unstable\"!"
     );
 
-    let (layer, server) = console_subscriber::ConsoleLayer::builder()
-        .with_default_env()
-        .build();
+    let (layer, server) = console_subscriber::ConsoleLayer::builder().with_default_env().build();
 
     std::thread::Builder::new()
         .name("console_subscriber".into())
@@ -95,12 +89,7 @@ pub fn console_layer() -> Result<console_subscriber::ConsoleLayer, Error> {
                 .build()
                 .expect("console subscriber runtime initialization failed");
 
-            runtime.block_on(async move {
-                server
-                    .serve()
-                    .await
-                    .expect("console subscriber server failed")
-            });
+            runtime.block_on(async move { server.serve().await.expect("console subscriber server failed") });
         })
         .expect("console subscriber could not spawn thread");
 

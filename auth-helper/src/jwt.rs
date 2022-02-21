@@ -172,11 +172,7 @@ impl std::fmt::Display for JsonWebToken {
 impl JsonWebToken {
     /// Creates a new JSON Web Token.
     pub fn new(claims: Claims, secret: &[u8]) -> Result<Self, Error> {
-        let token = encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_secret(secret),
-        )?;
+        let token = encode(&Header::default(), &claims, &EncodingKey::from_secret(secret))?;
 
         Ok(Self(token))
     }

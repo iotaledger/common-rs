@@ -11,7 +11,8 @@ use crate::{
     Packable,
 };
 
-use alloc::vec::Vec;
+use alloc::{vec, vec::Vec};
+use core::any::TypeId;
 
 impl<T> Packable for Vec<T>
 where
@@ -23,8 +24,14 @@ where
         // This cast is fine because we know `usize` is not larger than `64` bits.
         (self.len() as u64).pack(packer)?;
 
-        for item in self.iter() {
-            item.pack(packer)?;
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            // Safety: `Self` is identical to `Vec<u8>`.
+            let bytes = unsafe { core::mem::transmute::<&Self, &Vec<u8>>(self) };
+            packer.pack_bytes(bytes)?;
+        } else {
+            for item in self.iter() {
+                item.pack(packer)?;
+            }
         }
 
         Ok(())
@@ -38,13 +45,20 @@ where
             .try_into()
             .map_err(|err| UnpackError::Packable(UnpackPrefixError::Prefix(err)))?;
 
-        let mut vec = Vec::with_capacity(len);
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            let mut bytes = vec![0u8; len];
+            unpacker.unpack_bytes(&mut bytes)?;
+            // Safety: `Self` is identical to `Vec<u8>`.
+            Ok(unsafe { core::mem::transmute::<Vec<u8>, Self>(bytes) })
+        } else {
+            let mut vec = Vec::with_capacity(len);
 
-        for _ in 0..len {
-            let item = T::unpack::<_, VERIFY>(unpacker).coerce()?;
-            vec.push(item);
+            for _ in 0..len {
+                let item = T::unpack::<_, VERIFY>(unpacker).coerce()?;
+                vec.push(item);
+            }
+
+            Ok(vec)
         }
-
-        Ok(vec)
     }
 }

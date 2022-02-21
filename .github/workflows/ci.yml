@@ -85,6 +85,65 @@ jobs:
           command: test
           args: --workspace --all-targets --all-features --release
 
+  miri:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        crates: [
+          "packable",
+        ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set rust nightly version
+        run: echo "NIGHTLY_VERSION=$(curl https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/miri)" >> $GITHUB_ENV
+
+      - name: Install rust nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-${{ env.NIGHTLY_VERSION }}
+          override: true
+          components: miri
+
+      - name: Cache cargo state
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-cargo
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+          key: ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-build
+          restore-keys: |
+            ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-
+            ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-${{ env.cache-name }}-
+            ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-
+            ubuntu-latest-
+
+      - name: Cache target dir
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-target
+        with:
+          path: |
+            target/
+          key: ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-build
+          restore-keys: |
+            ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-${{ env.cache-name }}-${{ hashFiles('**/Cargo.toml') }}-
+            ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-${{ env.cache-name }}-
+            ubuntu-latest-nightly-${{ env.NIGHTLY_VERSION }}-
+            ubuntu-latest-
+
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: miri
+          args: test --release --all-features -p ${{ matrix.crates }}
+
   no_std:
     needs: build-and-test
     runs-on: ubuntu-latest

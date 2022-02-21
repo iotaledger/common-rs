@@ -5,8 +5,8 @@ mod common;
 
 use packable::{
     bounded::{
-        BoundedU16, BoundedU32, BoundedU64, BoundedU8, InvalidBoundedU16, InvalidBoundedU32,
-        InvalidBoundedU64, InvalidBoundedU8, TryIntoBoundedU32Error,
+        BoundedU16, BoundedU32, BoundedU64, BoundedU8, InvalidBoundedU16, InvalidBoundedU32, InvalidBoundedU64,
+        InvalidBoundedU8, TryIntoBoundedU32Error,
     },
     error::UnpackError,
     prefix::{BoxedSlicePrefix, UnpackPrefixError},
@@ -35,10 +35,7 @@ macro_rules! impl_packable_test_for_boxed_slice_prefix {
         fn $packable_boxed_slice_prefix() {
             assert_eq!(
                 common::generic_test(
-                    &<BoxedSlicePrefix<Option<u32>, $ty>>::try_from(
-                        vec![Some(0u32), None].into_boxed_slice()
-                    )
-                    .unwrap()
+                    &<BoxedSlicePrefix<Option<u32>, $ty>>::try_from(vec![Some(0u32), None].into_boxed_slice()).unwrap()
                 )
                 .0
                 .len(),
@@ -82,9 +79,7 @@ macro_rules! impl_packable_test_for_bounded_boxed_slice_prefix {
 
             assert!(matches!(
                 prefixed,
-                Err(UnpackError::Packable(UnpackPrefixError::Prefix($err(
-                    LEN_AS_TY
-                )))),
+                Err(UnpackError::Packable(UnpackPrefixError::Prefix($err(LEN_AS_TY)))),
             ));
         }
     };

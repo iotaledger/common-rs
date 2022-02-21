@@ -13,8 +13,9 @@ use crate::{
     Packable,
 };
 
-use alloc::{boxed::Box, vec::Vec};
+use alloc::{boxed::Box, vec, vec::Vec};
 use core::{
+    any::TypeId,
     convert::Infallible,
     fmt,
     marker::PhantomData,
@@ -159,9 +160,14 @@ where
         // The length of any dynamically-sized sequence must be prefixed. This unwrap is fine since
         // the length of the inner `Vec` has been validated while creating this `VecPrefix`.
         B::try_from(self.len()).unwrap().pack(packer)?;
-
-        for item in self.iter() {
-            item.pack(packer)?;
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            // Safety: `Self` is identical to `VecPrefix<u8, B>`.
+            let bytes = unsafe { core::mem::transmute::<&Self, &VecPrefix<u8, B>>(self) };
+            packer.pack_bytes(bytes.deref())?;
+        } else {
+            for item in self.iter() {
+                item.pack(packer)?;
+            }
         }
 
         Ok(())
@@ -175,25 +181,39 @@ where
             .map_packable_err(UnpackPrefixError::Prefix)?
             .into();
 
-        // If `len` fits in a `usize`, we use it as the capacity of the inner `Vec` to avoid extra
-        // allocations.
-        //
-        // If that is not the case, we avoid assuming anything about the memory capacity of the
-        // current platform and initialize `inner` with capacity zero. Most of the time this will
-        // cause the program to panic due to memory exhaustion or capacity overflow while calling
-        // `inner.push` but that is a platform limitation and not an error that the `Packable`
-        // infrastructure should handle.
-        let mut inner = Vec::with_capacity(len.try_into().unwrap_or(0));
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            // If `len` does not fit in a `usize`, we panic. There is no way this sequence will fit in memory anyway.
+            let len = len
+                .try_into()
+                .ok()
+                .expect("the length prefix exceeds the pointer length of this platform");
 
-        for _ in B::Bounds::default()..len {
-            let item = T::unpack::<_, VERIFY>(unpacker).coerce()?;
-            inner.push(item);
+            let mut bytes = vec![0u8; len];
+            unpacker.unpack_bytes(&mut bytes)?;
+            // Safety: `Self` is identical to `VecPrefix<u8, B>` which has the same layout as
+            // `Vec<u8>` thanks to `#[repr(transparent)]`.
+            Ok(unsafe { core::mem::transmute::<Vec<u8>, Self>(bytes) })
+        } else {
+            // If `len` fits in a `usize`, we use it as the capacity of the inner `Vec` to avoid extra
+            // allocations.
+            //
+            // If that is not the case, we avoid assuming anything about the memory capacity of the
+            // current platform and initialize `inner` with capacity zero. Most of the time this will
+            // cause the program to panic due to memory exhaustion or capacity overflow while calling
+            // `inner.push` but that is a platform limitation and not an error that the `Packable`
+            // infrastructure should handle.
+            let mut inner = Vec::with_capacity(len.try_into().unwrap_or(0));
+
+            for _ in B::Bounds::default()..len {
+                let item = T::unpack::<_, VERIFY>(unpacker).coerce()?;
+                inner.push(item);
+            }
+
+            Ok(VecPrefix {
+                inner,
+                bounded: PhantomData,
+            })
         }
-
-        Ok(VecPrefix {
-            inner,
-            bounded: PhantomData,
-        })
     }
 }
 
@@ -271,8 +291,14 @@ where
         // the length of the inner slice has been validated while creating this `BoxedSlicePrefix`.
         B::try_from(self.len()).unwrap().pack(packer)?;
 
-        for item in self.iter() {
-            item.pack(packer)?;
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            // Safety: `Self` is identical to `BoxedSlicePrefix<u8, B>`.
+            let bytes = unsafe { core::mem::transmute::<&Self, &BoxedSlicePrefix<u8, B>>(self) };
+            packer.pack_bytes(bytes.deref())?;
+        } else {
+            for item in self.iter() {
+                item.pack(packer)?;
+            }
         }
 
         Ok(())

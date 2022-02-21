@@ -28,11 +28,10 @@ use syn::{parse_macro_input, Ident};
 pub fn packable(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input);
 
-    let crate_string =
-        match crate_name("packable").expect("packable should be present in `Cargo.toml`") {
-            FoundCrate::Itself => "packable_crate".to_owned(),
-            FoundCrate::Name(name) => name,
-        };
+    let crate_string = match crate_name("packable").expect("packable should be present in `Cargo.toml`") {
+        FoundCrate::Itself => "packable_crate".to_owned(),
+        FoundCrate::Name(name) => name,
+    };
 
     match TraitImpl::new(input, Ident::new(&crate_string, Span::call_site())) {
         Ok(trait_impl) => trait_impl.into_token_stream().into(),

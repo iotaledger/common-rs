@@ -30,11 +30,7 @@ pub(crate) struct FieldInfo {
 }
 
 impl FieldInfo {
-    pub(crate) fn new(
-        field: &Field,
-        default_unpack_error_with: &Expr,
-        index: usize,
-    ) -> Result<Self> {
+    pub(crate) fn new(field: &Field, default_unpack_error_with: &Expr, index: usize) -> Result<Self> {
         let pattern_ident = match &field.ident {
             Some(ident) => IdentOrIndex::Ident(ident.clone()),
             None => IdentOrIndex::Index(Index {
@@ -71,8 +67,7 @@ impl FieldInfo {
         }
 
         Ok(Self {
-            unpack_error_with: unpack_error_with_opt
-                .unwrap_or_else(|| default_unpack_error_with.clone()),
+            unpack_error_with: unpack_error_with_opt.unwrap_or_else(|| default_unpack_error_with.clone()),
             verify_with: verify_with_opt,
             ident,
             pattern_ident,

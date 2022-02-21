@@ -18,15 +18,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .name(log_file.to_str().unwrap())
         .level_filter(log::LevelFilter::Warn);
 
-    let config = LoggerConfig::build()
-        .with_output(stdout)
-        .with_output(warn)
-        .finish();
+    let config = LoggerConfig::build().with_output(stdout).with_output(warn).finish();
 
-    let _ = trace_tools::subscriber::build()
-        .with_log_layer(config)
-        .init()
-        .unwrap();
+    let _ = trace_tools::subscriber::build().with_log_layer(config).init().unwrap();
 
     log();
     filtered::log();

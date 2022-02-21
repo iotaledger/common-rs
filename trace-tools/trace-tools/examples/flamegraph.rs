@@ -32,9 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Creating flamegraph at {}.svg", graph_filename.display());
 
-    flamegrapher
-        .with_graph_file(graph_filename)?
-        .write_flamegraph()?;
+    flamegrapher.with_graph_file(graph_filename)?.write_flamegraph()?;
 
     Ok(())
 }

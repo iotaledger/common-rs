@@ -99,12 +99,7 @@ impl FlamegraphLayer {
     ///
     /// This string is then directly used in the folded stack file to describe the number of samples in
     /// the described stack.
-    fn stack_string<S>(
-        &self,
-        id: &span::Id,
-        ctx: &Context<'_, S>,
-        skip_current_span: bool,
-    ) -> String
+    fn stack_string<S>(&self, id: &span::Id, ctx: &Context<'_, S>, skip_current_span: bool) -> String
     where
         S: Subscriber + for<'a> LookupSpan<'a>,
     {
@@ -224,8 +219,6 @@ impl TryFrom<LocationVisitor> for SpanLocation {
     fn try_from(visitor: LocationVisitor) -> Result<Self, Self::Error> {
         let LocationVisitor { file, line } = visitor;
 
-        file.zip(line)
-            .map(|(file, line)| SpanLocation { file, line })
-            .ok_or(())
+        file.zip(line).map(|(file, line)| SpanLocation { file, line }).ok_or(())
     }
 }

@@ -16,15 +16,16 @@ fn jwt_valid() {
 
     let jwt = jwt::JsonWebToken::new(claims, b"secret").unwrap();
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("issuer"),
             String::from("subject"),
             String::from("audience"),
             false,
             b"secret",
         )
-        .is_ok());
+        .is_ok()
+    );
 }
 
 #[test]
@@ -38,21 +39,18 @@ fn jwt_to_str_from_str_valid() {
     .build()
     .unwrap();
 
-    let jwt = jwt::JsonWebToken::from(
-        jwt::JsonWebToken::new(claims, b"secret")
-            .unwrap()
-            .to_string(),
-    );
+    let jwt = jwt::JsonWebToken::from(jwt::JsonWebToken::new(claims, b"secret").unwrap().to_string());
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("issuer"),
             String::from("subject"),
             String::from("audience"),
             false,
             b"secret",
         )
-        .is_ok());
+        .is_ok()
+    );
 }
 
 #[test]
@@ -68,15 +66,16 @@ fn jwt_invalid_issuer() {
 
     let jwt = jwt::JsonWebToken::new(claims, b"secret").unwrap();
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("Issuer"),
             String::from("subject"),
             String::from("audience"),
             false,
             b"secret",
         )
-        .is_err());
+        .is_err()
+    );
 }
 
 #[test]
@@ -92,15 +91,16 @@ fn jwt_invalid_subject() {
 
     let jwt = jwt::JsonWebToken::new(claims, b"secret").unwrap();
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("issuer"),
             String::from("Subject"),
             String::from("audience"),
             false,
             b"secret",
         )
-        .is_err());
+        .is_err()
+    );
 }
 
 #[test]
@@ -116,15 +116,16 @@ fn jwt_invalid_audience() {
 
     let jwt = jwt::JsonWebToken::new(claims, b"secret").unwrap();
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("issuer"),
             String::from("subject"),
             String::from("Audience"),
             false,
             b"secret",
         )
-        .is_err());
+        .is_err()
+    );
 }
 
 #[test]
@@ -140,15 +141,16 @@ fn jwt_invalid_secret() {
 
     let jwt = jwt::JsonWebToken::new(claims, b"secret").unwrap();
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("issuer"),
             String::from("subject"),
             String::from("audience"),
             false,
             b"Secret",
         )
-        .is_err());
+        .is_err()
+    );
 }
 
 #[test]
@@ -166,13 +168,14 @@ fn jwt_invalid_expired() {
 
     std::thread::sleep(std::time::Duration::from_secs(1));
 
-    assert!(jwt
-        .validate(
+    assert!(
+        jwt.validate(
             String::from("issuer"),
             String::from("subject"),
             String::from("audience"),
             true,
             b"secret",
         )
-        .is_err());
+        .is_err()
+    );
 }

@@ -160,10 +160,6 @@ impl std::error::Error for UnexpectedEOF {}
 
 impl fmt::Display for UnexpectedEOF {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "not enough bytes, required {} but had {}",
-            self.required, self.had
-        )
+        write!(f, "not enough bytes, required {} but had {}", self.required, self.had)
     }
 }

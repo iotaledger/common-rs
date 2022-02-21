@@ -23,20 +23,11 @@ impl TraitImpl {
     pub(crate) fn new(input: DeriveInput, crate_name: Ident) -> syn::Result<Self> {
         match input.data {
             Data::Struct(data) => {
-                let info = StructInfo::new(
-                    input.ident.clone().into(),
-                    &data.fields,
-                    &input.attrs,
-                    &crate_name,
-                )?;
+                let info = StructInfo::new(input.ident.clone().into(), &data.fields, &input.attrs, &crate_name)?;
 
                 let unpack_error = info.unpack_error.unpack_error.clone().into_token_stream();
 
-                let Fragments {
-                    pattern,
-                    pack,
-                    unpack,
-                }: Fragments = Fragments::new(info.inner, &crate_name);
+                let Fragments { pattern, pack, unpack }: Fragments = Fragments::new(info.inner, &crate_name);
 
                 Ok(Self {
                     ident: input.ident,
@@ -67,16 +58,10 @@ impl TraitImpl {
                 let mut tag_decls = Vec::with_capacity(len);
                 let mut tag_variants_and_idents = Vec::with_capacity(len);
 
-                for (index, VariantInfo { tag, inner }) in
-                    info.variants_info.into_iter().enumerate()
-                {
+                for (index, VariantInfo { tag, inner }) in info.variants_info.into_iter().enumerate() {
                     let variant_ident = inner.path.segments.last().unwrap().clone();
 
-                    let Fragments {
-                        pattern,
-                        pack,
-                        unpack,
-                    } = Fragments::new(inner, &crate_name);
+                    let Fragments { pattern, pack, unpack } = Fragments::new(inner, &crate_name);
 
                     // @pvdrz: The span here is very important, otherwise the compiler won't detect
                     // unreachable patterns in the generated code for some reason. I think this is related
