@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Derive `Default` on `LoggerConfig`;
+- Implement `Default` on `LoggerConfig`;
 
 ## 0.3.0 - 2022-02-09
 
