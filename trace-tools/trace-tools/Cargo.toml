@@ -11,7 +11,7 @@ keywords = [ "iota", "tangle", "task", "trace" ]
 homepage = "https://www.iota.org"
 
 [dependencies]
-fern-logger = { version = "0.4.0", path = "../../fern-logger", default-features = false }
+fern-logger = { version = "0.5.0", path = "../../fern-logger", default-features = false }
 time-helper = { version = "0.1.0", path = "../../time-helper", default-features = false }
 trace-tools-attributes = { version = "0.1.0", path = "../trace-tools-attributes", default-features = false }
 
