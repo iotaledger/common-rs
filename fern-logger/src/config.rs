@@ -18,7 +18,7 @@ const DEFAULT_OUTPUT_LEVEL_FILTER: LevelFilter = LevelFilter::Info;
 const DEFAULT_COLOR_ENABLED: bool = false;
 
 /// Builder for a logger output configuration.
-#[derive(Default, Deserialize)]
+#[derive(Default, Deserialize, PartialEq)]
 #[must_use]
 pub struct LoggerOutputConfigBuilder {
     /// Name of an output file, or `stdout` for standard output.
@@ -141,7 +141,7 @@ impl LoggerOutputConfig {
 }
 
 /// Builder for a logger configuration.
-#[derive(Default, Deserialize)]
+#[derive(Default, Deserialize, PartialEq)]
 #[must_use]
 pub struct LoggerConfigBuilder {
     /// Width of the target section of a log.
