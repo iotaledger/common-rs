@@ -41,7 +41,7 @@ where
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         let len = u64::unpack::<_, VERIFY>(unpacker)
-            .infallible()?
+            .coerce()?
             .try_into()
             .map_err(|err| UnpackError::Packable(UnpackPrefixError::Prefix(err)))?;
 
@@ -54,7 +54,7 @@ where
             let mut vec = Vec::with_capacity(len);
 
             for _ in 0..len {
-                let item = T::unpack::<_, VERIFY>(unpacker).coerce()?;
+                let item = T::unpack::<_, VERIFY>(unpacker).map_packable_err(Self::UnpackError::Item)?;
                 vec.push(item);
             }
 

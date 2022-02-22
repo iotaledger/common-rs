@@ -30,15 +30,6 @@ pub trait UnpackErrorExt<T, U, V>: sealed::Sealed + Sized {
     {
         self.map_packable_err(U::into)
     }
-
-    /// Coerces the [`Packable`](UnpackError::Packable) variant value to any type assuming the value is [`Infallible`].
-    fn infallible<W>(self) -> Result<T, UnpackError<W, V>>
-    where
-        U: Into<Infallible>,
-    {
-        #[allow(unreachable_code)]
-        self.map_packable_err(|err| match err.into() {})
-    }
 }
 
 impl<T, U, V> UnpackErrorExt<T, U, V> for Result<T, UnpackError<U, V>> {
