@@ -35,6 +35,6 @@ impl Packable for String {
         let bytes = Vec::<u8>::unpack::<_, VERIFY>(unpacker)
             .map_packable_err(|err| UnpackPrefixError::Prefix(err.into_prefix_err()))?;
 
-        String::from_utf8(bytes).map_err(UnpackError::from_packable)
+        String::from_utf8(bytes).map_err(|e| UnpackError::Packable(Self::UnpackError::Item(e)))
     }
 }

@@ -29,7 +29,10 @@ use crate::{
 pub use packable_derive::Packable;
 
 use alloc::vec::Vec;
-use core::{convert::AsRef, fmt::Debug};
+use core::{
+    convert::{AsRef, Infallible},
+    fmt::Debug,
+};
 
 /// A type that can be packed and unpacked.
 ///
@@ -76,7 +79,7 @@ use core::{convert::AsRef, fmt::Debug};
 ///     fn unpack<U: Unpacker, const VERIFY: bool>(
 ///         unpacker: &mut U,
 ///     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-///         match u8::unpack::<_, VERIFY>(unpacker).infallible()? {
+///         match u8::unpack::<_, VERIFY>(unpacker).coerce()? {
 ///             0u8 => Ok(Self::Nothing),
 ///             1u8 => Ok(Self::Just(i32::unpack::<_, VERIFY>(unpacker).coerce()?)),
 ///             tag => Err(UnpackError::Packable(UnknownTagError(tag))),
@@ -174,7 +177,7 @@ pub trait Packable: Sized + 'static {
     ///
     /// It is recommended to use [`Infallible`](core::convert::Infallible) if this kind of error is impossible or
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
-    type UnpackError: Debug;
+    type UnpackError: Debug + From<Infallible>;
 
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;

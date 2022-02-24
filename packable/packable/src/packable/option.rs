@@ -10,7 +10,7 @@ use crate::{
     Packable,
 };
 
-use core::fmt;
+use core::{convert::Infallible, fmt};
 
 /// Error type raised when a semantic error occurs while unpacking an option.
 #[derive(Debug)]
@@ -24,9 +24,9 @@ pub enum UnpackOptionError<E> {
 #[cfg(feature = "std")]
 impl<E> std::error::Error for UnpackOptionError<E> where E: std::error::Error {}
 
-impl<E> From<E> for UnpackOptionError<E> {
-    fn from(err: E) -> Self {
-        Self::Inner(err)
+impl<E> From<Infallible> for UnpackOptionError<E> {
+    fn from(err: Infallible) -> Self {
+        match err {}
     }
 }
 
@@ -56,9 +56,11 @@ impl<T: Packable> Packable for Option<T> {
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        match u8::unpack::<_, VERIFY>(unpacker).infallible()? {
+        match u8::unpack::<_, VERIFY>(unpacker).coerce()? {
             0 => Ok(None),
-            1 => Ok(Some(T::unpack::<_, VERIFY>(unpacker).coerce()?)),
+            1 => Ok(Some(
+                T::unpack::<_, VERIFY>(unpacker).map_packable_err(UnpackOptionError::Inner)?,
+            )),
             n => Err(UnpackError::Packable(Self::UnpackError::UnknownTag(n))),
         }
     }

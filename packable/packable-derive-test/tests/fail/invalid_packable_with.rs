@@ -23,4 +23,10 @@ impl Impossible {
     }
 }
 
+impl From<Infallible> for Impossible {
+    fn from(err: Infallible) -> Self {
+        match err {}
+    }
+}
+
 fn main() {}

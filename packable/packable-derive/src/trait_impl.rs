@@ -106,7 +106,7 @@ impl TraitImpl {
                         #(#tag_decls)*
                         #(#tag_asserts)*
 
-                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker).infallible()? {
+                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker).coerce()? {
                             #(#unpack_arms)*
                             tag => Err(#crate_name::error::UnpackError::from_packable(#tag_with_error(tag)))
                         }

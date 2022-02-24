@@ -88,9 +88,9 @@ impl<T, E> UnpackPrefixError<T, E> {
     }
 }
 
-impl<T, E> From<T> for UnpackPrefixError<T, E> {
-    fn from(err: T) -> Self {
-        Self::Item(err)
+impl<T, E> From<Infallible> for UnpackPrefixError<T, E> {
+    fn from(err: Infallible) -> Self {
+        match err {}
     }
 }
 
@@ -205,7 +205,7 @@ where
             let mut inner = Vec::with_capacity(len.try_into().unwrap_or(0));
 
             for _ in B::Bounds::default()..len {
-                let item = T::unpack::<_, VERIFY>(unpacker).coerce()?;
+                let item = T::unpack::<_, VERIFY>(unpacker).map_packable_err(Self::UnpackError::Item)?;
                 inner.push(item);
             }
 

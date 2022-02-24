@@ -18,6 +18,12 @@ pub struct Picky(u8);
 #[derive(Debug)]
 pub struct PickyError(u8);
 
+impl From<Infallible> for PickyError {
+    fn from(err: Infallible) -> Self {
+        match err {}
+    }
+}
+
 impl Packable for Picky {
     type UnpackError = PickyError;
 
@@ -28,7 +34,7 @@ impl Packable for Picky {
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        let value = u8::unpack::<_, VERIFY>(unpacker).infallible()?;
+        let value = u8::unpack::<_, VERIFY>(unpacker).coerce()?;
 
         if value == 42 {
             Ok(Self(value))

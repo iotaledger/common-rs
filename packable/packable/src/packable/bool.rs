@@ -23,6 +23,6 @@ impl Packable for bool {
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        Ok(u8::unpack::<_, VERIFY>(unpacker).infallible()? != 0)
+        Ok(u8::unpack::<_, VERIFY>(unpacker).coerce()? != 0)
     }
 }
