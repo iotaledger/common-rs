@@ -10,11 +10,12 @@ macro_rules! impl_packable_for_num {
         impl Packable for $ty {
             type UnpackError = Infallible;
 
-            #[inline(always)]
+            #[inline]
             fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
                 packer.pack_bytes(&self.to_le_bytes())
             }
 
+            #[inline]
             fn unpack<U: Unpacker, const VERIFY: bool>(
                 unpacker: &mut U,
             ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
@@ -47,6 +48,7 @@ impl_packable_for_num!(f64);
 impl Packable for usize {
     type UnpackError = core::num::TryFromIntError;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         const _: () = {
             if core::mem::size_of::<usize>() > core::mem::size_of::<u64>() {
@@ -57,6 +59,7 @@ impl Packable for usize {
         (*self as u64).pack(packer)
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
@@ -69,10 +72,12 @@ impl Packable for usize {
 impl Packable for isize {
     type UnpackError = core::num::TryFromIntError;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         (*self as i64).pack(packer)
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {

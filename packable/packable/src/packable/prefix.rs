@@ -156,6 +156,7 @@ where
 {
     type UnpackError = UnpackPrefixError<T::UnpackError, B::UnpackError>;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         // The length of any dynamically-sized sequence must be prefixed. This unwrap is fine since
         // the length of the inner `Vec` has been validated while creating this `VecPrefix`.
@@ -173,6 +174,7 @@ where
         Ok(())
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
@@ -286,6 +288,7 @@ where
 {
     type UnpackError = <VecPrefix<T, B> as Packable>::UnpackError;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         // The length of any dynamically-sized sequence must be prefixed. This unwrap is fine since
         // the length of the inner slice has been validated while creating this `BoxedSlicePrefix`.
@@ -304,6 +307,7 @@ where
         Ok(())
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {

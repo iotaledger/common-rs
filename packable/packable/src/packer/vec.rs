@@ -11,6 +11,7 @@ use core::convert::Infallible;
 impl Packer for Vec<u8> {
     type Error = Infallible;
 
+    #[inline]
     fn pack_bytes<B: AsRef<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error> {
         self.extend_from_slice(bytes.as_ref());
         Ok(())
