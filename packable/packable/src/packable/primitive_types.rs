@@ -10,12 +10,12 @@ use core::convert::Infallible;
 impl Packable for U256 {
     type UnpackError = Infallible;
 
-    #[inline(always)]
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         self.0.pack(packer)
     }
 
-    #[inline(always)]
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {

@@ -36,6 +36,7 @@ impl<R: Read> Deref for IoUnpacker<R> {
 impl<R: Read> Unpacker for IoUnpacker<R> {
     type Error = io::Error;
 
+    #[inline]
     fn unpack_bytes<B: AsMut<[u8]>>(&mut self, mut bytes: B) -> Result<(), Self::Error> {
         self.0.read_exact(bytes.as_mut())
     }

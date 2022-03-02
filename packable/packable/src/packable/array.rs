@@ -8,6 +8,7 @@ use core::{any::TypeId, mem::MaybeUninit};
 impl<T: Packable, const N: usize> Packable for [T; N] {
     type UnpackError = T::UnpackError;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         if TypeId::of::<T>() == TypeId::of::<u8>() {
             // Safety: `Self` is identical to `[u8; N]`.
@@ -22,6 +23,7 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
         Ok(())
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {

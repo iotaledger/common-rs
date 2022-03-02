@@ -20,6 +20,7 @@ where
 {
     type UnpackError = UnpackPrefixError<T::UnpackError, <usize as Packable>::UnpackError>;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         // This cast is fine because we know `usize` is not larger than `64` bits.
         (self.len() as u64).pack(packer)?;
@@ -37,6 +38,7 @@ where
         Ok(())
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {

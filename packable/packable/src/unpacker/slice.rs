@@ -6,6 +6,7 @@ use crate::{error::UnexpectedEOF, unpacker::Unpacker};
 impl<'u> Unpacker for &'u [u8] {
     type Error = UnexpectedEOF;
 
+    #[inline]
     fn unpack_bytes<B: AsMut<[u8]>>(&mut self, mut bytes: B) -> Result<(), Self::Error> {
         let slice = bytes.as_mut();
         let len = slice.len();

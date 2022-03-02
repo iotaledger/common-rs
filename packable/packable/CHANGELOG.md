@@ -24,8 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Inline more functions in a less aggressive way;
 - Make byte buffers packing and unpacking more performant;
 - Require `From<Infallible>` for every `Packable::UnpackError`;
+
+### Removed
+
+- Remove `UnpackErrorExt::infallible` as it superseeded by `UnpackErrorExt::coerce`;
 
 ## 0.2.1 - 2022-02-11
 

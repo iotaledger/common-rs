@@ -19,6 +19,7 @@ use alloc::{
 impl Packable for String {
     type UnpackError = UnpackPrefixError<FromUtf8Error, <usize as Packable>::UnpackError>;
 
+    #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         let bytes = self.as_bytes();
         // This cast is fine because we know `usize` is not larger than `64` bits.
@@ -29,6 +30,7 @@ impl Packable for String {
         Ok(())
     }
 
+    #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {

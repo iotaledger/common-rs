@@ -210,6 +210,7 @@ pub trait PackableExt: Packable {
 }
 
 impl<P: Packable> PackableExt for P {
+    #[inline]
     fn packed_len(&self) -> usize {
         let mut packer = LenPacker(0);
 
@@ -219,6 +220,7 @@ impl<P: Packable> PackableExt for P {
         }
     }
 
+    #[inline]
     fn pack_to_vec(&self) -> Vec<u8> {
         let mut packer = Vec::with_capacity(self.packed_len());
 
@@ -229,6 +231,7 @@ impl<P: Packable> PackableExt for P {
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`].
+    #[inline]
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
@@ -236,6 +239,7 @@ impl<P: Packable> PackableExt for P {
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
+    #[inline]
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
