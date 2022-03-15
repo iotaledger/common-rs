@@ -12,10 +12,9 @@ mod len;
 mod slice;
 mod vec;
 
-pub(crate) use len::LenPacker;
-
 #[cfg(feature = "io")]
 pub use io::IoPacker;
+pub(crate) use len::LenPacker;
 pub use slice::SlicePacker;
 
 /// A type that can pack any value that implements [`Packable`](crate::Packable).

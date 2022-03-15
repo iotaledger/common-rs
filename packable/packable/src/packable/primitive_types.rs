@@ -1,11 +1,11 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
+use core::convert::Infallible;
 
 use primitive_types::U256;
 
-use core::convert::Infallible;
+use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 impl Packable for U256 {
     type UnpackError = Infallible;

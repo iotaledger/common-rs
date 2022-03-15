@@ -3,14 +3,14 @@
 
 extern crate alloc;
 
-use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
-
 use alloc::boxed::Box;
 #[cfg(feature = "usize")]
 use alloc::{vec, vec::Vec};
 #[cfg(feature = "usize")]
 use core::any::TypeId;
 use core::ops::Deref;
+
+use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 impl<T: Packable> Packable for Box<T> {
     type UnpackError = T::UnpackError;

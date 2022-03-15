@@ -1,10 +1,10 @@
 // Copyright 2020-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use std::borrow::Cow;
+
 use log::LevelFilter;
 use serde::Deserialize;
-
-use std::borrow::Cow;
 
 /// Default value for the target width.
 const DEFAULT_TARGET_WIDTH: usize = 42;

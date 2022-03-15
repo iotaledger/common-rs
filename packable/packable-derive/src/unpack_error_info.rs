@@ -1,12 +1,12 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::parse::{parse_kv, parse_kv_after_comma, skip_stream};
-
 use syn::{
     parse::{Parse, ParseStream},
     parse_quote, Attribute, Error, Expr, Result,
 };
+
+use crate::parse::{parse_kv, parse_kv_after_comma, skip_stream};
 
 pub(crate) struct UnpackErrorInfo {
     pub(crate) unpack_error: syn::Type,

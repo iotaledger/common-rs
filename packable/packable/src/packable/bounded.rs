@@ -3,13 +3,13 @@
 
 //! Types and utilities related to bounded integers.
 
-use crate as packable_crate;
-use crate::Packable;
-
 use core::{
     convert::Infallible,
     fmt::{self, Display},
 };
+
+use crate as packable_crate;
+use crate::Packable;
 
 /// Trait that provides an interface for bounded types.
 pub trait Bounded: TryFrom<usize> + Into<Self::Bounds> {

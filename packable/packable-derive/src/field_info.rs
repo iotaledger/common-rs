@@ -1,11 +1,11 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::parse::{filter_attrs, parse_kv, skip_stream};
-
 use proc_macro2::Span;
 use quote::{format_ident, ToTokens};
 use syn::{parse::ParseStream, Expr, Field, Ident, Index, Path, Result, Type};
+
+use crate::parse::{filter_attrs, parse_kv, skip_stream};
 
 pub(crate) enum IdentOrIndex {
     Ident(Ident),

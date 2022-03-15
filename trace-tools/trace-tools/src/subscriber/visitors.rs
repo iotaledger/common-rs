@@ -1,11 +1,11 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::observe::{FILE_FIELD_NAME, LINE_FIELD_NAME};
+use std::fmt;
 
 use tracing::field::{Field, Visit};
 
-use std::fmt;
+use crate::observe::{FILE_FIELD_NAME, LINE_FIELD_NAME};
 
 /// Visits a [`Span`](tracing::Span) and records location fields.
 ///

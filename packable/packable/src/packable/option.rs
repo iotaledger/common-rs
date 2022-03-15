@@ -3,14 +3,14 @@
 
 //! Types and utilities related to packing and unpacking [`Option`] values.
 
+use core::{convert::Infallible, fmt};
+
 use crate::{
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
     unpacker::Unpacker,
     Packable,
 };
-
-use core::{convert::Infallible, fmt};
 
 /// Error type raised when a semantic error occurs while unpacking an option.
 #[derive(Debug)]

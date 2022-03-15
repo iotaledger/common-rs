@@ -3,12 +3,12 @@
 
 extern crate std;
 
-use crate::packer::Packer;
-
 use std::{
     io::{self, Write},
     ops::Deref,
 };
+
+use crate::packer::Packer;
 
 /// A [`Packer`] backed by [`Write`].
 pub struct IoPacker<W: Write>(W);

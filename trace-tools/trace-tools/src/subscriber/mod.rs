@@ -7,10 +7,9 @@ pub mod layer;
 /// Contains visitors that record [`Span`](tracing::Span) field information.
 pub(crate) mod visitors;
 
-use crate::{util::Flamegrapher, Error};
+use std::path::{Path, PathBuf};
 
 use fern_logger::LoggerConfig;
-
 use tracing_log::LogTracer;
 use tracing_subscriber::{
     filter::{FilterFn, Filtered},
@@ -19,7 +18,7 @@ use tracing_subscriber::{
     Registry,
 };
 
-use std::path::{Path, PathBuf};
+use crate::{util::Flamegrapher, Error};
 
 /// Initialises a [`tracing_log::LogTracer`] that converts any incoming [`log`] records into [`tracing`] events,
 /// allowing subscribers to interact with log records.

@@ -20,18 +20,18 @@ mod string;
 #[cfg(feature = "usize")]
 mod vec;
 
-use crate::{
-    error::{UnexpectedEOF, UnpackError},
-    packer::{LenPacker, Packer},
-    unpacker::Unpacker,
-};
-
-pub use packable_derive::Packable;
-
 use alloc::vec::Vec;
 use core::{
     convert::{AsRef, Infallible},
     fmt::Debug,
+};
+
+pub use packable_derive::Packable;
+
+use crate::{
+    error::{UnexpectedEOF, UnpackError},
+    packer::{LenPacker, Packer},
+    unpacker::Unpacker,
 };
 
 /// A type that can be packed and unpacked.
@@ -47,14 +47,14 @@ use core::{
 /// we will use an integer prefix as a tag to determine which variant of the enum is being packed.
 ///
 /// ```rust
+/// use core::convert::Infallible;
+///
 /// use packable::{
 ///     error::{UnknownTagError, UnpackError, UnpackErrorExt},
 ///     packer::Packer,
 ///     unpacker::Unpacker,
 ///     Packable,
 /// };
-///
-/// use core::convert::Infallible;
 ///
 /// pub enum Maybe {
 ///     Nothing,

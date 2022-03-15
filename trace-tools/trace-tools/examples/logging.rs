@@ -1,9 +1,9 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use fern_logger::{LoggerConfig, LoggerOutputConfigBuilder};
-
 use std::path::PathBuf;
+
+use fern_logger::{LoggerConfig, LoggerOutputConfigBuilder};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = LoggerOutputConfigBuilder::new()

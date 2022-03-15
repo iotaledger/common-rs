@@ -1,11 +1,13 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{subscriber::visitors::MessageVisitor, Error};
-
-use fern_logger::{LoggerConfig, LoggerOutputConfig};
+use std::{
+    fs::{File, OpenOptions},
+    io::{self, Stdout, StdoutLock},
+};
 
 use colored::{ColoredString, Colorize};
+use fern_logger::{LoggerConfig, LoggerOutputConfig};
 use parking_lot::{Mutex, MutexGuard};
 use tracing::{metadata::LevelFilter, Event, Level, Metadata, Subscriber};
 use tracing_log::{AsTrace, NormalizeEvent};
@@ -16,10 +18,7 @@ use tracing_subscriber::{
     registry::LookupSpan,
 };
 
-use std::{
-    fs::{File, OpenOptions},
-    io::{self, Stdout, StdoutLock},
-};
+use crate::{subscriber::visitors::MessageVisitor, Error};
 
 /// Describes the output target of a [`log`] event.
 ///

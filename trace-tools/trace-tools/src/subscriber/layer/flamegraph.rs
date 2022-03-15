@@ -1,13 +1,6 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{subscriber::visitors::LocationVisitor, util::Flamegrapher, Error};
-
-use lazy_static::lazy_static;
-use parking_lot::RwLock;
-use tracing::{callsite, span, subscriber, Metadata, Subscriber};
-use tracing_subscriber::{layer::Context, registry::LookupSpan, Layer};
-
 use std::{
     cell::Cell,
     collections::{HashMap, HashSet},
@@ -17,6 +10,13 @@ use std::{
     path::Path,
     time::{Duration, Instant},
 };
+
+use lazy_static::lazy_static;
+use parking_lot::RwLock;
+use tracing::{callsite, span, subscriber, Metadata, Subscriber};
+use tracing_subscriber::{layer::Context, registry::LookupSpan, Layer};
+
+use crate::{subscriber::visitors::LocationVisitor, util::Flamegrapher, Error};
 
 lazy_static! {
     /// The initialisation time of this layer.

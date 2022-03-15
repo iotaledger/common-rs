@@ -1,9 +1,9 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
-
 use core::{any::TypeId, mem::MaybeUninit};
+
+use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 impl<T: Packable, const N: usize> Packable for [T; N] {
     type UnpackError = T::UnpackError;

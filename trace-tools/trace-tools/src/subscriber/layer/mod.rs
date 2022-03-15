@@ -4,15 +4,13 @@
 mod flamegraph;
 mod log;
 
-pub use self::{flamegraph::FlamegraphLayer, log::LogLayer};
-
-use crate::{util::Flamegrapher, Error};
+use std::path::Path;
 
 use fern_logger::LoggerConfig;
-
 use tracing::Metadata;
 
-use std::path::Path;
+pub use self::{flamegraph::FlamegraphLayer, log::LogLayer};
+use crate::{util::Flamegrapher, Error};
 
 /// Creates a new [`FlamegraphLayer`].
 ///
