@@ -5,12 +5,13 @@
 
 mod config;
 
-pub use config::{LoggerConfig, LoggerConfigBuilder, LoggerOutputConfig, LoggerOutputConfigBuilder};
 use fern::{
     colors::{Color, ColoredLevelConfig},
     Dispatch,
 };
 use thiserror::Error;
+
+pub use self::config::{LoggerConfig, LoggerConfigBuilder, LoggerOutputConfig, LoggerOutputConfigBuilder};
 
 /// Name of the standard output.
 pub const LOGGER_STDOUT_NAME: &str = "stdout";

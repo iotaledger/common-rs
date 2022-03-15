@@ -20,7 +20,8 @@ use proc_macro_crate::{crate_name, FoundCrate};
 use proc_macro_error::{abort, proc_macro_error};
 use quote::ToTokens;
 use syn::{parse_macro_input, Ident};
-use trait_impl::TraitImpl;
+
+use self::trait_impl::TraitImpl;
 
 #[proc_macro_error]
 #[proc_macro_derive(Packable, attributes(packable))]
