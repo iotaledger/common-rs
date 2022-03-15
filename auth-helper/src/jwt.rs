@@ -3,12 +3,12 @@
 
 //! A module that provides JSON Web Token utilities.
 
+use std::time::{SystemTime, UNIX_EPOCH};
+
 pub use jsonwebtoken::TokenData;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-
-use std::time::{SystemTime, UNIX_EPOCH};
 
 /// JsonWebToken error.
 #[derive(Error, Debug)]

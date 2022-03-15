@@ -14,14 +14,14 @@ mod trait_impl;
 mod unpack_error_info;
 mod variant_info;
 
-use proc_macro2::Span;
-use trait_impl::TraitImpl;
-
 use proc_macro::TokenStream;
+use proc_macro2::Span;
 use proc_macro_crate::{crate_name, FoundCrate};
 use proc_macro_error::{abort, proc_macro_error};
 use quote::ToTokens;
 use syn::{parse_macro_input, Ident};
+
+use self::trait_impl::TraitImpl;
 
 #[proc_macro_error]
 #[proc_macro_derive(Packable, attributes(packable))]

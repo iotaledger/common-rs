@@ -1,11 +1,11 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::record_info::RecordInfo;
-
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
+
+use crate::record_info::RecordInfo;
 
 pub(crate) struct Fragments {
     // The pattern used to destructure the record.

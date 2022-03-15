@@ -13,7 +13,6 @@ pub mod util;
 mod error;
 mod observe;
 
-pub use error::Error;
-pub use observe::Observe;
-
 pub use trace_tools_attributes::observe;
+
+pub use self::{error::Error, observe::Observe};

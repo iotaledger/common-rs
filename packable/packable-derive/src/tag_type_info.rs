@@ -1,10 +1,10 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::parse::{parse_kv, parse_kv_after_comma, skip_stream};
-
 use quote::ToTokens;
 use syn::{parse::ParseStream, parse_quote, spanned::Spanned, Attribute, Error, Expr, Ident, Result, Type};
+
+use crate::parse::{parse_kv, parse_kv_after_comma, skip_stream};
 
 const VALID_TAG_TYPES: &[&str] = &["u8", "u16", "u32", "u64"];
 

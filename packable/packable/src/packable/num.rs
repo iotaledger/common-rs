@@ -1,9 +1,9 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
-
 use core::convert::Infallible;
+
+use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 macro_rules! impl_packable_for_num {
     ($ty:ty) => {

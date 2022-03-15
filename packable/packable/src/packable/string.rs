@@ -3,17 +3,17 @@
 
 extern crate alloc;
 
+use alloc::{
+    string::{FromUtf8Error, String},
+    vec::Vec,
+};
+
 use crate::{
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
     prefix::UnpackPrefixError,
     unpacker::Unpacker,
     Packable,
-};
-
-use alloc::{
-    string::{FromUtf8Error, String},
-    vec::Vec,
 };
 
 impl Packable for String {

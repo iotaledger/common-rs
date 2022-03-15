@@ -1,9 +1,9 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use trybuild::TestCases;
-
 use std::{ffi::OsStr, fs::read_dir, path::Path};
+
+use trybuild::TestCases;
 
 fn for_each_entry(root_path: &Path, f: impl Fn(&Path)) {
     let rs_ext = Some(OsStr::new("rs"));

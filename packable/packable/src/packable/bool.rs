@@ -1,14 +1,14 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use core::convert::Infallible;
+
 use crate::{
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
     unpacker::Unpacker,
     Packable,
 };
-
-use core::convert::Infallible;
 
 impl Packable for bool {
     type UnpackError = Infallible;

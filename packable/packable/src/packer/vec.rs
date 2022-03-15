@@ -3,10 +3,10 @@
 
 extern crate alloc;
 
-use crate::packer::Packer;
-
 use alloc::vec::Vec;
 use core::convert::Infallible;
+
+use crate::packer::Packer;
 
 impl Packer for Vec<u8> {
     type Error = Infallible;

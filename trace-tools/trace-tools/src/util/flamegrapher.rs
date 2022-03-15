@@ -1,13 +1,13 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::error::{Error, FlamegrapherErrorKind};
-
 use std::{
     fs::File,
     io::{BufReader, BufWriter},
     path::{Path, PathBuf},
 };
+
+use crate::error::{Error, FlamegrapherErrorKind};
 
 /// Helper struct that uses [`inferno`] internally to programatically produce a flamegraph from a folded
 /// stack trace file.

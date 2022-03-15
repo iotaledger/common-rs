@@ -1,14 +1,14 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote, ToTokens};
+use syn::{spanned::Spanned, Data, DeriveInput, Generics, Ident};
+
 use crate::{
     enum_info::EnumInfo, fragments::Fragments, struct_info::StructInfo, tag_type_info::TagTypeInfo,
     variant_info::VariantInfo,
 };
-
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens};
-use syn::{spanned::Spanned, Data, DeriveInput, Generics, Ident};
 
 pub(crate) struct TraitImpl {
     ident: Ident,

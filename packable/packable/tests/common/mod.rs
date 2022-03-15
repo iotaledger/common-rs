@@ -1,13 +1,13 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use core::fmt::Debug;
+
 use packable::{
     packer::{IoPacker, SlicePacker},
     unpacker::IoUnpacker,
     Packable, PackableExt,
 };
-
-use core::fmt::Debug;
 
 fn generic_test_pack_to_slice_unpack_verified<P>(packable: &P)
 where

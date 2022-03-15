@@ -3,12 +3,12 @@
 
 extern crate std;
 
-use crate::unpacker::Unpacker;
-
 use std::{
     io::{self, Read},
     ops::Deref,
 };
+
+use crate::unpacker::Unpacker;
 
 /// An [`Unpacker`] backed by [`Read`].
 pub struct IoUnpacker<R: Read>(R);

@@ -5,14 +5,6 @@
 
 extern crate alloc;
 
-use crate::{
-    error::{UnpackError, UnpackErrorExt},
-    packable::bounded::Bounded,
-    packer::Packer,
-    unpacker::Unpacker,
-    Packable,
-};
-
 use alloc::{boxed::Box, vec, vec::Vec};
 use core::{
     any::TypeId,
@@ -20,6 +12,14 @@ use core::{
     fmt,
     marker::PhantomData,
     ops::{Deref, DerefMut, Range},
+};
+
+use crate::{
+    error::{UnpackError, UnpackErrorExt},
+    packable::bounded::Bounded,
+    packer::Packer,
+    unpacker::Unpacker,
+    Packable,
 };
 
 /// Semantic error raised while unpacking dynamically-sized sequences.

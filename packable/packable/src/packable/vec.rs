@@ -3,6 +3,9 @@
 
 extern crate alloc;
 
+use alloc::{vec, vec::Vec};
+use core::any::TypeId;
+
 use crate::{
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
@@ -10,9 +13,6 @@ use crate::{
     unpacker::Unpacker,
     Packable,
 };
-
-use alloc::{vec, vec::Vec};
-use core::any::TypeId;
 
 impl<T> Packable for Vec<T>
 where
