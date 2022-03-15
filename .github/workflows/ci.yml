@@ -158,6 +158,7 @@ jobs:
         rust: [nightly, beta, stable]
         crates: [
           "iterator-sorted",
+          "prefix-hex",
         ]
 
     steps:

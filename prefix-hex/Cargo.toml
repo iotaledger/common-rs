@@ -1,0 +1,18 @@
+[package]
+name = "prefix-hex"
+version = "0.1.0"
+authors = [ "IOTA Stiftung" ]
+edition = "2021"
+description = "Encoding and decoding of hex strings with 0x prefix"
+readme = "README.md"
+repository = "https://github.com/iotaledger/common-rs"
+license = "Apache-2.0"
+keywords = [ "iota", "hex", "encoding", "decoding"]
+homepage = "https://www.iota.org"
+
+[dependencies]
+hex = { version = "0.4.3", default-features = false, features = [ "alloc" ] }
+primitive-types = { version = "0.10.1", default-features = false, optional = true }
+
+[dev-dependencies]
+mini_paste = { version = "0.1.11", default-features = false }

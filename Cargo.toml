@@ -6,6 +6,7 @@ members = [
   "packable/packable",
   "packable/packable-derive",
   "packable/packable-derive-test",
+  "prefix-hex",
   "time-helper",
   "trace-tools/trace-tools",
   "trace-tools/trace-tools-attributes",
