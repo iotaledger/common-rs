@@ -13,6 +13,10 @@ homepage = "https://www.iota.org"
 [dependencies]
 hex = { version = "0.4.3", default-features = false, features = [ "alloc" ] }
 primitive-types = { version = "0.10.1", default-features = false, optional = true }
+uint = { version = "0.9.3", default-features = false, optional = true }
 
 [dev-dependencies]
 mini_paste = { version = "0.1.11", default-features = false }
+
+[features]
+primitive-types1 = [ "primitive-types", "uint" ]

@@ -35,8 +35,8 @@ fn array_decode_invalid_length_too_long() {
 #[test]
 fn array_decode_no_prefix() {
     assert_eq!(
-        prefix_hex::decode::<[u8; 3]>("ffffff"),
-        Err(Error::InvalidPrefix { c0: 'f', c1: 'f' })
+        prefix_hex::decode::<[u8; 3]>("004200"),
+        Err(Error::InvalidPrefix { c0: '0', c1: '0' })
     );
 }
 
@@ -54,6 +54,11 @@ fn vec_decode() {
 }
 
 #[test]
+fn vec_decode_empty_string() {
+    assert_eq!(prefix_hex::decode("0x"), Ok(vec![]));
+}
+
+#[test]
 fn vec_decode_odd_length() {
-    assert_eq!(prefix_hex::decode::<Vec<u8>>("0x00000"), Err(Error::OddLength));
+    assert_eq!(prefix_hex::decode::<Vec<u8>>("0xf0f0f"), Err(Error::OddLength));
 }

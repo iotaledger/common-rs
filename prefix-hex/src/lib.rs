@@ -11,11 +11,9 @@
 
 extern crate alloc;
 
-mod error;
-
 mod data;
-
-#[cfg(feature = "primitive-types")]
+mod error;
+#[cfg(feature = "primitive-types1")]
 mod primitive_types;
 
 use alloc::string::String;
@@ -49,28 +47,32 @@ pub trait ToHexPrefix {
     fn to_hex_prefix(self) -> String;
 }
 
+/// Decodes a hex string with `0x` prefix into a type `T`.
 ///
+/// ## Decode into `Vec<u8>`
+/// ```
+/// let result = prefix_hex::decode("0x000102");
+/// assert_eq!(result, Ok(vec![0x0, 0x1, 0x2]));
+/// ```
+/// ## Decode into `[u8;N]`
+/// ```
+/// let result = prefix_hex::decode("0x000102");
+/// assert_eq!(result, Ok([0x0, 0x1, 0x2]));
+/// ```
 pub fn decode<T: FromHexPrefix>(hex: &str) -> Result<T, Error> {
     T::from_hex_prefix(hex)
 }
 
+/// Encodes `T` as a hex string with a `0x` prefix.
 ///
+/// ## Encode `Vec<u8>`
+/// ```
+/// assert_eq!(prefix_hex::encode(vec![0x1, 0x2, 0x3]), "0x010203");
+/// ```
+/// ## Encode `[u8; N]`
+/// ```
+/// assert_eq!(prefix_hex::encode([0x1, 0x2, 0x3]), "0x010203");
+/// ```
 pub fn encode<T: ToHexPrefix>(value: T) -> String {
     ToHexPrefix::to_hex_prefix(value)
-}
-
-#[cfg(test)]
-mod test {
-    use alloc::string::ToString;
-
-    #[test]
-    fn endianess() {
-        // TODO check endianess again against eth hex encoding
-        let x = 10000u64.to_le_bytes();
-        let encoded = super::encode(x);
-        assert_eq!(encoded, "0x1027000000000000".to_string());
-        let decoded: [u8; 8] = super::decode(&encoded).unwrap();
-        assert_eq!(decoded, [0x10, 0x27, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]);
-        assert_eq!(x, decoded);
-    }
 }
