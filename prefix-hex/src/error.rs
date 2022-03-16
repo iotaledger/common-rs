@@ -14,12 +14,12 @@ pub enum Error {
     OddLength,
 }
 
-impl Into<Error> for FromHexError {
-    fn into(self) -> Error {
-        match self {
-            Self::InvalidHexCharacter { c, index } => Error::InvalidHexCharacter { c, index },
-            Self::InvalidStringLength => Error::InvalidStringLength,
-            Self::OddLength => Error::OddLength,
+impl From<FromHexError> for Error {
+    fn from(v: FromHexError) -> Error {
+        match v {
+            FromHexError::InvalidHexCharacter { c, index } => Error::InvalidHexCharacter { c, index },
+            FromHexError::InvalidStringLength => Error::InvalidStringLength,
+            FromHexError::OddLength => Error::OddLength,
         }
     }
 }

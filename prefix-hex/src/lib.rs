@@ -28,8 +28,8 @@ pub trait FromHexPrefix: Sized {
 
 // TODO: Maybe introduce `handle_error` with `#[cold]` attribute.
 fn strip_prefix(hex: &str) -> Result<&str, Error> {
-    if hex.starts_with("0x") {
-        Ok(&hex[2..])
+    if let Some(hex) = hex.strip_prefix("0x") {
+        Ok(hex)
     } else if hex.len() < 2 {
         Err(Error::InvalidStringLength)
     } else {
