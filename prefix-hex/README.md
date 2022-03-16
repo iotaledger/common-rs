@@ -1,6 +1,6 @@
 # prefix-hex
 
-The `hex-prefix` crates offers encoding and decoding of hex strings with a `0x` prefix.
+The `prefix-hex` crates offers encoding and decoding of hex strings with a `0x` prefix.
 
 Its API aims to mimic that of the [`hex`](https://docs.rs/hex/latest/hex/) crate, which we also use internally.
 

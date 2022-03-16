@@ -1,7 +1,7 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-//! The `hex-prefix` crates offers encoding and decoding of hex strings with a `0x` prefix.
+//! The `prefix-hex` crates offers encoding and decoding of hex strings with a `0x` prefix.
 //!
 //! Its API aims to mimic that of the [`hex`](https://docs.rs/hex/latest/hex/) crate, which we also use internally.
 //!
@@ -21,12 +21,12 @@ use alloc::string::String;
 pub use error::Error;
 
 /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
-pub trait FromHexPrefix: Sized {
+pub trait FromHexPrefixed: Sized {
     /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
     fn from_hex_prefix(hex: &str) -> Result<Self, Error>;
 }
 
-// TODO: Maybe introduce `handle_error` with `#[cold]` attribute.
+// TODO: Maybe introduce `handle_error` function with `#[cold]` attribute.
 fn strip_prefix(hex: &str) -> Result<&str, Error> {
     if let Some(hex) = hex.strip_prefix("0x") {
         Ok(hex)
@@ -34,7 +34,7 @@ fn strip_prefix(hex: &str) -> Result<&str, Error> {
         Err(Error::InvalidStringLength)
     } else {
         let mut chars = hex.chars();
-        // Safety the following two operations are safe because we checked for the `hex.len()` in a previous branch.
+        // Panic: the following two operations cannot panic because we checked for `hex.len()` in the `else if` branch.
         let c0 = chars.next().unwrap();
         let c1 = chars.next().unwrap();
         Err(Error::InvalidPrefix { c0, c1 })
@@ -42,7 +42,7 @@ fn strip_prefix(hex: &str) -> Result<&str, Error> {
 }
 
 /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
-pub trait ToHexPrefix {
+pub trait ToHexPrefixed {
     /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
     fn to_hex_prefix(self) -> String;
 }
@@ -59,7 +59,7 @@ pub trait ToHexPrefix {
 /// let result = prefix_hex::decode("0x000102");
 /// assert_eq!(result, Ok([0x0, 0x1, 0x2]));
 /// ```
-pub fn decode<T: FromHexPrefix>(hex: &str) -> Result<T, Error> {
+pub fn decode<T: FromHexPrefixed>(hex: &str) -> Result<T, Error> {
     T::from_hex_prefix(hex)
 }
 
@@ -73,6 +73,6 @@ pub fn decode<T: FromHexPrefix>(hex: &str) -> Result<T, Error> {
 /// ```
 /// assert_eq!(prefix_hex::encode([0x1, 0x2, 0x3]), "0x010203");
 /// ```
-pub fn encode<T: ToHexPrefix>(value: T) -> String {
-    ToHexPrefix::to_hex_prefix(value)
+pub fn encode<T: ToHexPrefixed>(value: T) -> String {
+    ToHexPrefixed::to_hex_prefix(value)
 }

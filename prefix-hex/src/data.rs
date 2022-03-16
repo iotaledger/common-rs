@@ -3,22 +3,22 @@
 
 use alloc::{format, string::String, vec::Vec};
 
-use crate::{strip_prefix, Error, FromHexPrefix, ToHexPrefix};
+use crate::{strip_prefix, Error, FromHexPrefixed, ToHexPrefixed};
 
-impl FromHexPrefix for Vec<u8> {
+impl FromHexPrefixed for Vec<u8> {
     fn from_hex_prefix(hex: &str) -> Result<Self, Error> {
         let hex = strip_prefix(hex)?;
-        hex::decode(hex).map_err(|e| -> Error { e.into() })
+        hex::decode(hex).map_err(Into::into)
     }
 }
 
-impl ToHexPrefix for Vec<u8> {
+impl ToHexPrefixed for Vec<u8> {
     fn to_hex_prefix(self) -> String {
         format!("0x{}", hex::encode(self))
     }
 }
 
-impl<const N: usize> FromHexPrefix for [u8; N]
+impl<const N: usize> FromHexPrefixed for [u8; N]
 where
     Self: hex::FromHex,
 {
@@ -36,7 +36,7 @@ where
     }
 }
 
-impl<const N: usize> ToHexPrefix for [u8; N]
+impl<const N: usize> ToHexPrefixed for [u8; N]
 where
     Self: hex::ToHex,
 {
@@ -45,7 +45,7 @@ where
     }
 }
 
-impl ToHexPrefix for &[u8] {
+impl ToHexPrefixed for &[u8] {
     fn to_hex_prefix(self) -> String {
         format!("0x{}", hex::encode(self))
     }

@@ -28,15 +28,15 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::InvalidPrefix { c0, c1 } => {
-                write!(f, "Invalid prefix `{c0}{c1}`, should be `0x`")
+                write!(f, "Invalid hex prefix: expected `0x` but got `{c0}{c1}`")
             }
             Error::InvalidHexCharacter { c, index } => {
-                write!(f, "Invalid character {:?} at position {}", c, index)
+                write!(f, "Invalid hex character {:?} at position {}", c, index)
             }
-            Error::InvalidStringLength => write!(f, "Invalid string length"),
+            Error::InvalidStringLength => write!(f, "Invalid hex string length"),
             Error::InvalidStringLengthSlice { expected, actual } => write!(
                 f,
-                "invalid hexadecimal length for slice: expected {expected} got {actual}"
+                "Invalid hex string length for slice: expected {expected} got {actual}"
             ),
             Error::OddLength => write!(f, "Odd number of digits in hex string"),
         }

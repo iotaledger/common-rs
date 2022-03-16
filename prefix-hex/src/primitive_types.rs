@@ -3,18 +3,11 @@
 
 use alloc::{format, string::String};
 
-use crate::{strip_prefix, Error, FromHexPrefix, ToHexPrefix};
-
-#[rustfmt::skip]
-fn is_hex_character(c: char) -> bool {
-    matches!(c, '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' |
-                'a' | 'b' | 'c' | 'd' | 'e' | 'f' |
-                'A' | 'B' | 'C' | 'D' | 'E' | 'F')
-}
+use crate::{strip_prefix, Error, FromHexPrefixed, ToHexPrefixed};
 
 macro_rules! impl_from_to_hex {
     ($type:ty) => {
-        impl FromHexPrefix for $type {
+        impl FromHexPrefixed for $type {
             fn from_hex_prefix(hex: &str) -> Result<Self, Error> {
                 let hex = strip_prefix(hex)?;
 
@@ -24,7 +17,7 @@ macro_rules! impl_from_to_hex {
 
                 <$type>::from_str_radix(hex, 16).map_err(|error| match error.kind() {
                     uint::FromStrRadixErrKind::InvalidCharacter => {
-                        if let Some((index, c)) = hex.chars().enumerate().find(|(_, c)| !is_hex_character(*c)) {
+                        if let Some((index, c)) = hex.chars().enumerate().find(|(_, c)| !c.is_ascii_hexdigit()) {
                             Error::InvalidHexCharacter { c, index }
                         } else {
                             unreachable!()
@@ -36,7 +29,7 @@ macro_rules! impl_from_to_hex {
             }
         }
 
-        impl ToHexPrefix for $type {
+        impl ToHexPrefixed for $type {
             fn to_hex_prefix(self) -> String {
                 format!("{:#x}", self)
             }
