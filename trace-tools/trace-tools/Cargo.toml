@@ -33,3 +33,7 @@ tokio = { version = "1.13.0", default-features = false, features = [ "full", "rt
 [features]
 default = [ ]
 tokio-console = [ "console-subscriber", "tokio" ]
+
+[[example]]
+name = "console"
+required-features = [ "tokio-console" ]
