@@ -7,7 +7,7 @@ description = "Encoding and decoding of hex strings with 0x prefix"
 readme = "README.md"
 repository = "https://github.com/iotaledger/common-rs"
 license = "Apache-2.0"
-keywords = [ "iota", "hex", "encoding", "decoding"]
+keywords = [ "iota", "hex", "prefix", "encoding", "decoding"]
 homepage = "https://www.iota.org"
 
 [dependencies]
