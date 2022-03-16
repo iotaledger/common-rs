@@ -5,7 +5,7 @@
 
 macro_rules! test_impl {
     ($name:ident, $type:ty) => {
-        ::mini_paste::item! {
+        ::paste::item! {
             #[test]
             fn [< $name _decode_zero >]() {
                 assert_eq!(
