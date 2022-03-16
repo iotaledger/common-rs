@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use core::fmt;
+
 use hex::FromHexError;
 
 #[derive(Debug, PartialEq)]

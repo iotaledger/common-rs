@@ -18,9 +18,9 @@ mod data;
 #[cfg(feature = "primitive-types")]
 mod primitive_types;
 
-pub use error::Error;
-
 use alloc::string::String;
+
+pub use error::Error;
 
 /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
 pub trait FromHexPrefix: Sized {

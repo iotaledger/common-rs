@@ -1,9 +1,9 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{strip_prefix, Error, FromHexPrefix, ToHexPrefix};
-
 use alloc::{format, string::String, vec::Vec};
+
+use crate::{strip_prefix, Error, FromHexPrefix, ToHexPrefix};
 
 impl FromHexPrefix for Vec<u8> {
     fn from_hex_prefix(hex: &str) -> Result<Self, Error> {
