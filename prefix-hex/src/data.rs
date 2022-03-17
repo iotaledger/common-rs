@@ -45,6 +45,15 @@ where
     }
 }
 
+impl<const N: usize> ToHexPrefixed for &[u8; N]
+where
+    [u8; N]: hex::ToHex,
+{
+    fn to_hex_prefixed(self) -> String {
+        format!("0x{}", hex::encode(self))
+    }
+}
+
 impl ToHexPrefixed for &[u8] {
     fn to_hex_prefixed(self) -> String {
         format!("0x{}", hex::encode(self))
