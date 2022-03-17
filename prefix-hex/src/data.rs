@@ -1,7 +1,7 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use alloc::{format, string::String, vec::Vec, boxed::Box};
+use alloc::{boxed::Box, format, string::String, vec::Vec};
 
 use crate::{strip_prefix, Error, FromHexPrefixed, ToHexPrefixed};
 
