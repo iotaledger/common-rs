@@ -49,6 +49,11 @@ fn array_decode_wrong_prefix() {
 }
 
 #[test]
+fn array_encode() {
+    assert_eq!(prefix_hex::encode([0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]), "0x0123456789abcdef");
+}
+
+#[test]
 fn vec_decode() {
     assert_eq!(prefix_hex::decode::<Vec<u8>>("0x000102").unwrap(), [0x0, 0x1, 0x2]);
 }
@@ -61,4 +66,9 @@ fn vec_decode_empty_string() {
 #[test]
 fn vec_decode_odd_length() {
     assert_eq!(prefix_hex::decode::<Vec<u8>>("0xf0f0f"), Err(Error::OddLength));
+}
+
+#[test]
+fn vec_encode() {
+    assert_eq!(prefix_hex::encode(vec![0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]), "0x0123456789abcdef");
 }
