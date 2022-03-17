@@ -57,6 +57,14 @@ fn array_encode() {
 }
 
 #[test]
+fn array_reference_encode() {
+    assert_eq!(
+        prefix_hex::encode(&[0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]),
+        "0x0123456789abcdef"
+    );
+}
+
+#[test]
 fn vec_decode() {
     assert_eq!(prefix_hex::decode::<Vec<u8>>("0x000102").unwrap(), [0x0, 0x1, 0x2]);
 }
