@@ -8,7 +8,7 @@ use crate::{strip_prefix, Error, FromHexPrefixed, ToHexPrefixed};
 macro_rules! impl_from_to_hex {
     ($type:ty) => {
         impl FromHexPrefixed for $type {
-            fn from_hex_prefix(hex: &str) -> Result<Self, Error> {
+            fn from_hex_prefixed(hex: &str) -> Result<Self, Error> {
                 let hex = strip_prefix(hex)?;
 
                 if hex.is_empty() {
@@ -30,7 +30,7 @@ macro_rules! impl_from_to_hex {
         }
 
         impl ToHexPrefixed for $type {
-            fn to_hex_prefix(self) -> String {
+            fn to_hex_prefixed(self) -> String {
                 format!("{:#x}", self)
             }
         }

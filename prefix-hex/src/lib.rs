@@ -23,7 +23,7 @@ pub use error::Error;
 /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
 pub trait FromHexPrefixed: Sized {
     /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
-    fn from_hex_prefix(hex: &str) -> Result<Self, Error>;
+    fn from_hex_prefixed(hex: &str) -> Result<Self, Error>;
 }
 
 // TODO: Maybe introduce `handle_error` function with `#[cold]` attribute.
@@ -44,7 +44,7 @@ fn strip_prefix(hex: &str) -> Result<&str, Error> {
 /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
 pub trait ToHexPrefixed {
     /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
-    fn to_hex_prefix(self) -> String;
+    fn to_hex_prefixed(self) -> String;
 }
 
 /// Decodes a hex string with `0x` prefix into a type `T`.
@@ -60,7 +60,7 @@ pub trait ToHexPrefixed {
 /// assert_eq!(result, Ok([0x0, 0x1, 0x2]));
 /// ```
 pub fn decode<T: FromHexPrefixed>(hex: &str) -> Result<T, Error> {
-    T::from_hex_prefix(hex)
+    T::from_hex_prefixed(hex)
 }
 
 /// Encodes `T` as a hex string with a `0x` prefix.
@@ -74,5 +74,5 @@ pub fn decode<T: FromHexPrefixed>(hex: &str) -> Result<T, Error> {
 /// assert_eq!(prefix_hex::encode([0x1, 0x2, 0x3]), "0x010203");
 /// ```
 pub fn encode<T: ToHexPrefixed>(value: T) -> String {
-    ToHexPrefixed::to_hex_prefix(value)
+    ToHexPrefixed::to_hex_prefixed(value)
 }
