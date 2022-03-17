@@ -26,21 +26,6 @@ pub trait FromHexPrefixed: Sized {
     fn from_hex_prefixed(hex: &str) -> Result<Self, Error>;
 }
 
-// TODO: Maybe introduce `handle_error` function with `#[cold]` attribute.
-fn strip_prefix(hex: &str) -> Result<&str, Error> {
-    if let Some(hex) = hex.strip_prefix("0x") {
-        Ok(hex)
-    } else if hex.len() < 2 {
-        Err(Error::InvalidStringLength)
-    } else {
-        let mut chars = hex.chars();
-        // Panic: the following two operations cannot panic because we checked for `hex.len()` in the `else if` branch.
-        let c0 = chars.next().unwrap();
-        let c1 = chars.next().unwrap();
-        Err(Error::InvalidPrefix { c0, c1 })
-    }
-}
-
 /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
 pub trait ToHexPrefixed {
     /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
@@ -75,4 +60,19 @@ pub fn decode<T: FromHexPrefixed>(hex: &str) -> Result<T, Error> {
 /// ```
 pub fn encode<T: ToHexPrefixed>(value: T) -> String {
     ToHexPrefixed::to_hex_prefixed(value)
+}
+
+// TODO: Maybe introduce `handle_error` function with `#[cold]` attribute.
+fn strip_prefix(hex: &str) -> Result<&str, Error> {
+    if let Some(hex) = hex.strip_prefix("0x") {
+        Ok(hex)
+    } else if hex.len() < 2 {
+        Err(Error::InvalidStringLength)
+    } else {
+        let mut chars = hex.chars();
+        // Panic: the following two operations cannot panic because we checked for `hex.len()` in the `else if` branch.
+        let c0 = chars.next().unwrap();
+        let c1 = chars.next().unwrap();
+        Err(Error::InvalidPrefix { c0, c1 })
+    }
 }
