@@ -14,6 +14,10 @@ on:
       - 'documentation/**'
       - '**.md'
 
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     name: build and test
