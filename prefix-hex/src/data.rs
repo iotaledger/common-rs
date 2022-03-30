@@ -1,7 +1,7 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use alloc::{format, string::String, vec::Vec};
+use alloc::{boxed::Box, format, string::String, vec::Vec};
 
 use crate::{strip_prefix, Error, FromHexPrefixed, ToHexPrefixed};
 
@@ -54,8 +54,16 @@ where
     }
 }
 
-impl ToHexPrefixed for &[u8] {
-    fn to_hex_prefixed(self) -> String {
-        format!("0x{}", hex::encode(self))
-    }
+macro_rules! impl_for_as_ref_type {
+    ($type:ty) => {
+        impl ToHexPrefixed for $type {
+            fn to_hex_prefixed(self) -> String {
+                format!("0x{}", hex::encode(self))
+            }
+        }
+    };
 }
+
+impl_for_as_ref_type!(Box<[u8]>);
+impl_for_as_ref_type!(&Box<[u8]>);
+impl_for_as_ref_type!(&[u8]);
