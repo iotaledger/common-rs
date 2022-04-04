@@ -43,8 +43,7 @@ use crate::{
 ///
 /// We will implement [`Packable`] for a type that encapsulates optional integer values (like `Option<i32>`).
 ///
-/// Following the conventions from the [IOTA protocol messages RFC](https:///github.com/iotaledger/protocol-rfcs/pull/0017),
-/// we will use an integer prefix as a tag to determine which variant of the enum is being packed.
+/// We will use an integer prefix as a tag to determine which variant of the enum is being packed.
 ///
 /// ```rust
 /// use core::convert::Infallible;
