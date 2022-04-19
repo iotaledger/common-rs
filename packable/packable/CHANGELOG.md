@@ -20,11 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security -->
 
 
-## 0.X.X - 2022-XX-XX
+## 0.3.0 - 2022-04-19
 
 ### Added
 
 - Implement `Packable` for tuples;
+- Add `CounterPacker` and `CounterUnpacker`;
+- Implement `Packer` and `Unpacker` for mutable references;
 
 ### Changed
 
