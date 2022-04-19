@@ -6,10 +6,12 @@
 //! The [`Unpacker`] trait represents types that can be used to read bytes from it. It can be thought as a `no_std`
 //! friendly alternative to the [`Read`](std::io::Read) trait.
 
+mod counter;
 #[cfg(feature = "io")]
 mod io;
 mod slice;
 
+pub use counter::CounterUnpacker;
 #[cfg(feature = "io")]
 pub use io::IoUnpacker;
 

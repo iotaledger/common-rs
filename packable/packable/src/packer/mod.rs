@@ -6,12 +6,14 @@
 //! The [`Packer`] trait represents types that can be used to write bytes into it. It can be thought as a `no_std`
 //! friendly alternative to the [`Write`](std::io::Write) trait.
 
+mod counter;
 #[cfg(feature = "io")]
 mod io;
 mod len;
 mod slice;
 mod vec;
 
+pub use counter::CounterPacker;
 #[cfg(feature = "io")]
 pub use io::IoPacker;
 pub(crate) use len::LenPacker;
