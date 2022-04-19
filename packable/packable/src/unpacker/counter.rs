@@ -44,4 +44,9 @@ impl<U: Unpacker> Unpacker for CounterUnpacker<U> {
 
         Ok(())
     }
+
+    #[inline]
+    fn ensure_bytes(&self, len: usize) -> Result<(), Self::Error> {
+        self.inner.ensure_bytes(len)
+    }
 }
