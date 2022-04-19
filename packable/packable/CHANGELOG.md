@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Implement `Packable` for tuples;
+- Add `PackerCounter` and `UnpackerCounter`;
+- Implement `Packer` and `Unpacker` for mutable references;
 
 ### Changed
 
