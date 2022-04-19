@@ -24,6 +24,12 @@ impl<U: Unpacker> CounterUnpacker<U> {
     pub fn counter(&self) -> usize {
         self.counter
     }
+
+    /// Consumes the value to return the inner [`Unpacker`].
+    #[inline]
+    pub fn into_inner(self) -> U {
+        self.inner
+    }
 }
 
 impl<U: Unpacker> Unpacker for CounterUnpacker<U> {
