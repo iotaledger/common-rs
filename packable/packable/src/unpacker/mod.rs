@@ -33,3 +33,17 @@ pub trait Unpacker: Sized {
         Ok(())
     }
 }
+
+impl<U: Unpacker + ?Sized> Unpacker for &mut U {
+    type Error = U::Error;
+
+    #[inline]
+    fn unpack_bytes<B: AsMut<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error> {
+        U::unpack_bytes(*self, bytes)
+    }
+
+    #[inline]
+    fn ensure_bytes(&self, len: usize) -> Result<(), Self::Error> {
+        U::ensure_bytes(*self, len)
+    }
+}

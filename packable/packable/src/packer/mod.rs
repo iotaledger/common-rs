@@ -28,3 +28,12 @@ pub trait Packer {
     /// This method **must** fail if the packer does not have enough space to fulfill the request.
     fn pack_bytes<B: AsRef<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error>;
 }
+
+impl<P: Packer + ?Sized> Packer for &mut P {
+    type Error = P::Error;
+
+    #[inline]
+    fn pack_bytes<B: AsRef<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error> {
+        P::pack_bytes(*self, bytes)
+    }
+}
