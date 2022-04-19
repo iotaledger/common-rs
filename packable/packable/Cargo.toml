@@ -1,6 +1,6 @@
 [package]
 name = "packable"
-version = "0.2.1"
+version = "0.3.0"
 authors = [ "IOTA Stiftung" ]
 edition = "2021"
 description = "A crate for packing and unpacking binary representations."
@@ -19,7 +19,7 @@ usize = [ ]
 autocfg = { version = "1.0.1", default-features = false }
 
 [dependencies]
-packable-derive = { version = "=0.2.1", path = "../packable-derive", default-features = false }
+packable-derive = { version = "=0.3.0", path = "../packable-derive", default-features = false }
 
 primitive-types = { version = "0.10.1", default-features = false, optional = true }
 serde = { version = "1.0.130", default-features = false, features = [ "derive", "std" ], optional = true }
