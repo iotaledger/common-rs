@@ -3,7 +3,7 @@
 
 use crate::packer::Packer;
 
-/// An [`Packer`] able to keep count of the number of read bytes.
+/// A [`Packer`] able to keep count of the number of written bytes.
 pub struct CounterPacker<P: Packer> {
     inner: P,
     counter: usize,
@@ -19,7 +19,7 @@ impl<P: Packer> CounterPacker<P> {
         }
     }
 
-    /// Returns the number of read bytes.
+    /// Returns the number of written bytes.
     #[inline]
     pub fn counter(&self) -> usize {
         self.counter
