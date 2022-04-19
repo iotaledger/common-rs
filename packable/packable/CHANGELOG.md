@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.X.X - 2022-XX-XX
 
+### Added
+
+- Implement `Packable` for tuples;
+
 ### Changed
 
 - Inline more functions in a less aggressive way;

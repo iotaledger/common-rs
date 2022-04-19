@@ -17,6 +17,7 @@ mod num;
 mod primitive_types;
 #[cfg(feature = "usize")]
 mod string;
+mod tuple;
 #[cfg(feature = "usize")]
 mod vec;
 
