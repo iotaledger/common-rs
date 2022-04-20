@@ -36,4 +36,9 @@ impl<'a> Packer for SlicePacker<'a> {
             }),
         }
     }
+
+    #[inline]
+    fn written_bytes(&self) -> Option<usize> {
+        Some(self.offset)
+    }
 }
