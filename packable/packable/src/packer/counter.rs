@@ -44,4 +44,9 @@ impl<P: Packer> Packer for CounterPacker<P> {
 
         Ok(())
     }
+
+    #[inline]
+    fn written_bytes(&self) -> Option<usize> {
+        Some(self.counter)
+    }
 }

@@ -27,6 +27,12 @@ pub trait Packer {
     /// Writes a sequence of bytes into the [`Packer`]. The totality of `bytes` must be written into the packer.
     /// This method **must** fail if the packer does not have enough space to fulfill the request.
     fn pack_bytes<B: AsRef<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error>;
+
+    /// Returns the exact number of written bytes if possible.
+    #[inline]
+    fn written_bytes(&self) -> Option<usize> {
+        None
+    }
 }
 
 impl<P: Packer + ?Sized> Packer for &mut P {
@@ -35,5 +41,10 @@ impl<P: Packer + ?Sized> Packer for &mut P {
     #[inline]
     fn pack_bytes<B: AsRef<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error> {
         P::pack_bytes(*self, bytes)
+    }
+
+    #[inline]
+    fn written_bytes(&self) -> Option<usize> {
+        P::written_bytes(*self)
     }
 }

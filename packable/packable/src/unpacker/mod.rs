@@ -24,13 +24,19 @@ pub trait Unpacker: Sized {
     /// This method **must** fail if the unpacker does not have enough bytes to fulfill the request.
     fn unpack_bytes<B: AsMut<[u8]>>(&mut self, bytes: B) -> Result<(), Self::Error>;
 
-    #[inline]
     /// Tries to guarantee that the [`Unpacker`] has at least `len` bytes.
     ///
     /// This method **must** fail if and only if it is certain that there are not enough bytes and
     /// it is allowed to return `Ok(())` in any other case.
+    #[inline]
     fn ensure_bytes(&self, _len: usize) -> Result<(), Self::Error> {
         Ok(())
+    }
+
+    /// Returns the exact number of read bytes if possible.
+    #[inline]
+    fn read_bytes(&self) -> Option<usize> {
+        None
     }
 }
 
@@ -45,5 +51,10 @@ impl<U: Unpacker + ?Sized> Unpacker for &mut U {
     #[inline]
     fn ensure_bytes(&self, len: usize) -> Result<(), Self::Error> {
         U::ensure_bytes(*self, len)
+    }
+
+    #[inline]
+    fn read_bytes(&self) -> Option<usize> {
+        U::read_bytes(*self)
     }
 }
