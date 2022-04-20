@@ -16,4 +16,9 @@ impl Packer for Vec<u8> {
         self.extend_from_slice(bytes.as_ref());
         Ok(())
     }
+
+    #[inline]
+    fn written_bytes(&self) -> Option<usize> {
+        Some(self.len())
+    }
 }
