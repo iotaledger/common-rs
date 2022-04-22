@@ -12,7 +12,7 @@ macro_rules! impl_from_to_hex {
                 let hex = strip_prefix(hex)?;
 
                 if hex.is_empty() {
-                    return Err(Error::InvalidStringLength);
+                    return Ok(<$type>::zero());
                 }
 
                 <$type>::from_str_radix(hex, 16).map_err(|error| match error.kind() {

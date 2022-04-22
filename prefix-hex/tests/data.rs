@@ -91,6 +91,11 @@ fn vec_decode_empty_string() {
 }
 
 #[test]
+fn vec_decode_empty_string_with_prefix() {
+    assert_eq!(prefix_hex::decode(""), Ok(vec![]));
+}
+
+#[test]
 fn vec_decode_odd_length() {
     assert_eq!(prefix_hex::decode::<Vec<u8>>("0xf0f0f"), Err(Error::OddLength));
 }

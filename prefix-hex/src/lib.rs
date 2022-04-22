@@ -64,7 +64,9 @@ pub fn encode<T: ToHexPrefixed>(value: T) -> String {
 
 // TODO: Maybe introduce `handle_error` function with `#[cold]` attribute.
 fn strip_prefix(hex: &str) -> Result<&str, Error> {
-    if let Some(hex) = hex.strip_prefix("0x") {
+    if hex.is_empty() {
+        Ok(hex)
+    } else if let Some(hex) = hex.strip_prefix("0x") {
         Ok(hex)
     } else if hex.len() < 2 {
         Err(Error::InvalidStringLength)

@@ -7,18 +7,26 @@ macro_rules! test_impl {
     ($name:ident, $type:ty) => {
         ::paste::item! {
             #[test]
-            fn [< $name _decode_zero >]() {
+            fn [< $name _decode_empty >]() {
                 assert_eq!(
-                    prefix_hex::decode("0x0"),
+                    prefix_hex::decode(""),
                     Ok(<$type>::zero())
                 );
             }
 
             #[test]
-            fn [< $name _decode_err_no_body >]() {
+            fn [< $name _decode_empty_with_prefix >]() {
                 assert_eq!(
-                    prefix_hex::decode::<$type>("0x"),
-                    Err(prefix_hex::Error::InvalidStringLength)
+                    prefix_hex::decode("0x"),
+                    Ok(<$type>::zero())
+                );
+            }
+
+            #[test]
+            fn [< $name _decode_zero >]() {
+                assert_eq!(
+                    prefix_hex::decode("0x0"),
+                    Ok(<$type>::zero())
                 );
             }
 
