@@ -97,12 +97,18 @@ impl<T, E> From<Infallible> for UnpackPrefixError<T, E> {
 /// Wrapper type for [`Vec<T>`] with a length prefix.
 /// The [`Vec<T>`]'s prefix bounds are provided by `B`, where `B` is a [`Bounded`] type.
 /// The prefix type is the `Bounds` type associated with `B`.
-#[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct VecPrefix<T, B: Bounded> {
     inner: Vec<T>,
     bounded: PhantomData<B>,
+}
+
+impl<T: fmt::Debug, B: Bounded> fmt::Debug for VecPrefix<T, B> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "VecPrefix({:?})", self.inner)
+    }
 }
 
 impl<T, B: Bounded> Default for VecPrefix<T, B> {
@@ -222,12 +228,18 @@ where
 /// Wrapper type for `Box<[T]>` with a length prefix.
 /// The boxed slice's prefix bounds are provided by `B`, where `B` is a [`Bounded`] type.
 /// The prefix type is the `Bounds` type associated with `B`.
-#[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct BoxedSlicePrefix<T, B: Bounded> {
     inner: Box<[T]>,
     bounded: PhantomData<B>,
+}
+
+impl<T: fmt::Debug, B: Bounded> fmt::Debug for BoxedSlicePrefix<T, B> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "BoxedSlicePrefix({:?})", self.inner)
+    }
 }
 
 impl<T, B: Bounded> Default for BoxedSlicePrefix<T, B> {
