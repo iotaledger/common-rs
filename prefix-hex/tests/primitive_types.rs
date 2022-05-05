@@ -1,7 +1,7 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-#![cfg(all(feature = "primitive-types1"))]
+#![cfg(all(feature = "primitive-types"))]
 
 macro_rules! test_impl {
     ($name:ident, $type:ty) => {

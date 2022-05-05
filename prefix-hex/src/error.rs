@@ -14,6 +14,9 @@ pub enum Error {
     OddLength,
 }
 
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
+
 impl From<FromHexError> for Error {
     fn from(v: FromHexError) -> Error {
         match v {
