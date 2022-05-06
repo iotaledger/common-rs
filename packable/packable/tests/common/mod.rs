@@ -11,7 +11,7 @@ use packable::{
 
 fn generic_test_pack_to_slice_unpack_verified<P>(packable: &P)
 where
-    P: Packable + PartialEq + Debug,
+    P: Packable<UnpackVisitor = ()> + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     let mut vec = vec![0; packable.packed_len()];
@@ -31,7 +31,7 @@ where
 
 fn generic_test_pack_to_vec_unpack_verified<P>(packable: &P) -> (Vec<u8>, P)
 where
-    P: Packable + PartialEq + Debug,
+    P: Packable<UnpackVisitor = ()> + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     let vec = packable.pack_to_vec();
@@ -45,7 +45,7 @@ where
 
 pub fn generic_test<P>(packable: &P) -> (Vec<u8>, P)
 where
-    P: Packable + PartialEq + Debug,
+    P: Packable<UnpackVisitor = ()> + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     // Tests for `Vec` and `&[u8]`
@@ -60,7 +60,7 @@ where
     let mut packer = IoPacker::new(Vec::new());
     packable.pack(&mut packer).unwrap();
     let mut unpacker = IoUnpacker::new(packer.as_slice());
-    let unpacked = P::unpack::<_, true>(&mut unpacker).unwrap();
+    let unpacked = P::unpack::<_, true>(&mut unpacker, &mut ()).unwrap();
     assert_eq!(packable, &unpacked);
 
     generic_test_pack_to_slice_unpack_verified(packable);

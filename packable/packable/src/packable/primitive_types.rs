@@ -9,6 +9,7 @@ use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 impl Packable for U256 {
     type UnpackError = Infallible;
+    type UnpackVisitor = ();
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -18,7 +19,8 @@ impl Packable for U256 {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &mut Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        <[u64; 4]>::unpack::<_, VERIFY>(unpacker).map(Self)
+        <[u64; 4]>::unpack::<_, VERIFY>(unpacker, visitor).map(Self)
     }
 }

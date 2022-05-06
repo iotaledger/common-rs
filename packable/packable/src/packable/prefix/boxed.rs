@@ -86,12 +86,13 @@ where
 impl<T, B> Packable for BoxedSlicePrefix<T, B>
 where
     T: Packable,
-    B: Bounded + Packable,
+    B: Bounded + Packable<UnpackVisitor = ()>,
     <B::Bounds as TryInto<B>>::Error: fmt::Debug,
     <B as TryFrom<usize>>::Error: fmt::Debug,
     Range<B::Bounds>: Iterator<Item = B::Bounds>,
 {
     type UnpackError = <VecPrefix<T, B> as Packable>::UnpackError;
+    type UnpackVisitor = T::UnpackVisitor;
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -115,8 +116,9 @@ where
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &mut Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        let vec: Vec<T> = VecPrefix::<T, B>::unpack::<_, VERIFY>(unpacker)?.into();
+        let vec: Vec<T> = VecPrefix::<T, B>::unpack::<_, VERIFY>(unpacker, visitor)?.into();
 
         Ok(Self {
             inner: vec.into_boxed_slice(),

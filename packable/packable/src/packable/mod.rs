@@ -23,6 +23,7 @@ mod vec;
 
 use alloc::vec::Vec;
 use core::{
+    borrow::BorrowMut,
     convert::{AsRef, Infallible},
     fmt::Debug,
 };
@@ -63,6 +64,7 @@ use crate::{
 ///
 /// impl Packable for Maybe {
 ///     type UnpackError = UnknownTagError<u8>;
+///     type UnpackVisitor = ();
 ///
 ///     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
 ///         match self {
@@ -78,10 +80,13 @@ use crate::{
 ///
 ///     fn unpack<U: Unpacker, const VERIFY: bool>(
 ///         unpacker: &mut U,
+///         visitor: &mut Self::UnpackVisitor,
 ///     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-///         match u8::unpack::<_, VERIFY>(unpacker).coerce()? {
+///         match u8::unpack::<_, VERIFY>(unpacker, visitor).coerce()? {
 ///             0u8 => Ok(Self::Nothing),
-///             1u8 => Ok(Self::Just(i32::unpack::<_, VERIFY>(unpacker).coerce()?)),
+///             1u8 => Ok(Self::Just(
+///                 i32::unpack::<_, VERIFY>(unpacker, visitor).coerce()?,
+///             )),
 ///             tag => Err(UnpackError::Packable(UnknownTagError(tag))),
 ///         }
 ///     }
@@ -178,6 +183,8 @@ pub trait Packable: Sized + 'static {
     /// It is recommended to use [`Infallible`](core::convert::Infallible) if this kind of error is impossible or
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
     type UnpackError: Debug + From<Infallible>;
+    /// FIXME: docs
+    type UnpackVisitor: BorrowMut<()>;
 
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
@@ -186,6 +193,7 @@ pub trait Packable: Sized + 'static {
     /// syntactic checks.
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &mut Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>>;
 }
 
@@ -209,7 +217,7 @@ pub trait PackableExt: Packable {
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 }
 
-impl<P: Packable> PackableExt for P {
+impl<P: Packable<UnpackVisitor = ()>> PackableExt for P {
     #[inline]
     fn packed_len(&self) -> usize {
         let mut packer = LenPacker(0);
@@ -235,7 +243,7 @@ impl<P: Packable> PackableExt for P {
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()))
+        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()), &mut ())
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
@@ -243,6 +251,6 @@ impl<P: Packable> PackableExt for P {
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()))
+        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), &mut ())
     }
 }

@@ -1,6 +1,8 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use core::borrow::BorrowMut;
+
 use crate::{
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
@@ -12,9 +14,12 @@ macro_rules! tuple_impls {
     ($($Tuple:ident { ($first_idx:tt) -> $FirstT:ident $(($idx:tt) -> $T:ident)* })+) => {
         $(
             impl<$FirstT: Packable,$($T: Packable),*> Packable for ($FirstT,$($T,)*)
-            where $($T::UnpackError: Into<$FirstT::UnpackError>,)*
+            where
+                $($T::UnpackError: Into<$FirstT::UnpackError>,)*
+                $($FirstT::UnpackVisitor: BorrowMut<$T::UnpackVisitor>,)*
             {
                 type UnpackError = $FirstT::UnpackError;
+                type UnpackVisitor = $FirstT::UnpackVisitor;
 
                 fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
                     self.$first_idx.pack(packer)?;
@@ -25,10 +30,11 @@ macro_rules! tuple_impls {
 
                 fn unpack<U: Unpacker, const VERIFY: bool>(
                     unpacker: &mut U,
+                    visitor: &mut Self::UnpackVisitor,
                 ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
                     Ok((
-                            <$FirstT>::unpack::<_, VERIFY>(unpacker)?,
-                            $( (<$T>::unpack::<_, VERIFY>(unpacker).map_packable_err(Into::into))?,)*
+                            <$FirstT>::unpack::<_, VERIFY>(unpacker, visitor)?,
+                            $( (<$T>::unpack::<_, VERIFY>(unpacker, visitor.borrow_mut()).map_packable_err(Into::into))?,)*
                        ))
                 }
             }
