@@ -47,6 +47,7 @@ fn validate_ident(ident: &Ident) -> Result<()> {
     const KNOWN_IDENTS: &[&str] = &[
         "unpack_error",
         "unpack_error_with",
+        "unpack_visitor",
         "tag_type",
         "tag",
         "with",
