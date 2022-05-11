@@ -121,3 +121,18 @@ impl_packable_test_for_bounded_vec_prefix!(
     1,
     64
 );
+
+#[test]
+fn debug_impl() {
+    let buf = VecPrefix::<u8, u64>::try_from(vec![0xde, 0xad, 0xbe, 0xef]).unwrap();
+
+    let expected = "VecPrefix(0xdeadbeef)";
+    let found = format!("{:?}", buf);
+    assert_eq!(expected, found);
+
+    let buf = VecPrefix::<u16, u64>::try_from(vec![0xde, 0xad, 0xbe, 0xef]).unwrap();
+
+    let expected = "VecPrefix([222, 173, 190, 239])";
+    let found = format!("{:?}", buf);
+    assert_eq!(expected, found);
+}
