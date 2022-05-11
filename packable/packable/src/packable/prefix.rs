@@ -5,7 +5,7 @@
 
 extern crate alloc;
 
-use alloc::{boxed::Box, vec, vec::Vec};
+use alloc::{boxed::Box, string::String, vec, vec::Vec};
 use core::{
     any::TypeId,
     convert::Infallible,
@@ -105,9 +105,22 @@ pub struct VecPrefix<T, B: Bounded> {
     bounded: PhantomData<B>,
 }
 
-impl<T: fmt::Debug, B: Bounded> fmt::Debug for VecPrefix<T, B> {
+impl<T: fmt::Debug + 'static, B: Bounded> fmt::Debug for VecPrefix<T, B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "VecPrefix({:?})", self.inner)
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            use core::fmt::Write;
+            // SAFETY: `T` is `u8`.
+            let inner = unsafe { &*(&self.inner as *const _ as *const Vec<u8>) };
+            let mut buf = String::with_capacity(2 * self.inner.len());
+
+            for byte in inner {
+                write!(buf, "{:x}", byte)?;
+            }
+
+            write!(f, "VecPrefix(0x{})", buf)
+        } else {
+            write!(f, "VecPrefix({:?})", self.inner)
+        }
     }
 }
 
@@ -236,9 +249,22 @@ pub struct BoxedSlicePrefix<T, B: Bounded> {
     bounded: PhantomData<B>,
 }
 
-impl<T: fmt::Debug, B: Bounded> fmt::Debug for BoxedSlicePrefix<T, B> {
+impl<T: fmt::Debug + 'static, B: Bounded> fmt::Debug for BoxedSlicePrefix<T, B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "BoxedSlicePrefix({:?})", self.inner)
+        if TypeId::of::<T>() == TypeId::of::<u8>() {
+            use core::fmt::Write;
+            // SAFETY: `T` is `u8`.
+            let inner = unsafe { &*(&self.inner as *const _ as *const Box<[u8]>) };
+            let mut buf = String::with_capacity(2 * self.inner.len());
+
+            for byte in inner.iter() {
+                write!(buf, "{:x}", byte)?;
+            }
+
+            write!(f, "BoxedSlicePrefix(0x{})", buf)
+        } else {
+            write!(f, "BoxedSlicePrefix({:?})", self.inner)
+        }
     }
 }
 

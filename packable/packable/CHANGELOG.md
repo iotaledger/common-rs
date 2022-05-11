@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.3.3 - 2022-05-11
+
+### Added
+
+- Custom `Debug` impl for `VecPrefix<u8, _>`;
+- Custom `Debug` impl for `BoxedSlicePrefix<u8, _>`;
+
 ## 0.3.2 - 2022-05-04
 
 ### Added

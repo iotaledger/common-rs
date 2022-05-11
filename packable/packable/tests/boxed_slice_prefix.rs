@@ -142,3 +142,18 @@ impl_packable_test_for_bounded_boxed_slice_prefix!(
     1,
     64
 );
+
+#[test]
+fn debug_impl() {
+    let buf = BoxedSlicePrefix::<u8, u64>::try_from(vec![0xde, 0xad, 0xbe, 0xef].into_boxed_slice()).unwrap();
+
+    let expected = "BoxedSlicePrefix(0xdeadbeef)";
+    let found = format!("{:?}", buf);
+    assert_eq!(expected, found);
+
+    let buf = BoxedSlicePrefix::<u16, u64>::try_from(vec![0xde, 0xad, 0xbe, 0xef].into_boxed_slice()).unwrap();
+
+    let expected = "BoxedSlicePrefix([222, 173, 190, 239])";
+    let found = format!("{:?}", buf);
+    assert_eq!(expected, found);
+}
