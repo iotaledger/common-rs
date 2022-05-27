@@ -107,7 +107,11 @@ pub struct VecPrefix<T, B: Bounded> {
 
 impl<T: fmt::Debug, B: Bounded> fmt::Debug for VecPrefix<T, B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "VecPrefix({:?})", self.inner)
+        if f.alternate() {
+            write!(f, "VecPrefix({:#?})", self.inner)
+        } else {
+            write!(f, "VecPrefix({:?})", self.inner)
+        }
     }
 }
 
@@ -238,7 +242,11 @@ pub struct BoxedSlicePrefix<T, B: Bounded> {
 
 impl<T: fmt::Debug, B: Bounded> fmt::Debug for BoxedSlicePrefix<T, B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "BoxedSlicePrefix({:?})", self.inner)
+        if f.alternate() {
+            write!(f, "BoxedSlicePrefix({:#?})", self.inner)
+        } else {
+            write!(f, "BoxedSlicePrefix({:?})", self.inner)
+        }
     }
 }
 

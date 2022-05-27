@@ -33,12 +33,11 @@ macro_rules! impl_packable_test_for_boxed_slice_prefix {
     ($packable_boxed_slice_prefix:ident, $packable_boxed_slice_prefix_invalid_length:ident, $ty:ty) => {
         #[test]
         fn $packable_boxed_slice_prefix() {
+            let b = <BoxedSlicePrefix<Option<u32>, $ty>>::try_from(vec![Some(0u32), None].into_boxed_slice()).unwrap();
+            println!("{:?}", b);
+            println!("{:#?}", b);
             assert_eq!(
-                common::generic_test(
-                    &<BoxedSlicePrefix<Option<u32>, $ty>>::try_from(vec![Some(0u32), None].into_boxed_slice()).unwrap()
-                )
-                .0
-                .len(),
+                common::generic_test(&b).0.len(),
                 core::mem::size_of::<$ty>()
                     + (core::mem::size_of::<u8>() + core::mem::size_of::<u32>())
                     + core::mem::size_of::<u8>()
