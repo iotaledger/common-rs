@@ -160,7 +160,7 @@ fn jwt_immature_signature() {
     let mut claims = Claims::new("issuer", "subject", "audience")
         .expires_after(Duration::from_secs(1000))
         .unwrap();
-    claims.nbf = claims.nbf + 100;
+    claims.nbf += 100;
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
 
