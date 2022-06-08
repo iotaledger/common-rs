@@ -11,8 +11,8 @@ keywords = [ "iota", "auth" ]
 homepage = "https://www.iota.org"
 
 [dependencies]
-jsonwebtoken = { version = "7.2.0", default-features = false }
+jsonwebtoken = { version = "8.1.0", default-features = false }
 rand = { version = "0.8.4", default-features = false, features = [ "std" ] }
-rust-argon2 = { version = "0.8.3", default-features = false }
+rust-argon2 = { version = "1.0.0", default-features = false }
 serde = { version = "1.0.30", default-features = false, features = [ "std", "derive" ] }
 thiserror = { version = "1.0.30", default-features = false }
