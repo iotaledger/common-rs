@@ -16,6 +16,12 @@ pub enum Error {
     /// Provided an invalid expiry date.
     #[error("invalid expiry time {expiry} from issue time {issued_at}")]
     InvalidExpiry { issued_at: u64, expiry: u64 },
+    /// Provided an invalid not before date.
+    #[error("invalid not before time {nbf} from issue time {issued_at}")]
+    InvalidNbf { issued_at: u64, nbf: u64 },
+    /// The system time is before the UNIX epoch.
+    #[error("system time is before the UNIX epoch")]
+    InvalidSystemTime,
     /// An error occured in the [`jsonwebtoken`] crate.
     #[error(transparent)]
     Jwt(#[from] jsonwebtoken::errors::Error),
@@ -59,30 +65,64 @@ pub struct Claims {
 
 impl Claims {
     /// Creates a new set of claims.
-    pub fn new(iss: impl Into<String>, sub: impl Into<String>, aud: impl Into<String>) -> Self {
+    pub fn new(iss: impl Into<String>, sub: impl Into<String>, aud: impl Into<String>) -> Result<Self, Error> {
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
-            .as_ref()
-            .map(Duration::as_secs)
-            .unwrap_or_default();
-        Self {
+            .map_err(|_| Error::InvalidSystemTime)?
+            .as_secs();
+        Ok(Self {
             iss: iss.into(),
             sub: sub.into(),
             aud: aud.into(),
             exp: None,
             nbf: now,
             iat: now,
-        }
+        })
     }
 
-    /// Specifies that this token will expire, and provides an expiry time (offset from issue time).
-    pub fn expires_after(mut self, dur: Duration) -> Result<Self, Error> {
+    /// Specify that this token will expire by providing an expiry timestamp.
+    pub fn expires_after(mut self, exp: u64) -> Result<Self, Error> {
+        if exp < self.iat {
+            return Err(Error::InvalidExpiry {
+                issued_at: self.iat,
+                expiry: exp,
+            });
+        }
+        self.exp = Some(exp);
+        Ok(self)
+    }
+
+    /// Specify that this token will expire by providing a duration offset from issued time.
+    pub fn expires_after_duration(mut self, dur: Duration) -> Result<Self, Error> {
         let dur = dur.as_secs();
-        let exp = self.nbf.checked_add(dur).ok_or(Error::InvalidExpiry {
-            issued_at: self.nbf,
-            expiry: self.nbf + dur,
+        let exp = self.iat.checked_add(dur).ok_or(Error::InvalidExpiry {
+            issued_at: self.iat,
+            expiry: self.iat + dur,
         })?;
         self.exp = Some(exp);
+        Ok(self)
+    }
+
+    /// Specify that this token is valid after the given timestamp.
+    pub fn valid_after(mut self, nbf: u64) -> Result<Self, Error> {
+        if nbf < self.iat {
+            return Err(Error::InvalidNbf {
+                issued_at: self.iat,
+                nbf,
+            });
+        }
+        self.nbf = nbf;
+        Ok(self)
+    }
+
+    /// Specify when this token becomes valid by providing a duration offset from issued time.
+    pub fn valid_after_duration(mut self, dur: Duration) -> Result<Self, Error> {
+        let dur = dur.as_secs();
+        let nbf = self.iat.checked_add(dur).ok_or(Error::InvalidNbf {
+            issued_at: self.iat,
+            nbf: self.iat + dur,
+        })?;
+        self.nbf = nbf;
         Ok(self)
     }
 

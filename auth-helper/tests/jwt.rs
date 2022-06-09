@@ -8,7 +8,8 @@ use auth_helper::jwt::{BuildValidation, Claims, Error, JsonWebToken, Validation}
 #[test]
 fn jwt_valid() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
@@ -29,7 +30,8 @@ fn jwt_valid() {
 #[test]
 fn jwt_to_str_from_str_valid() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
 
     let jwt = JsonWebToken::from(JsonWebToken::new(claims, b"secret").unwrap().to_string());
@@ -50,7 +52,8 @@ fn jwt_to_str_from_str_valid() {
 #[test]
 fn jwt_invalid_issuer() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
@@ -71,7 +74,8 @@ fn jwt_invalid_issuer() {
 #[test]
 fn jwt_invalid_subject() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
@@ -92,7 +96,8 @@ fn jwt_invalid_subject() {
 #[test]
 fn jwt_invalid_audience() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
@@ -113,7 +118,8 @@ fn jwt_invalid_audience() {
 #[test]
 fn jwt_invalid_secret() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
@@ -134,7 +140,8 @@ fn jwt_invalid_secret() {
 #[test]
 fn jwt_invalid_expired() {
     let claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(0))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(0))
         .unwrap();
 
     let jwt = JsonWebToken::new(claims, b"secret").unwrap();
@@ -158,7 +165,8 @@ fn jwt_invalid_expired() {
 #[test]
 fn jwt_immature_signature() {
     let mut claims = Claims::new("issuer", "subject", "audience")
-        .expires_after(Duration::from_secs(1000))
+        .unwrap()
+        .expires_after_duration(Duration::from_secs(1000))
         .unwrap();
     claims.nbf += 100;
 
