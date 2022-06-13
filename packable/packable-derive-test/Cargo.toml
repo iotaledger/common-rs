@@ -1,6 +1,6 @@
 [package]
 name = "packable-derive-test"
-version = "0.3.4"
+version = "0.4.0"
 authors = [ "IOTA Stiftung" ]
 edition = "2021"
 description = "Test suite for the `packable-derive` crate."
@@ -16,7 +16,7 @@ name = "tests"
 path = "tests/lib.rs"
 
 [dev-dependencies]
-packable = { version = "=0.3.4", path = "../packable", default-features = false }
+packable = { version = "=0.4.0", path = "../packable", default-features = false }
 
 rustversion = { version = "1.0.5", default-features = false }
 trybuild = { version = "1.0.50", default-features = false, features = [ "diff" ] }
