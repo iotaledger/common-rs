@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.3.4 - 2022-06-13
+
+### Added
+
+- Add the `StringPrefix` type;
+
 ## 0.3.3 - 2022-05-27
 
 ### Added
