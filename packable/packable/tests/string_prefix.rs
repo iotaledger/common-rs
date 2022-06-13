@@ -26,10 +26,7 @@ fn packable_string_prefix_from_string_invalid_error() {
 fn packable_string_prefix_from_string_truncated_error() {
     // This measures 257 bytes.
     let string = String::from(
-        "In the town where I was born lived a man who sailed to sea and he
-                              told us of his life in the land of submarines. So we sailed on to the
-                              sun til we found a sea of green and we lived beneath the waves in our
-                              yellow submarine. We all live in a yellow submarine",
+        "In the town where I was born lived a man who sailed to sea and he told us of his life in the land of submarines. So we sailed on to the sun til we found a sea of green and we lived beneath the waves in our yellow submarine. We all live in a yellow submarine",
     );
     let prefixed = StringPrefix::<u8>::try_from(string);
 
