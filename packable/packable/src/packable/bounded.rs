@@ -60,11 +60,9 @@ macro_rules! bounded {
             }
         }
 
-        // We cannot provide a [`From`] implementation because primitives are not in this crate.
-        #[allow(clippy::from_over_into)]
-        impl<const MIN: $ty, const MAX: $ty> Into<$ty> for $wrapper<MIN, MAX> {
-            fn into(self) -> $ty {
-                self.get()
+        impl<const MIN: $ty, const MAX: $ty> From<$wrapper<MIN, MAX>> for $ty {
+            fn from(wrapper: $wrapper<MIN, MAX>) -> Self {
+                wrapper.get()
             }
         }
 
@@ -100,17 +98,15 @@ macro_rules! bounded {
             }
         }
 
-        #[allow(clippy::from_over_into)]
         impl<const MIN: $ty, const MAX: $ty> From<Infallible> for $invalid_error<MIN, MAX> {
             fn from(err: Infallible) -> Self {
                 match err {}
             }
         }
 
-        #[allow(clippy::from_over_into)]
-        impl<const MIN: $ty, const MAX: $ty> Into<$ty> for $invalid_error<MIN, MAX> {
-            fn into(self) -> $ty {
-                self.0
+        impl<const MIN: $ty, const MAX: $ty> From<$invalid_error<MIN, MAX>> for $ty {
+            fn from(error: $invalid_error<MIN, MAX>) -> $ty {
+                error.0
             }
         }
 

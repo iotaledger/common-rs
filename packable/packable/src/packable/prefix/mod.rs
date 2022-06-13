@@ -60,11 +60,9 @@ impl<T> UnpackPrefixError<T, Infallible> {
     }
 }
 
-/// We cannot provide a [`From`] implementation because [`Infallible`] is not from this crate.
-#[allow(clippy::from_over_into)]
-impl Into<Infallible> for UnpackPrefixError<Infallible, Infallible> {
-    fn into(self) -> Infallible {
-        let (Self::Item(err) | Self::Prefix(err)) = self;
+impl From<UnpackPrefixError<Infallible, Infallible>> for Infallible {
+    fn from(err: UnpackPrefixError<Infallible, Infallible>) -> Self {
+        let (UnpackPrefixError::Item(err) | UnpackPrefixError::Prefix(err)) = err;
         match err {}
     }
 }

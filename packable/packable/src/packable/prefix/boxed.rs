@@ -61,11 +61,9 @@ impl<T, B: Bounded> DerefMut for BoxedSlicePrefix<T, B> {
     }
 }
 
-/// We cannot provide a [`From`] implementation because [`Vec`] is not from this crate.
-#[allow(clippy::from_over_into)]
-impl<T, B: Bounded> Into<Box<[T]>> for BoxedSlicePrefix<T, B> {
-    fn into(self) -> Box<[T]> {
-        self.inner
+impl<T, B: Bounded> From<BoxedSlicePrefix<T, B>> for Box<[T]> {
+    fn from(prefix: BoxedSlicePrefix<T, B>) -> Self {
+        prefix.inner
     }
 }
 

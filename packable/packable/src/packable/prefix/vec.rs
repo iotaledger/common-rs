@@ -58,11 +58,9 @@ impl<T, B: Bounded> Deref for VecPrefix<T, B> {
     }
 }
 
-/// We cannot provide a [`From`] implementation because [`Vec`] is not from this crate.
-#[allow(clippy::from_over_into)]
-impl<T, B: Bounded> Into<Vec<T>> for VecPrefix<T, B> {
-    fn into(self) -> Vec<T> {
-        self.inner
+impl<T, B: Bounded> From<VecPrefix<T, B>> for Vec<T> {
+    fn from(prefix: VecPrefix<T, B>) -> Self {
+        prefix.inner
     }
 }
 

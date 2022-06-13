@@ -57,11 +57,9 @@ impl<B: Bounded> Deref for StringPrefix<B> {
     }
 }
 
-/// We cannot provide a [`From`] implementation because [`String`] is not from this crate.
-#[allow(clippy::from_over_into)]
-impl<B: Bounded> Into<String> for StringPrefix<B> {
-    fn into(self) -> String {
-        self.inner
+impl<B: Bounded> From<StringPrefix<B>> for String {
+    fn from(prefix: StringPrefix<B>) -> String {
+        prefix.inner
     }
 }
 
