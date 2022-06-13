@@ -108,11 +108,9 @@ where
 {
 }
 
-/// We cannot provide a [`From`] implementation because [`Infallible`] is not from this crate.
-#[allow(clippy::from_over_into)]
-impl Into<Infallible> for UnpackError<Infallible, Infallible> {
-    fn into(self) -> Infallible {
-        let (Self::Packable(err) | Self::Unpacker(err)) = self;
+impl From<UnpackError<Infallible, Infallible>> for Infallible {
+    fn from(val: UnpackError<Infallible, Infallible>) -> Self {
+        let (UnpackError::Packable(err) | UnpackError::Unpacker(err)) = val;
         match err {}
     }
 }
