@@ -1,4 +1,4 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 extern crate alloc;
@@ -20,8 +20,8 @@ use crate::{
 };
 
 /// Wrapper type for [`String`] with a length prefix.
-/// The [`String`]'s prefix bounds are provided by `B`, where `B` is a [`Bounded`] type.
-/// The prefix type is the `Bounds` type associated with `B`.
+/// The [`String`]'s prefix bounds are provided by `B`, where `B` is a [`Bounded`] type. The prefix
+/// type is the `Bounds` type associated with `B`.
 #[derive(Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
@@ -57,7 +57,7 @@ impl<B: Bounded> Deref for StringPrefix<B> {
     }
 }
 
-/// We cannot provide a [`From`] implementation because [`Vec`] is not from this crate.
+/// We cannot provide a [`From`] implementation because [`String`] is not from this crate.
 #[allow(clippy::from_over_into)]
 impl<B: Bounded> Into<String> for StringPrefix<B> {
     fn into(self) -> String {
