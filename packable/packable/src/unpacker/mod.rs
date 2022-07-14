@@ -14,6 +14,7 @@ mod slice;
 pub use counter::CounterUnpacker;
 #[cfg(feature = "io")]
 pub use io::IoUnpacker;
+pub use slice::SliceUnpacker;
 
 /// A type that can unpack any value that implements [`Packable`](crate::Packable).
 pub trait Unpacker: Sized {

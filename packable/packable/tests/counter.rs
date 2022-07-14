@@ -3,7 +3,7 @@
 
 use packable::{
     packer::{CounterPacker, Packer},
-    unpacker::{CounterUnpacker, Unpacker},
+    unpacker::{CounterUnpacker, SliceUnpacker, Unpacker},
     Packable, PackableExt,
 };
 
@@ -17,7 +17,7 @@ fn option_counter() {
     assert_eq!(packer.counter(), packer.written_bytes().unwrap());
 
     let packer = packer.into_inner();
-    let mut unpacker = CounterUnpacker::new(packer.as_slice());
+    let mut unpacker = CounterUnpacker::new(SliceUnpacker::new(packer.as_slice()));
 
     let unpacked_value = Option::<u32>::unpack::<_, true>(&mut unpacker).unwrap();
     assert_eq!(unpacked_value.packed_len(), unpacker.counter());

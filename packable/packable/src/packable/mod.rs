@@ -32,7 +32,7 @@ pub use packable_derive::Packable;
 use crate::{
     error::{UnexpectedEOF, UnpackError},
     packer::{LenPacker, Packer},
-    unpacker::Unpacker,
+    unpacker::{SliceUnpacker, Unpacker},
 };
 
 /// A type that can be packed and unpacked.
@@ -235,7 +235,7 @@ impl<P: Packable> PackableExt for P {
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, true>(&mut bytes.as_ref())
+        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()))
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
@@ -243,6 +243,6 @@ impl<P: Packable> PackableExt for P {
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(&mut bytes.as_ref())
+        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()))
     }
 }
