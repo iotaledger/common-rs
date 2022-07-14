@@ -3,7 +3,20 @@
 
 use crate::{error::UnexpectedEOF, unpacker::Unpacker};
 
-impl<'u> Unpacker for &'u [u8] {
+/// A [`Unpacker`] backed by a `&mut [u8]`.
+#[repr(transparent)]
+pub struct SliceUnpacker<'a> {
+    slice: &'a [u8],
+}
+
+impl<'a> SliceUnpacker<'a> {
+    /// Creates a new [`SliceUnpacker`] from a `&[u8]`.
+    pub fn new(slice: &'a [u8]) -> Self {
+        Self { slice }
+    }
+}
+
+impl<'u> Unpacker for SliceUnpacker<'u> {
     type Error = UnexpectedEOF;
 
     #[inline]
@@ -11,25 +24,25 @@ impl<'u> Unpacker for &'u [u8] {
         let slice = bytes.as_mut();
         let len = slice.len();
 
-        if self.len() >= len {
-            let (head, tail) = self.split_at(len);
-            *self = tail;
+        if self.slice.len() >= len {
+            let (head, tail) = self.slice.split_at(len);
+            self.slice = tail;
             slice.copy_from_slice(head);
             Ok(())
         } else {
             Err(UnexpectedEOF {
                 required: len,
-                had: self.len(),
+                had: self.slice.len(),
             })
         }
     }
 
     #[inline]
     fn ensure_bytes(&self, len: usize) -> Result<(), Self::Error> {
-        if self.len() < len {
+        if self.slice.len() < len {
             Err(UnexpectedEOF {
                 required: len,
-                had: self.len(),
+                had: self.slice.len(),
             })
         } else {
             Ok(())
