@@ -18,7 +18,7 @@ const DEFAULT_OUTPUT_LEVEL_FILTER: LevelFilter = LevelFilter::Info;
 const DEFAULT_COLOR_ENABLED: bool = false;
 
 /// Builder for a logger output configuration.
-#[derive(Default, Deserialize, PartialEq)]
+#[derive(Default, Deserialize, PartialEq, Eq)]
 #[must_use]
 pub struct LoggerOutputConfigBuilder {
     /// Name of an output file, or `stdout` for standard output.
@@ -99,7 +99,7 @@ impl LoggerOutputConfigBuilder {
 }
 
 /// Logger output configuration.
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct LoggerOutputConfig {
     /// Name of an output file, or `stdout` for standard output.
     pub(crate) name: String,
@@ -141,7 +141,7 @@ impl LoggerOutputConfig {
 }
 
 /// Builder for a logger configuration.
-#[derive(Default, Deserialize, PartialEq)]
+#[derive(Default, Deserialize, PartialEq, Eq)]
 #[must_use]
 pub struct LoggerConfigBuilder {
     /// Width of the target section of a log.
@@ -204,7 +204,7 @@ impl LoggerConfigBuilder {
 }
 
 /// Logger configuration.
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct LoggerConfig {
     /// Width of the target section of a log.
     pub(crate) target_width: usize,
