@@ -209,15 +209,17 @@ pub trait PackableExt: Packable {
     /// Unpacks this value from a sequence of bytes doing syntactical checks.
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
+        visitor: &mut Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 
     /// Unpacks this value from a sequence of bytes without doing syntactical checks.
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
+        visitor: &mut Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 }
 
-impl<P: Packable<UnpackVisitor = ()>> PackableExt for P {
+impl<P: Packable> PackableExt for P {
     #[inline]
     fn packed_len(&self) -> usize {
         let mut packer = LenPacker(0);
@@ -242,15 +244,17 @@ impl<P: Packable<UnpackVisitor = ()>> PackableExt for P {
     #[inline]
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
+        visitor: &mut P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()), &mut ())
+        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
     #[inline]
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
+        visitor: &mut P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), &mut ())
+        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
     }
 }

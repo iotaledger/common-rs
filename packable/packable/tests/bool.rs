@@ -16,7 +16,7 @@ fn packable_bool_packed_non_zero_bytes_are_truthy() {
     let mut packer = Vec::default();
     42u8.pack(&mut packer).unwrap();
 
-    let is_true = bool::unpack_verified(&mut packer.as_slice()).unwrap();
+    let is_true = bool::unpack_verified(&mut packer.as_slice(), &mut ()).unwrap();
 
     assert!(is_true);
 }

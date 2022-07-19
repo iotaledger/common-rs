@@ -73,7 +73,7 @@ macro_rules! impl_packable_test_for_bounded_boxed_slice_prefix {
             let mut bytes = vec![0u8; LEN + 1].into_boxed_slice();
             bytes[0] = LEN as u8;
 
-            let prefixed = BoxedSlicePrefix::<u8, $bounded<$min, $max>>::unpack_verified(bytes);
+            let prefixed = BoxedSlicePrefix::<u8, $bounded<$min, $max>>::unpack_verified(bytes, &mut ());
 
             const LEN_AS_TY: $ty = LEN as $ty;
 
