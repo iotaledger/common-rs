@@ -24,7 +24,7 @@ impl<T: Packable> Packable for Box<T> {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         Ok(Box::new(T::unpack::<_, VERIFY>(unpacker, visitor)?))
     }
@@ -56,11 +56,11 @@ impl<T: Packable> Packable for Box<[T]> {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
 
-        let len = u64::unpack::<_, VERIFY>(unpacker, &mut ())
+        let len = u64::unpack::<_, VERIFY>(unpacker, &())
             .coerce()?
             .try_into()
             .map_err(|err| UnpackError::Packable(Self::UnpackError::Prefix(err)))?;

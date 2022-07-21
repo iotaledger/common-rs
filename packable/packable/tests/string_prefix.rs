@@ -68,7 +68,7 @@ macro_rules! impl_packable_test_for_bounded_string_prefix {
             let mut bytes = vec![0; LEN + 1];
             bytes[0] = LEN as u8;
 
-            let prefixed = StringPrefix::<$bounded<$min, $max>>::unpack_verified(bytes, &mut ());
+            let prefixed = StringPrefix::<$bounded<$min, $max>>::unpack_verified(bytes, &());
 
             const LEN_AS_TY: $ty = LEN as $ty;
 

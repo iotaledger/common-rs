@@ -40,7 +40,7 @@ impl Fragments {
             },
             unpack: quote! {
                 #(
-                    let #fields_ident = <#fields_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, BorrowMut::<<#fields_type as #crate_name::Packable>::UnpackVisitor>::borrow_mut(visitor)).map_packable_err(#fields_unpack_error_with).coerce()?;
+                    let #fields_ident = <#fields_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, Borrow::<<#fields_type as #crate_name::Packable>::UnpackVisitor>::borrow(visitor)).map_packable_err(#fields_unpack_error_with).coerce()?;
                     #fields_verification
                 )*
 

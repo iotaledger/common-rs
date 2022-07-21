@@ -19,7 +19,7 @@ where
     let mut packer = SlicePacker::new(&mut vec);
     packable.pack(&mut packer).unwrap();
 
-    let unpacked = P::unpack_verified(&vec, &mut ()).unwrap();
+    let unpacked = P::unpack_verified(&vec, &()).unwrap();
 
     assert_eq!(packable, &unpacked);
 
@@ -35,7 +35,7 @@ where
     P::UnpackError: Debug,
 {
     let vec = packable.pack_to_vec();
-    let unpacked = P::unpack_verified(&vec, &mut ()).unwrap();
+    let unpacked = P::unpack_verified(&vec, &()).unwrap();
 
     assert_eq!(packable, &unpacked);
     assert_eq!(packable.packed_len(), vec.len());
@@ -52,7 +52,7 @@ where
 
     let mut vec = Vec::new();
     packable.pack(&mut vec).unwrap();
-    let unpacked = P::unpack_verified(&mut vec.as_slice(), &mut ()).unwrap();
+    let unpacked = P::unpack_verified(&mut vec.as_slice(), &()).unwrap();
     assert_eq!(packable, &unpacked);
 
     // Tests for `Read` and `Write`
@@ -60,7 +60,7 @@ where
     let mut packer = IoPacker::new(Vec::new());
     packable.pack(&mut packer).unwrap();
     let mut unpacker = IoUnpacker::new(packer.as_slice());
-    let unpacked = P::unpack::<_, true>(&mut unpacker, &mut ()).unwrap();
+    let unpacked = P::unpack::<_, true>(&mut unpacker, &()).unwrap();
     assert_eq!(packable, &unpacked);
 
     generic_test_pack_to_slice_unpack_verified(packable);

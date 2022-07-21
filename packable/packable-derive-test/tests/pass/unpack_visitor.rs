@@ -5,7 +5,7 @@
 
 use packable::{error::UnknownTagError, Packable};
 
-use core::borrow::{Borrow, BorrowMut};
+use core::borrow::Borrow;
 use core::convert::Infallible;
 
 pub struct Visitor {
@@ -15,12 +15,6 @@ pub struct Visitor {
 impl Borrow<()> for Visitor {
     fn borrow(&self) -> &() {
         &self.inner
-    }
-}
-
-impl BorrowMut<()> for Visitor {
-    fn borrow_mut(&mut self) -> &mut () {
-        &mut self.inner
     }
 }
 

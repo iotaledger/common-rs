@@ -27,7 +27,7 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         if TypeId::of::<T>() == TypeId::of::<u8>() {
             let mut bytes = [0u8; N];

@@ -112,10 +112,10 @@ where
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack::<_, VERIFY>(unpacker, &mut ())
+        let len = B::unpack::<_, VERIFY>(unpacker, &())
             .map_packable_err(UnpackPrefixError::Prefix)?
             .into();
 

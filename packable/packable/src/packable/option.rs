@@ -56,9 +56,9 @@ impl<T: Packable> Packable for Option<T> {
 
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        match u8::unpack::<_, VERIFY>(unpacker, &mut ()).coerce()? {
+        match u8::unpack::<_, VERIFY>(unpacker, &()).coerce()? {
             0 => Ok(None),
             1 => Ok(Some(
                 T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(UnpackOptionError::Inner)?,

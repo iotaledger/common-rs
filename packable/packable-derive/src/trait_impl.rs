@@ -111,7 +111,7 @@ impl TraitImpl {
                         #(#tag_decls)*
                         #(#tag_asserts)*
 
-                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, BorrowMut::<<#tag_type as #crate_name::Packable>::UnpackVisitor>::borrow_mut(visitor)).coerce()? {
+                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, Borrow::<<#tag_type as #crate_name::Packable>::UnpackVisitor>::borrow(visitor)).coerce()? {
                             #(#unpack_arms)*
                             tag => Err(#crate_name::error::UnpackError::from_packable(#tag_with_error(tag)))
                         }
@@ -151,9 +151,9 @@ impl ToTokens for TraitImpl {
                     #pack
                 }
 
-                fn unpack<U: #crate_name::unpacker::Unpacker, const VERIFY: bool>(unpacker: &mut U, visitor: &mut Self::UnpackVisitor) -> Result<Self, #crate_name::error::UnpackError<Self::UnpackError, U::Error>> {
+                fn unpack<U: #crate_name::unpacker::Unpacker, const VERIFY: bool>(unpacker: &mut U, visitor: &Self::UnpackVisitor) -> Result<Self, #crate_name::error::UnpackError<Self::UnpackError, U::Error>> {
                     use #crate_name::error::UnpackErrorExt;
-                    use core::borrow::BorrowMut;
+                    use core::borrow::Borrow;
                     #unpack
                 }
             }

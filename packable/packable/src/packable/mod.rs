@@ -23,7 +23,7 @@ mod vec;
 
 use alloc::vec::Vec;
 use core::{
-    borrow::BorrowMut,
+    borrow::Borrow,
     convert::{AsRef, Infallible},
     fmt::Debug,
 };
@@ -80,7 +80,7 @@ use crate::{
 ///
 ///     fn unpack<U: Unpacker, const VERIFY: bool>(
 ///         unpacker: &mut U,
-///         visitor: &mut Self::UnpackVisitor,
+///         visitor: &Self::UnpackVisitor,
 ///     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
 ///         match u8::unpack::<_, VERIFY>(unpacker, visitor).coerce()? {
 ///             0u8 => Ok(Self::Nothing),
@@ -184,7 +184,7 @@ pub trait Packable: Sized + 'static {
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
     type UnpackError: Debug + From<Infallible>;
     /// FIXME: docs
-    type UnpackVisitor: BorrowMut<()>;
+    type UnpackVisitor: Borrow<()>;
 
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
@@ -193,7 +193,7 @@ pub trait Packable: Sized + 'static {
     /// syntactic checks.
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>>;
 }
 
@@ -209,13 +209,13 @@ pub trait PackableExt: Packable {
     /// Unpacks this value from a sequence of bytes doing syntactical checks.
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 
     /// Unpacks this value from a sequence of bytes without doing syntactical checks.
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
-        visitor: &mut Self::UnpackVisitor,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 }
 
@@ -244,7 +244,7 @@ impl<P: Packable> PackableExt for P {
     #[inline]
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
-        visitor: &mut P::UnpackVisitor,
+        visitor: &P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
         Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
     }
@@ -253,7 +253,7 @@ impl<P: Packable> PackableExt for P {
     #[inline]
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
-        visitor: &mut P::UnpackVisitor,
+        visitor: &P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
         Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
     }
