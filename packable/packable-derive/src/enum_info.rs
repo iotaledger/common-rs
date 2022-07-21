@@ -1,14 +1,16 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use syn::{parse_quote, Attribute, DataEnum, Ident, Result, Type};
+use syn::{parse_quote, Attribute, DataEnum, Field, Ident, Result, Type};
 
 use crate::{
-    parse::filter_attrs, tag_type_info::TagTypeInfo, unpack_error_info::UnpackErrorInfo, variant_info::VariantInfo,
+    parse::filter_attrs, tag_type_info::TagTypeInfo, unpack_error_info::UnpackErrorInfo,
+    unpack_visitor_info::UnpackVisitorInfo, variant_info::VariantInfo,
 };
 
 pub(crate) struct EnumInfo {
     pub(crate) unpack_error: UnpackErrorInfo,
+    pub(crate) unpack_visitor: UnpackVisitorInfo,
     pub(crate) tag_type: TagTypeInfo,
     pub(crate) variants_info: Vec<VariantInfo>,
 }
@@ -27,9 +29,21 @@ impl EnumInfo {
         let tag_ty = &tag_type.tag_type;
 
         let unpack_error = UnpackErrorInfo::new(
-            filtered_attrs,
+            filtered_attrs.clone(),
             || parse_quote!(#crate_name::error::UnknownTagError<#tag_ty>),
         )?;
+
+        let unpack_visitor = UnpackVisitorInfo::new(filtered_attrs, || {
+            match data
+                .variants
+                .iter()
+                .next()
+                .and_then(|variant| variant.fields.iter().next())
+            {
+                Some(Field { ty, .. }) => parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor),
+                None => parse_quote!(()),
+            }
+        })?;
 
         let variants_info = data
             .variants
@@ -39,6 +53,7 @@ impl EnumInfo {
 
         Ok(Self {
             unpack_error,
+            unpack_visitor,
             tag_type,
             variants_info,
         })

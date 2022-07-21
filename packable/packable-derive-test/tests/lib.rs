@@ -61,9 +61,11 @@ macro_rules! make_test {
 make_test!();
 #[rustversion::not(stable)]
 make_test!(
+    duplicated_tag_enum,
     incorrect_tag_enum,
     invalid_field_type_verify_with,
     invalid_packable_with,
     invalid_tag_enum,
+    overlapping_discriminant,
     packable_is_structural
 );

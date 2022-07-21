@@ -7,6 +7,7 @@ use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 impl<T: Packable, const N: usize> Packable for [T; N] {
     type UnpackError = T::UnpackError;
+    type UnpackVisitor = T::UnpackVisitor;
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -26,6 +27,7 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         if TypeId::of::<T>() == TypeId::of::<u8>() {
             let mut bytes = [0u8; N];
@@ -38,7 +40,7 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
             let mut array = unsafe { MaybeUninit::<[MaybeUninit<T>; N]>::uninit().assume_init() };
 
             for item in array.iter_mut() {
-                let unpacked = T::unpack::<_, VERIFY>(unpacker)?;
+                let unpacked = T::unpack::<_, VERIFY>(unpacker, visitor)?;
 
                 // Safety: each `item` is only visited once so we are never overwriting nor dropping values that are
                 // already initialized.

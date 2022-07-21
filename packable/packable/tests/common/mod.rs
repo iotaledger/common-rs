@@ -11,7 +11,7 @@ use packable::{
 
 fn generic_test_pack_to_slice_unpack_verified<P>(packable: &P)
 where
-    P: Packable + PartialEq + Debug,
+    P: Packable<UnpackVisitor = ()> + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     let mut vec = vec![0; packable.packed_len()];
@@ -19,7 +19,7 @@ where
     let mut packer = SlicePacker::new(&mut vec);
     packable.pack(&mut packer).unwrap();
 
-    let unpacked = P::unpack_verified(&vec).unwrap();
+    let unpacked = P::unpack_verified(&vec, &()).unwrap();
 
     assert_eq!(packable, &unpacked);
 
@@ -31,11 +31,11 @@ where
 
 fn generic_test_pack_to_vec_unpack_verified<P>(packable: &P) -> (Vec<u8>, P)
 where
-    P: Packable + PartialEq + Debug,
+    P: Packable<UnpackVisitor = ()> + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     let vec = packable.pack_to_vec();
-    let unpacked = P::unpack_verified(&vec).unwrap();
+    let unpacked = P::unpack_verified(&vec, &()).unwrap();
 
     assert_eq!(packable, &unpacked);
     assert_eq!(packable.packed_len(), vec.len());
@@ -45,14 +45,14 @@ where
 
 pub fn generic_test<P>(packable: &P) -> (Vec<u8>, P)
 where
-    P: Packable + PartialEq + Debug,
+    P: Packable<UnpackVisitor = ()> + PartialEq + Debug,
     P::UnpackError: Debug,
 {
     // Tests for `Vec` and `&[u8]`
 
     let mut vec = Vec::new();
     packable.pack(&mut vec).unwrap();
-    let unpacked = P::unpack_verified(&mut vec.as_slice()).unwrap();
+    let unpacked = P::unpack_verified(&mut vec.as_slice(), &()).unwrap();
     assert_eq!(packable, &unpacked);
 
     // Tests for `Read` and `Write`
@@ -60,7 +60,7 @@ where
     let mut packer = IoPacker::new(Vec::new());
     packable.pack(&mut packer).unwrap();
     let mut unpacker = IoUnpacker::new(packer.as_slice());
-    let unpacked = P::unpack::<_, true>(&mut unpacker).unwrap();
+    let unpacked = P::unpack::<_, true>(&mut unpacker, &()).unwrap();
     assert_eq!(packable, &unpacked);
 
     generic_test_pack_to_slice_unpack_verified(packable);

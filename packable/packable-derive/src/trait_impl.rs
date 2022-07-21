@@ -14,6 +14,7 @@ pub(crate) struct TraitImpl {
     ident: Ident,
     generics: Generics,
     unpack_error: TokenStream,
+    unpack_visitor: TokenStream,
     pack: TokenStream,
     unpack: TokenStream,
     crate_name: Ident,
@@ -26,6 +27,7 @@ impl TraitImpl {
                 let info = StructInfo::new(input.ident.clone().into(), &data.fields, &input.attrs, &crate_name)?;
 
                 let unpack_error = info.unpack_error.unpack_error.clone().into_token_stream();
+                let unpack_visitor = info.unpack_visitor.unpack_visitor.clone().into_token_stream();
 
                 let Fragments { pattern, pack, unpack }: Fragments = Fragments::new(info.inner, &crate_name);
 
@@ -33,6 +35,7 @@ impl TraitImpl {
                     ident: input.ident,
                     generics: input.generics,
                     unpack_error,
+                    unpack_visitor,
                     pack: quote! {
                         let #pattern = self;
                         #pack
@@ -51,6 +54,7 @@ impl TraitImpl {
                 } = info.tag_type;
 
                 let unpack_error = info.unpack_error.unpack_error.into_token_stream();
+                let unpack_visitor = info.unpack_visitor.unpack_visitor.clone().into_token_stream();
 
                 let len = info.variants_info.len();
                 let mut pack_arms = Vec::with_capacity(len);
@@ -99,6 +103,7 @@ impl TraitImpl {
                     ident: enum_ident.clone(),
                     generics: input.generics,
                     unpack_error,
+                    unpack_visitor,
                     pack: quote!(match self {
                         #(#pack_arms)*
                     }),
@@ -106,7 +111,7 @@ impl TraitImpl {
                         #(#tag_decls)*
                         #(#tag_asserts)*
 
-                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker).coerce()? {
+                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, Borrow::<<#tag_type as #crate_name::Packable>::UnpackVisitor>::borrow(visitor)).coerce()? {
                             #(#unpack_arms)*
                             tag => Err(#crate_name::error::UnpackError::from_packable(#tag_with_error(tag)))
                         }
@@ -128,6 +133,7 @@ impl ToTokens for TraitImpl {
             ident: type_name,
             generics,
             unpack_error,
+            unpack_visitor,
             pack,
             unpack,
             crate_name,
@@ -138,14 +144,16 @@ impl ToTokens for TraitImpl {
         let impl_tokens = quote! {
             impl #impl_generics #crate_name::Packable for #type_name #ty_generics #where_clause {
                 type UnpackError = #unpack_error;
+                type UnpackVisitor = #unpack_visitor;
 
                 fn pack<P: #crate_name::packer::Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
                     use #crate_name::error::UnpackErrorExt;
                     #pack
                 }
 
-                fn unpack<U: #crate_name::unpacker::Unpacker, const VERIFY: bool>(unpacker: &mut U) -> Result<Self, #crate_name::error::UnpackError<Self::UnpackError, U::Error>> {
+                fn unpack<U: #crate_name::unpacker::Unpacker, const VERIFY: bool>(unpacker: &mut U, visitor: &Self::UnpackVisitor) -> Result<Self, #crate_name::error::UnpackError<Self::UnpackError, U::Error>> {
                     use #crate_name::error::UnpackErrorExt;
+                    use core::borrow::Borrow;
                     #unpack
                 }
             }
