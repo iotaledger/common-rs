@@ -11,4 +11,4 @@ keywords = [ "iota", "time" ]
 homepage = "https://www.iota.org"
 
 [dependencies]
-time = { version = "0.3.0", default-features = false, features = [ "formatting", "local-offset" ] }
+time = { version = "0.3.13", default-features = false, features = [ "formatting", "local-offset" ] }

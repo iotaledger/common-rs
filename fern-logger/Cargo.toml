@@ -13,7 +13,7 @@ homepage = "https://www.iota.org"
 [dependencies]
 time-helper = { version = "0.1.0", path = "../time-helper", default-features = false }
 
-fern = { version = "0.6.0", default-features = false, features = [ "colored" ] }
-log = { version = "0.4.14", default-features = false, features = [ "serde" ] }
-serde = { version = "1.0.130", default-features = false, features = [ "std", "derive" ] }
-thiserror = { version = "1.0.30", default-features = false }
+fern = { version = "0.6.1", default-features = false, features = [ "colored" ] }
+log = { version = "0.4.17", default-features = false, features = [ "serde" ] }
+serde = { version = "1.0.143", default-features = false, features = [ "std", "derive" ] }
+thiserror = { version = "1.0.32", default-features = false }
