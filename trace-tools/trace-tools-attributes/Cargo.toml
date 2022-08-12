@@ -15,6 +15,6 @@ path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = { version = "1.0.28", default-features = false }
-quote = { version = "1.0.9", default-features = false }
-syn = { version = "1.0.75", default-features = false, features = [ "full", "extra-traits", "parsing", "printing", "derive", "proc-macro", "clone-impls" ] }
+proc-macro2 = { version = "1.0.43", default-features = false }
+quote = { version = "1.0.21", default-features = false }
+syn = { version = "1.0.99", default-features = false, features = [ "full", "extra-traits", "parsing", "printing", "derive", "proc-macro", "clone-impls" ] }
