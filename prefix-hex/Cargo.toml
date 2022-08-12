@@ -16,7 +16,7 @@ primitive-types = { version = "0.11.1", default-features = false, optional = tru
 uint = { version = "0.9.3", default-features = false, optional = true }
 
 [dev-dependencies]
-paste = { version = "1.0.6", default-features = false }
+paste = { version = "1.0.8", default-features = false }
 
 [features]
 primitive-types = [ "dep:primitive-types", "uint" ]
