@@ -191,6 +191,7 @@ pub trait Packable: Sized + 'static {
 
     /// Unpacks this value from the given [`Unpacker`]. The `VERIFY` generic parameter can be used to skip additional
     /// syntactic checks.
+    /// Using the visitor when `VERIFY` is false is undefined behaviour.
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
         visitor: &Self::UnpackVisitor,
@@ -254,6 +255,9 @@ impl<P: Packable> PackableExt for P {
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
         Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), unsafe {
+            // SAFETY: this unsafe block provides a dummy visitor instance that shouldn't even be used.
+            // This could have been done safely by adding a `Default` bound to the visitor type but this would have been too restrictive.
+            // There is potential for undefined behaviour if the implementor starts using the visitor even though `VERIFY` is false.
             &core::mem::MaybeUninit::<<P as Packable>::UnpackVisitor>::zeroed().assume_init()
         })
     }
