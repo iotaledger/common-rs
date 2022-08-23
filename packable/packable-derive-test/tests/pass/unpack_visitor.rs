@@ -3,10 +3,9 @@
 
 #![allow(unused_imports)]
 
-use packable::{error::UnknownTagError, Packable};
+use core::{borrow::Borrow, convert::Infallible};
 
-use core::borrow::Borrow;
-use core::convert::Infallible;
+use packable::{error::UnknownTagError, Packable};
 
 pub struct Visitor {
     inner: (),
@@ -31,7 +30,7 @@ pub enum Answer {
     #[packable(tag = 0)]
     Yes,
     #[packable(tag = 1)]
-    No
+    No,
 }
 
 fn main() {}
