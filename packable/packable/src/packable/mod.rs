@@ -215,7 +215,6 @@ pub trait PackableExt: Packable {
     /// Unpacks this value from a sequence of bytes without doing syntactical checks.
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
-        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 }
 
@@ -253,8 +252,9 @@ impl<P: Packable> PackableExt for P {
     #[inline]
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
-        visitor: &P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
+        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), unsafe {
+            &core::mem::MaybeUninit::<<P as Packable>::UnpackVisitor>::zeroed().assume_init()
+        })
     }
 }
