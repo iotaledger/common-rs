@@ -184,14 +184,13 @@ pub trait Packable: Sized + 'static {
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
     type UnpackError: Debug + From<Infallible>;
     /// FIXME: docs
-    type UnpackVisitor: Borrow<()>;
+    type UnpackVisitor: Default + Borrow<()>;
 
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
 
     /// Unpacks this value from the given [`Unpacker`]. The `VERIFY` generic parameter can be used to skip additional
     /// syntactic checks.
-    /// Using the visitor when `VERIFY` is false is undefined behaviour.
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
         visitor: &Self::UnpackVisitor,
@@ -254,12 +253,9 @@ impl<P: Packable> PackableExt for P {
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(&mut SliceUnpacker::new(bytes.as_ref()), unsafe {
-            // SAFETY: this unsafe block provides a dummy visitor instance that shouldn't even be used.
-            // This could have been done safely by adding a `Default` bound to the visitor type but this would have been
-            // too restrictive. There is potential for undefined behaviour if the implementor starts using
-            // the visitor even though `VERIFY` is false.
-            &core::mem::MaybeUninit::<<P as Packable>::UnpackVisitor>::zeroed().assume_init()
-        })
+        Self::unpack::<_, false>(
+            &mut SliceUnpacker::new(bytes.as_ref()),
+            &<P as Packable>::UnpackVisitor::default(),
+        )
     }
 }

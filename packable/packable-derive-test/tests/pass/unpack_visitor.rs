@@ -7,6 +7,7 @@ use core::{borrow::Borrow, convert::Infallible};
 
 use packable::{error::UnknownTagError, Packable};
 
+#[derive(Default)]
 pub struct Visitor {
     inner: (),
 }
