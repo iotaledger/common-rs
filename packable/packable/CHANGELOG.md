@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.6.1 - 2022-08-26
+
+### Added
+
+- `verify_with` attribute functions now also take the `visitor` as parameter;
+
 ## 0.6.0 - 2022-08-25
 
 ### Added
