@@ -26,6 +26,7 @@ impl From<Infallible> for PickyError {
 
 impl Packable for Picky {
     type UnpackError = PickyError;
+    type UnpackVisitor = ();
 
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         self.0.pack(packer)
@@ -33,8 +34,9 @@ impl Packable for Picky {
 
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        let value = u8::unpack::<_, VERIFY>(unpacker).coerce()?;
+        let value = u8::unpack::<_, VERIFY>(unpacker, visitor).coerce()?;
 
         if value == 42 {
             Ok(Self(value))

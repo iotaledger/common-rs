@@ -19,7 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
-## Unreleased - 2022-XX-XX
+## 0.6.0 - 2022-08-25
+
+### Added
+
+- `Packable::UnpackVisitor` associated type;
+- `Packable::{unpack, unpack_verified}` argument `visitor`;
+- `#[packable(unpack_visitor = _)]` attribute;
 
 ### Changed
 

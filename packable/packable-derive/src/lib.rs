@@ -12,6 +12,7 @@ mod struct_info;
 mod tag_type_info;
 mod trait_impl;
 mod unpack_error_info;
+mod unpack_visitor_info;
 mod variant_info;
 
 use proc_macro::TokenStream;

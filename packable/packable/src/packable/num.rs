@@ -9,6 +9,7 @@ macro_rules! impl_packable_for_num {
     ($ty:ty) => {
         impl Packable for $ty {
             type UnpackError = Infallible;
+            type UnpackVisitor = ();
 
             #[inline]
             fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -18,6 +19,7 @@ macro_rules! impl_packable_for_num {
             #[inline]
             fn unpack<U: Unpacker, const VERIFY: bool>(
                 unpacker: &mut U,
+                (): &Self::UnpackVisitor,
             ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
                 let mut bytes = [0u8; core::mem::size_of::<Self>()];
                 unpacker.unpack_bytes(&mut bytes)?;
@@ -47,6 +49,7 @@ impl_packable_for_num!(f64);
 #[cfg(feature = "usize")]
 impl Packable for usize {
     type UnpackError = core::num::TryFromIntError;
+    type UnpackVisitor = ();
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -62,15 +65,17 @@ impl Packable for usize {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
-        Self::try_from(u64::unpack::<_, VERIFY>(unpacker).coerce()?).map_err(UnpackError::Packable)
+        Self::try_from(u64::unpack::<_, VERIFY>(unpacker, visitor).coerce()?).map_err(UnpackError::Packable)
     }
 }
 
 #[cfg(feature = "usize")]
 impl Packable for isize {
     type UnpackError = core::num::TryFromIntError;
+    type UnpackVisitor = ();
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -80,8 +85,9 @@ impl Packable for isize {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
-        Self::try_from(i64::unpack::<_, VERIFY>(unpacker).coerce()?).map_err(UnpackError::Packable)
+        Self::try_from(i64::unpack::<_, VERIFY>(unpacker, visitor).coerce()?).map_err(UnpackError::Packable)
     }
 }

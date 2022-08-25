@@ -83,12 +83,13 @@ where
 impl<T, B> Packable for VecPrefix<T, B>
 where
     T: Packable,
-    B: Bounded + Packable,
+    B: Bounded + Packable<UnpackVisitor = ()>,
     <B::Bounds as TryInto<B>>::Error: fmt::Debug,
     <B as TryFrom<usize>>::Error: fmt::Debug,
     Range<B::Bounds>: Iterator<Item = B::Bounds>,
 {
     type UnpackError = UnpackPrefixError<T::UnpackError, B::UnpackError>;
+    type UnpackVisitor = T::UnpackVisitor;
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -111,9 +112,10 @@ where
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack::<_, VERIFY>(unpacker)
+        let len = B::unpack::<_, VERIFY>(unpacker, &())
             .map_packable_err(UnpackPrefixError::Prefix)?
             .into();
 
@@ -141,7 +143,7 @@ where
             let mut inner = Vec::with_capacity(len.try_into().unwrap_or(0));
 
             for _ in B::Bounds::default()..len {
-                let item = T::unpack::<_, VERIFY>(unpacker).map_packable_err(Self::UnpackError::Item)?;
+                let item = T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
                 inner.push(item);
             }
 
