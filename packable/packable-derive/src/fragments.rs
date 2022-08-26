@@ -27,8 +27,8 @@ impl Fragments {
             fields_type,
         } = info;
 
-        let fields_verification = fields_verify_with.into_iter().zip(fields_ident.iter()).map(|(verify_with, field_ident)| match verify_with {
-            Some(verify_with) => quote!(#verify_with::<VERIFY>(&#field_ident).map_err(#crate_name::error::UnpackError::from_packable)?;),
+        let fields_verification = fields_verify_with.into_iter().zip(fields_ident.iter()).zip(fields_type.iter()).map(|((verify_with, field_ident), field_type)| match verify_with {
+            Some(verify_with) => quote!(#verify_with::<VERIFY>(&#field_ident, Borrow::<<#field_type as #crate_name::Packable>::UnpackVisitor>::borrow(visitor)).map_err(#crate_name::error::UnpackError::from_packable)?;),
             None => quote!(),
         });
 

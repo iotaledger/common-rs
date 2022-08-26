@@ -44,7 +44,7 @@ macro_rules! bounded {
                 self.0
             }
 
-            fn verify<const VERIFY: bool>(&value: &$ty) -> Result<(), $invalid_error<MIN, MAX>> {
+            fn verify<const VERIFY: bool>(&value: &$ty, _: &()) -> Result<(), $invalid_error<MIN, MAX>> {
                 if VERIFY && !(MIN..=MAX).contains(&value) {
                     Err($invalid_error(value))
                 } else {
@@ -70,7 +70,7 @@ macro_rules! bounded {
             type Error = $invalid_error<MIN, MAX>;
 
             fn try_from(value: $ty) -> Result<Self, Self::Error> {
-                Self::verify::<true>(&value)?;
+                Self::verify::<true>(&value, &())?;
                 Ok(Self(value))
             }
         }
