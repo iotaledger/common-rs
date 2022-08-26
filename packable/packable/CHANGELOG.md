@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.6.2 - 2022-08-26
+
+### Fixed
+
+- `verify_with` visitor parameter type from `field::UnpackVisitor` to `Self::UnpackVisitor`;
+
 ## 0.6.1 - 2022-08-26
 
 ### Added
