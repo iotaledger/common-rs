@@ -60,4 +60,8 @@ macro_rules! make_test {
 #[rustversion::stable]
 make_test!();
 #[rustversion::not(stable)]
-make_test!(duplicated_tag_enum, overlapping_discriminant);
+make_test!(
+    duplicated_tag_enum,
+    invalid_field_type_verify_with,
+    overlapping_discriminant
+);
