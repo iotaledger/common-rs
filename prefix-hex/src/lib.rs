@@ -7,13 +7,15 @@
 //!
 //! This crate is compatible with the hex encoding rules of the [Ethereum RPC API](https://eth.wiki/json-rpc/API#hex-value-encoding).
 
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
 
 mod data;
 mod error;
-#[cfg(feature = "primitive-types1")]
+#[cfg(feature = "primitive-types")]
 mod primitive_types;
 
 use alloc::string::String;

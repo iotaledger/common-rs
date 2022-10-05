@@ -14,6 +14,7 @@ use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 impl<T: Packable> Packable for Box<T> {
     type UnpackError = T::UnpackError;
+    type UnpackVisitor = T::UnpackVisitor;
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -23,14 +24,16 @@ impl<T: Packable> Packable for Box<T> {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        Ok(Box::new(T::unpack::<_, VERIFY>(unpacker)?))
+        Ok(Box::new(T::unpack::<_, VERIFY>(unpacker, visitor)?))
     }
 }
 
 #[cfg(feature = "usize")]
 impl<T: Packable> Packable for Box<[T]> {
     type UnpackError = crate::prefix::UnpackPrefixError<T::UnpackError, <usize as Packable>::UnpackError>;
+    type UnpackVisitor = T::UnpackVisitor;
 
     #[inline]
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -53,10 +56,11 @@ impl<T: Packable> Packable for Box<[T]> {
     #[inline]
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
 
-        let len = u64::unpack::<_, VERIFY>(unpacker)
+        let len = u64::unpack::<_, VERIFY>(unpacker, &())
             .coerce()?
             .try_into()
             .map_err(|err| UnpackError::Packable(Self::UnpackError::Prefix(err)))?;
@@ -70,7 +74,7 @@ impl<T: Packable> Packable for Box<[T]> {
             let mut vec = Vec::with_capacity(len);
 
             for _ in 0..len {
-                let item = T::unpack::<_, VERIFY>(unpacker).map_packable_err(Self::UnpackError::Item)?;
+                let item = T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
                 vec.push(item);
             }
 

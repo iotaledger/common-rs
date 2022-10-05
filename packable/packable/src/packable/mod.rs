@@ -17,11 +17,13 @@ mod num;
 mod primitive_types;
 #[cfg(feature = "usize")]
 mod string;
+mod tuple;
 #[cfg(feature = "usize")]
 mod vec;
 
 use alloc::vec::Vec;
 use core::{
+    borrow::Borrow,
     convert::{AsRef, Infallible},
     fmt::Debug,
 };
@@ -31,7 +33,7 @@ pub use packable_derive::Packable;
 use crate::{
     error::{UnexpectedEOF, UnpackError},
     packer::{LenPacker, Packer},
-    unpacker::Unpacker,
+    unpacker::{SliceUnpacker, Unpacker},
 };
 
 /// A type that can be packed and unpacked.
@@ -43,8 +45,7 @@ use crate::{
 ///
 /// We will implement [`Packable`] for a type that encapsulates optional integer values (like `Option<i32>`).
 ///
-/// Following the conventions from the [IOTA protocol messages RFC](https:///github.com/iotaledger/protocol-rfcs/pull/0017),
-/// we will use an integer prefix as a tag to determine which variant of the enum is being packed.
+/// We will use an integer prefix as a tag to determine which variant of the enum is being packed.
 ///
 /// ```rust
 /// use core::convert::Infallible;
@@ -63,6 +64,7 @@ use crate::{
 ///
 /// impl Packable for Maybe {
 ///     type UnpackError = UnknownTagError<u8>;
+///     type UnpackVisitor = ();
 ///
 ///     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
 ///         match self {
@@ -78,10 +80,13 @@ use crate::{
 ///
 ///     fn unpack<U: Unpacker, const VERIFY: bool>(
 ///         unpacker: &mut U,
+///         visitor: &Self::UnpackVisitor,
 ///     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-///         match u8::unpack::<_, VERIFY>(unpacker).coerce()? {
+///         match u8::unpack::<_, VERIFY>(unpacker, visitor).coerce()? {
 ///             0u8 => Ok(Self::Nothing),
-///             1u8 => Ok(Self::Just(i32::unpack::<_, VERIFY>(unpacker).coerce()?)),
+///             1u8 => Ok(Self::Just(
+///                 i32::unpack::<_, VERIFY>(unpacker, visitor).coerce()?,
+///             )),
 ///             tag => Err(UnpackError::Packable(UnknownTagError(tag))),
 ///         }
 ///     }
@@ -178,6 +183,8 @@ pub trait Packable: Sized + 'static {
     /// It is recommended to use [`Infallible`](core::convert::Infallible) if this kind of error is impossible or
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
     type UnpackError: Debug + From<Infallible>;
+    /// FIXME: docs
+    type UnpackVisitor: Default + Borrow<()>;
 
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
@@ -186,6 +193,7 @@ pub trait Packable: Sized + 'static {
     /// syntactic checks.
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>>;
 }
 
@@ -201,6 +209,7 @@ pub trait PackableExt: Packable {
     /// Unpacks this value from a sequence of bytes doing syntactical checks.
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 
     /// Unpacks this value from a sequence of bytes without doing syntactical checks.
@@ -234,8 +243,9 @@ impl<P: Packable> PackableExt for P {
     #[inline]
     fn unpack_verified<T: AsRef<[u8]>>(
         bytes: T,
+        visitor: &P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, true>(&mut bytes.as_ref())
+        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
@@ -243,6 +253,9 @@ impl<P: Packable> PackableExt for P {
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(&mut bytes.as_ref())
+        Self::unpack::<_, false>(
+            &mut SliceUnpacker::new(bytes.as_ref()),
+            &<P as Packable>::UnpackVisitor::default(),
+        )
     }
 }

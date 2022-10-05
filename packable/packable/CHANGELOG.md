@@ -19,8 +19,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.6.2 - 2022-08-26
 
-## 0.X.X - 2022-XX-XX
+### Fixed
+
+- `verify_with` visitor parameter type from `field::UnpackVisitor` to `Self::UnpackVisitor`;
+
+## 0.6.1 - 2022-08-26
+
+### Added
+
+- `verify_with` attribute functions now also take the `visitor` as parameter;
+
+## 0.6.0 - 2022-08-25
+
+### Added
+
+- `Packable::UnpackVisitor` associated type;
+- `Packable::{unpack, unpack_verified}` argument `visitor`;
+- `#[packable(unpack_visitor = _)]` attribute;
+
+### Changed
+
+- Updated dependencies;
+
+## 0.5.0 - 2022-07-14
+
+### Added
+
+- Add the `SliceUnpacker` type;
+
+### Removed
+
+- Remove the `Unpacker` implementation for `&[u8]`.
+
+## 0.4.0 - 2022-06-13
+
+### Added
+
+- Add the `StringPrefix` type;
+
+## 0.3.3 - 2022-05-27
+
+### Added
+
+- Propagate alternate `Debug` to `VecPrefix` and `BoxedSlicePrefix`;
+
+## 0.3.2 - 2022-05-04
+
+### Added
+
+- Custom `Debug` impl for `VecPrefix`;
+- Custom `Debug` impl for `BoxedSlicePrefix`;
+
+## 0.3.1 - 2022-04-20
+
+### Added
+
+- Add `Packer::written_bytes` and `Unpacker::read_bytes`;
+
+## 0.3.0 - 2022-04-19
+
+### Added
+
+- Implement `Packable` for tuples;
+- Add `CounterPacker` and `CounterUnpacker`;
+- Implement `Packer` and `Unpacker` for mutable references;
 
 ### Changed
 

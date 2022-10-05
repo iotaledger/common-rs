@@ -5,7 +5,7 @@ use core::fmt;
 
 use hex::FromHexError;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Error {
     InvalidPrefix { c0: char, c1: char },
     InvalidHexCharacter { c: char, index: usize },
@@ -13,6 +13,9 @@ pub enum Error {
     InvalidStringLengthSlice { expected: usize, actual: usize },
     OddLength,
 }
+
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
 
 impl From<FromHexError> for Error {
     fn from(v: FromHexError) -> Error {

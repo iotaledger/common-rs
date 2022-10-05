@@ -42,6 +42,7 @@ impl<E: fmt::Display> fmt::Display for UnpackOptionError<E> {
 /// Options are packed and unpacked using `0u8` as the prefix for `None` and `1u8` as the prefix for `Some`.
 impl<T: Packable> Packable for Option<T> {
     type UnpackError = UnpackOptionError<T::UnpackError>;
+    type UnpackVisitor = T::UnpackVisitor;
 
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
         match self {
@@ -55,11 +56,12 @@ impl<T: Packable> Packable for Option<T> {
 
     fn unpack<U: Unpacker, const VERIFY: bool>(
         unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        match u8::unpack::<_, VERIFY>(unpacker).coerce()? {
+        match u8::unpack::<_, VERIFY>(unpacker, &()).coerce()? {
             0 => Ok(None),
             1 => Ok(Some(
-                T::unpack::<_, VERIFY>(unpacker).map_packable_err(UnpackOptionError::Inner)?,
+                T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(UnpackOptionError::Inner)?,
             )),
             n => Err(UnpackError::Packable(Self::UnpackError::UnknownTag(n))),
         }

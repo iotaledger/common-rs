@@ -28,7 +28,7 @@ impl Fragments {
         } = info;
 
         let fields_verification = fields_verify_with.into_iter().zip(fields_ident.iter()).map(|(verify_with, field_ident)| match verify_with {
-            Some(verify_with) => quote!(#verify_with::<VERIFY>(&#field_ident).map_err(#crate_name::error::UnpackError::from_packable)?;),
+            Some(verify_with) => quote!(#verify_with::<VERIFY>(&#field_ident, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;),
             None => quote!(),
         });
 
@@ -40,7 +40,7 @@ impl Fragments {
             },
             unpack: quote! {
                 #(
-                    let #fields_ident = <#fields_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker).map_packable_err(#fields_unpack_error_with).coerce()?;
+                    let #fields_ident = <#fields_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, Borrow::<<#fields_type as #crate_name::Packable>::UnpackVisitor>::borrow(visitor)).map_packable_err(#fields_unpack_error_with).coerce()?;
                     #fields_verification
                 )*
 

@@ -19,6 +19,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## Unreleased - 2022-XX-XX
+
+### Changed
+
+- Updated dependencies;
+
+## 0.3.0 - 2022-06-14
+
+### Added
+
+ - `BuildValidation` extension trait for the `jsonwebtoken::Validation` type;
+ - `Claims` builder-lite methods;
+
+### Changed
+
+ - Re-export `jsonwebtoken` lib;
+ - Expose `Claims` and `JsonWebToken` inner fields;
+ - `Claims` system time error handling;
+ - Better test cases;
+ - `JsonWebToken::validate` accepts `Validation` struct for better flexibility;
+ 
+### Removed
+
+ - `ClaimsBuilder`;
+
 ## 0.2.0 - 2022-01-25
 
 ### Added
