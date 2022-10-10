@@ -52,7 +52,7 @@ where
 
     let mut vec = Vec::new();
     packable.pack(&mut vec).unwrap();
-    let unpacked = P::unpack_verified(&mut vec.as_slice(), &()).unwrap();
+    let unpacked = P::unpack_verified(vec.as_slice(), &()).unwrap();
     assert_eq!(packable, &unpacked);
 
     // Tests for `Read` and `Write`
