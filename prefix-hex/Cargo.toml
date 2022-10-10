@@ -9,7 +9,7 @@ repository = "https://github.com/iotaledger/common-rs"
 license = "Apache-2.0"
 keywords = [ "iota", "hex", "prefix", "encoding", "decoding"]
 homepage = "https://www.iota.org"
-rust = "1.60"
+rust-version = "1.60"
 
 [dependencies]
 hex = { version = "0.4", default-features = false, features = [ "alloc" ] }
