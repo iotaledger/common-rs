@@ -6,8 +6,8 @@ use alloc::{boxed::Box, format, string::String, vec::Vec};
 use crate::{strip_prefix, Error, FromHexPrefixed, ToHexPrefixed};
 
 impl FromHexPrefixed for Vec<u8> {
-    fn from_hex_prefixed(hex: &str) -> Result<Self, Error> {
-        let hex = strip_prefix(hex)?;
+    fn from_hex_prefixed<S: AsRef<str>>(hex: S) -> Result<Self, Error> {
+        let hex = strip_prefix(hex.as_ref())?;
         hex::decode(hex).map_err(Into::into)
     }
 }
@@ -22,8 +22,8 @@ impl<const N: usize> FromHexPrefixed for [u8; N]
 where
     Self: hex::FromHex,
 {
-    fn from_hex_prefixed(hex: &str) -> Result<Self, Error> {
-        let hex = strip_prefix(hex)?;
+    fn from_hex_prefixed<S: AsRef<str>>(hex: S) -> Result<Self, Error> {
+        let hex = strip_prefix(hex.as_ref())?;
         let mut buffer = [0; N];
         hex::decode_to_slice(hex, &mut buffer).map_err(|e| match e {
             hex::FromHexError::InvalidStringLength | hex::FromHexError::OddLength => Error::InvalidStringLengthSlice {

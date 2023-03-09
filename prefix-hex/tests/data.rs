@@ -11,7 +11,7 @@ fn array_decode() {
 #[test]
 fn array_decode_invalid_hex() {
     assert_eq!(
-        prefix_hex::decode::<[u8; 3]>("0x00000y"),
+        prefix_hex::decode::<[u8; 3], _>("0x00000y"),
         Err(Error::InvalidHexCharacter { c: 'y', index: 5 })
     );
 }
@@ -19,7 +19,7 @@ fn array_decode_invalid_hex() {
 #[test]
 fn array_decode_invalid_length_too_short() {
     assert_eq!(
-        prefix_hex::decode::<[u8; 3]>("0x52fd6"),
+        prefix_hex::decode::<[u8; 3], _>("0x52fd6"),
         Err(Error::InvalidStringLengthSlice { expected: 6, actual: 5 })
     );
 }
@@ -27,7 +27,7 @@ fn array_decode_invalid_length_too_short() {
 #[test]
 fn array_decode_invalid_length_too_long() {
     assert_eq!(
-        prefix_hex::decode::<[u8; 3]>("0x52fd643"),
+        prefix_hex::decode::<[u8; 3], _>("0x52fd643"),
         Err(Error::InvalidStringLengthSlice { expected: 6, actual: 7 })
     );
 }
@@ -35,7 +35,7 @@ fn array_decode_invalid_length_too_long() {
 #[test]
 fn array_decode_no_prefix() {
     assert_eq!(
-        prefix_hex::decode::<[u8; 3]>("004200"),
+        prefix_hex::decode::<[u8; 3], _>("004200"),
         Err(Error::InvalidPrefix { c0: '0', c1: '0' })
     );
 }
@@ -43,7 +43,7 @@ fn array_decode_no_prefix() {
 #[test]
 fn array_decode_wrong_prefix() {
     assert_eq!(
-        prefix_hex::decode::<[u8; 3]>("0yffffff"),
+        prefix_hex::decode::<[u8; 3], _>("0yffffff"),
         Err(Error::InvalidPrefix { c0: '0', c1: 'y' })
     );
 }
@@ -82,7 +82,7 @@ fn boxed_slice_reference_encode() {
 
 #[test]
 fn vec_decode() {
-    assert_eq!(prefix_hex::decode::<Vec<u8>>("0x000102").unwrap(), [0x0, 0x1, 0x2]);
+    assert_eq!(prefix_hex::decode::<Vec<u8>, _>("0x000102").unwrap(), [0x0, 0x1, 0x2]);
 }
 
 #[test]
@@ -92,7 +92,7 @@ fn vec_decode_empty_string() {
 
 #[test]
 fn vec_decode_odd_length() {
-    assert_eq!(prefix_hex::decode::<Vec<u8>>("0xf0f0f"), Err(Error::OddLength));
+    assert_eq!(prefix_hex::decode::<Vec<u8>, _>("0xf0f0f"), Err(Error::OddLength));
 }
 
 #[test]
