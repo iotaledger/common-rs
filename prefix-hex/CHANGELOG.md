@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.6.0 - 2023-03-09
+
+### Changed
+
+- `FromHexPrefixed::from_hex_prefixed` takes a `S: AsRef<str>` parameter;
+- `ToHexPrefixed::decode` takes a `S: AsRef<str>` parameter;
+
 ## 0.5.0 - 2022-10-10
 
 ### Changed
