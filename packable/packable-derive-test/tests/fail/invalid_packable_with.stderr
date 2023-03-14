@@ -13,4 +13,4 @@ note: required by a bound in `map_packable_err`
   --> $WORKSPACE/packable/packable/src/error.rs
    |
    |     fn map_packable_err<W>(self, f: impl Fn(U) -> W) -> Result<T, UnpackError<W, V>>;
-   |                                          ^^^^^^^^^^ required by this bound in `map_packable_err`
+   |                                          ^^^^^^^^^^ required by this bound in `UnpackErrorExt::map_packable_err`

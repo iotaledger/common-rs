@@ -1,6 +1,6 @@
 [package]
 name = "prefix-hex"
-version = "0.6.0"
+version = "0.7.0"
 authors = [ "IOTA Stiftung" ]
 edition = "2021"
 description = "Encoding and decoding of hex strings with a 0x prefix."
