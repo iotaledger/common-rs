@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.7.0 - 2023-03-14
+
+### Fixed
+
+- Use `impl AsRef<str>` parameter instead of a generic `S: AsRef<str>` parameter;
+
 ## 0.6.0 - 2023-03-09
 
 ### Changed

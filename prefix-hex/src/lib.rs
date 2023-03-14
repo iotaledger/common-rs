@@ -25,7 +25,7 @@ pub use error::Error;
 /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
 pub trait FromHexPrefixed: Sized {
     /// Tries to decode an hexadecimal encoded string with a `0x` prefix.
-    fn from_hex_prefixed<S: AsRef<str>>(hex: S) -> Result<Self, Error>;
+    fn from_hex_prefixed(hex: impl AsRef<str>) -> Result<Self, Error>;
 }
 
 /// Encodes data into an hexadecimal encoded string with a `0x` prefix.
@@ -46,7 +46,7 @@ pub trait ToHexPrefixed {
 /// let result = prefix_hex::decode("0x000102");
 /// assert_eq!(result, Ok([0x0, 0x1, 0x2]));
 /// ```
-pub fn decode<T: FromHexPrefixed, S: AsRef<str>>(hex: S) -> Result<T, Error> {
+pub fn decode<T: FromHexPrefixed>(hex: impl AsRef<str>) -> Result<T, Error> {
     T::from_hex_prefixed(hex)
 }
 

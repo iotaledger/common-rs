@@ -17,7 +17,7 @@ macro_rules! test_impl {
             #[test]
             fn [< $name _decode_err_no_body >]() {
                 assert_eq!(
-                    prefix_hex::decode::<$type, _>("0x"),
+                    prefix_hex::decode::<$type>("0x"),
                     Err(prefix_hex::Error::InvalidStringLength)
                 );
             }
@@ -25,7 +25,7 @@ macro_rules! test_impl {
             #[test]
             fn [< $name _decode_invalid_character >]() {
                 assert_eq!(
-                    prefix_hex::decode::<$type, _>("0x271y"),
+                    prefix_hex::decode::<$type>("0x271y"),
                     Err(prefix_hex::Error::InvalidHexCharacter{index: 3, c: 'y'})
                 );
             }
