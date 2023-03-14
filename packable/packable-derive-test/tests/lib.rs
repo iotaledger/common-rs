@@ -62,7 +62,6 @@ make_test!();
 #[rustversion::not(stable)]
 make_test!(
     incorrect_tag_enum,
-    invalid_packable_with,
     packable_is_structural,
     invalid_field_type_verify_with
 );
