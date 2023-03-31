@@ -34,9 +34,9 @@ pub struct VecPrefix<T, B: Bounded> {
 impl<T: fmt::Debug, B: Bounded> fmt::Debug for VecPrefix<T, B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if f.alternate() {
-            write!(f, "VecPrefix({:#?})", self.inner)
+            write!(f, "{:#?}", self.inner)
         } else {
-            write!(f, "VecPrefix({:?})", self.inner)
+            write!(f, "{:?}", self.inner)
         }
     }
 }

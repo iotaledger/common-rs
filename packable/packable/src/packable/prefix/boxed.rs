@@ -30,9 +30,9 @@ pub struct BoxedSlicePrefix<T, B: Bounded> {
 impl<T: fmt::Debug, B: Bounded> fmt::Debug for BoxedSlicePrefix<T, B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if f.alternate() {
-            write!(f, "BoxedSlicePrefix({:#?})", self.inner)
+            write!(f, "{:#?}", self.inner)
         } else {
-            write!(f, "BoxedSlicePrefix({:?})", self.inner)
+            write!(f, "{:?}", self.inner)
         }
     }
 }

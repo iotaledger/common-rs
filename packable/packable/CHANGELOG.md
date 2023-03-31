@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.8.0 - 2023-03-30
+
+### Changed
+
+- `Debug` impl of `StringPrefix`, `BoxedSlicePrefix` and `VecPrefix` don't print the wrapper anymore;
+
 ## 0.7.0 - 2022-10-10
 
 ### Changed

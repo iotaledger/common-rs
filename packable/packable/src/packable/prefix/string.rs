@@ -33,9 +33,9 @@ pub struct StringPrefix<B: Bounded> {
 impl<B: Bounded> fmt::Debug for StringPrefix<B> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if f.alternate() {
-            write!(f, "StringPrefix({:#?})", self.inner)
+            write!(f, "{:#?}", self.inner)
         } else {
-            write!(f, "StringPrefix({:?})", self.inner)
+            write!(f, "{:?}", self.inner)
         }
     }
 }
