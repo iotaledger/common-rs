@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.7.1 - 2023-07-19
+
+### Added
+
+- `FromHexPrefixed` impl for boxed slice;
+- `ToHexPrefixed` impl for Vec references;
+
 ## 0.7.0 - 2023-03-14
 
 ### Fixed

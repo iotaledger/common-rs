@@ -12,9 +12,10 @@ impl FromHexPrefixed for Vec<u8> {
     }
 }
 
-impl ToHexPrefixed for Vec<u8> {
-    fn to_hex_prefixed(self) -> String {
-        format!("0x{}", hex::encode(self))
+impl FromHexPrefixed for Box<[u8]> {
+    fn from_hex_prefixed(hex: impl AsRef<str>) -> Result<Self, Error> {
+        let hex = strip_prefix(hex.as_ref())?;
+        hex::decode(hex).map(Vec::into_boxed_slice).map_err(Into::into)
     }
 }
 
@@ -54,7 +55,7 @@ where
     }
 }
 
-macro_rules! impl_for_as_ref_type {
+macro_rules! impl_to_hex {
     ($type:ty) => {
         impl ToHexPrefixed for $type {
             fn to_hex_prefixed(self) -> String {
@@ -64,6 +65,8 @@ macro_rules! impl_for_as_ref_type {
     };
 }
 
-impl_for_as_ref_type!(Box<[u8]>);
-impl_for_as_ref_type!(&Box<[u8]>);
-impl_for_as_ref_type!(&[u8]);
+impl_to_hex!(Box<[u8]>);
+impl_to_hex!(&Box<[u8]>);
+impl_to_hex!(&[u8]);
+impl_to_hex!(Vec<u8>);
+impl_to_hex!(&Vec<u8>);
