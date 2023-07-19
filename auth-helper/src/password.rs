@@ -11,7 +11,7 @@ pub type Error = argon2::Error;
 
 /// Generates a salt to be used for password hashing.
 pub fn generate_salt() -> [u8; 32] {
-    rand::rngs::OsRng::default().gen()
+    rand::rngs::OsRng.gen()
 }
 
 /// Hashes a password together with a salt.
