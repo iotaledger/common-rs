@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.8.2 - 2023-09-07
+
+### Added
+
+- `BTreeSet` impls and `BTreeSetPrefix`;
+
 ## 0.8.0 - 2023-03-30
 
 ### Changed
