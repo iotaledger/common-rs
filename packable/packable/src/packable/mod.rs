@@ -12,6 +12,7 @@ pub mod prefix;
 mod array;
 mod bool;
 mod r#box;
+mod btreeset;
 mod num;
 #[cfg(feature = "primitive-types")]
 mod primitive_types;

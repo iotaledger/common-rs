@@ -4,6 +4,7 @@
 //! Types and utilities used to pack and unpack dynamic sequences of values with restricted length prefixes.
 
 mod boxed;
+mod btreeset;
 mod string;
 mod vec;
 
