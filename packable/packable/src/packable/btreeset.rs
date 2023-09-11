@@ -3,9 +3,11 @@
 
 extern crate alloc;
 
+#[cfg(feature = "usize")]
 use alloc::collections::BTreeSet;
 use core::{convert::Infallible, fmt};
 
+#[cfg(feature = "usize")]
 use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 /// Error type raised when a semantic error occurs while unpacking an option.
