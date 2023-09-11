@@ -1,7 +1,7 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-//! Types and implementations for packing and unpacking [`BTreeSet`] values.
+//! Types and implementations for packing and unpacking set values.
 
 extern crate alloc;
 

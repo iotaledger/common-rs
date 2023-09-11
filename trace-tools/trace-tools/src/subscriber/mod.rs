@@ -51,7 +51,7 @@ type BaseSubscriber = Layered<
 #[cfg(not(feature = "tokio-console"))]
 pub type TraceSubscriber = BaseSubscriber;
 
-/// [`Layered`](tracing_subscriber::layer::Layered) type describing the composition of the subscriber constructed
+/// [`Layered`] type describing the composition of the subscriber constructed
 /// by the [`trace_tools`](crate) crate.
 #[cfg(feature = "tokio-console")]
 pub type TraceSubscriber =
