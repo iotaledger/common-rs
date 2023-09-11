@@ -10,9 +10,9 @@ use packable::{
         BoundedU16, BoundedU32, BoundedU64, BoundedU8, InvalidBoundedU16, InvalidBoundedU32, InvalidBoundedU64,
         InvalidBoundedU8, TryIntoBoundedU32Error,
     },
-    btreeset::UnpackSetError,
     error::UnpackError,
     prefix::BTreeSetPrefix,
+    set::UnpackSetError,
     PackableExt,
 };
 

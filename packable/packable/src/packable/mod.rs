@@ -6,10 +6,10 @@
 extern crate alloc;
 
 pub mod bounded;
-#[cfg(feature = "usize")]
-pub mod btreeset;
+
 pub mod option;
 pub mod prefix;
+pub mod set;
 
 mod array;
 mod bool;
