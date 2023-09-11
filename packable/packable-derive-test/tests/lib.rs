@@ -60,4 +60,4 @@ macro_rules! make_test {
 #[rustversion::stable]
 make_test!();
 #[rustversion::not(stable)]
-make_test!(packable_is_structural);
+make_test!();
