@@ -1,13 +1,13 @@
 // Copyright 2021-2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+//! Types and implementations for packing and unpacking [`BTreeSet`] values.
+
 extern crate alloc;
 
-#[cfg(feature = "usize")]
 use alloc::collections::BTreeSet;
 use core::{convert::Infallible, fmt};
 
-#[cfg(feature = "usize")]
 use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 /// Error type raised when a semantic error occurs while unpacking an option.
@@ -55,7 +55,6 @@ impl<T, I: fmt::Display, P: fmt::Display> fmt::Display for UnpackSetError<T, I, 
     }
 }
 
-#[cfg(feature = "usize")]
 impl<T: Packable + Ord> Packable for BTreeSet<T> {
     type UnpackError = UnpackSetError<T, T::UnpackError, <usize as Packable>::UnpackError>;
     type UnpackVisitor = T::UnpackVisitor;

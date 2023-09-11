@@ -11,6 +11,7 @@ mod vec;
 use core::{convert::Infallible, fmt};
 
 pub use boxed::BoxedSlicePrefix;
+pub use btreeset::BTreeSetPrefix;
 pub use string::StringPrefix;
 pub use vec::VecPrefix;
 

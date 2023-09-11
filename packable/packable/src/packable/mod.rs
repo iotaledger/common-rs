@@ -6,13 +6,14 @@
 extern crate alloc;
 
 pub mod bounded;
+#[cfg(feature = "usize")]
+pub mod btreeset;
 pub mod option;
 pub mod prefix;
 
 mod array;
 mod bool;
 mod r#box;
-mod btreeset;
 mod num;
 #[cfg(feature = "primitive-types")]
 mod primitive_types;
