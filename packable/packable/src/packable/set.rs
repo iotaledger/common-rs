@@ -7,7 +7,7 @@ extern crate alloc;
 
 use core::{convert::Infallible, fmt};
 
-/// Error type raised when a semantic error occurs while unpacking an option.
+/// Error type raised when a semantic error occurs while unpacking a set.
 pub enum UnpackSetError<T, I, P> {
     /// A duplicate set item.
     DuplicateItem(T),
