@@ -1,11 +1,11 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 #![allow(unused_imports)]
 
-use packable::{error::UnknownTagError, Packable};
-
 use core::{any::TypeId, convert::Infallible};
+
+use packable::{error::UnknownTagError, Packable};
 
 #[derive(Packable)]
 pub struct Point {

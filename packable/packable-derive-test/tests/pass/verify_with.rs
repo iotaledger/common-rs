@@ -1,17 +1,16 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 #![allow(unused_imports)]
 
+use core::convert::Infallible;
+
 use packable::{
-    error::UnpackErrorExt,
-    error::{UnknownTagError, UnpackError},
+    error::{UnknownTagError, UnpackError, UnpackErrorExt},
     packer::Packer,
     unpacker::Unpacker,
     Packable,
 };
-
-use core::convert::Infallible;
 
 #[derive(Debug)]
 pub struct PickyError(u8);
