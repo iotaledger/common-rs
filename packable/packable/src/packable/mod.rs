@@ -6,7 +6,6 @@
 extern crate alloc;
 
 pub mod bounded;
-
 pub mod option;
 pub mod prefix;
 pub mod set;

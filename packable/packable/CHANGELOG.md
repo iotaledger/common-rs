@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `BTreeSet` impls and `BTreeSetPrefix`;
 
+### Fixed
+
+- `no_std` support;
+
 ## 0.8.0 - 2023-03-30
 
 ### Changed
