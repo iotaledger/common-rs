@@ -1,15 +1,17 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 //! Types and utilities used to pack and unpack dynamic sequences of values with restricted length prefixes.
 
 mod boxed;
+mod btreeset;
 mod string;
 mod vec;
 
 use core::{convert::Infallible, fmt};
 
 pub use boxed::BoxedSlicePrefix;
+pub use btreeset::BTreeSetPrefix;
 pub use string::StringPrefix;
 pub use vec::VecPrefix;
 

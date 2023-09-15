@@ -1,4 +1,4 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 //! Packable is a binary serialization and deserialization framework.
@@ -65,7 +65,7 @@
 //! ## `usize`
 //!
 //! This feature implements [`Packable`] for [`usize`], [`isize`], [`Vec<T>`](std::vec::Vec),
-//! `Box<[T]>` and [`String`](std::string::String). This is done serializing and deserializing
+//! `Box<[T]>` and [`String`]. This is done serializing and deserializing
 //! pointer sized integers as 64-bit integers. This feature will not work for targets with a
 //! pointer width larger than 64.
 

@@ -1,4 +1,4 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{ffi::OsStr, fs::read_dir, path::Path};
@@ -60,4 +60,4 @@ macro_rules! make_test {
 #[rustversion::stable]
 make_test!();
 #[rustversion::not(stable)]
-make_test!(packable_is_structural);
+make_test!();

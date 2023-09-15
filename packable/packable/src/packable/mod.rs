@@ -1,4 +1,4 @@
-// Copyright 2021-2022 IOTA Stiftung
+// Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 //! A module that provides a [`Packable`] trait to serialize and deserialize types.
@@ -8,6 +8,7 @@ extern crate alloc;
 pub mod bounded;
 pub mod option;
 pub mod prefix;
+pub mod set;
 
 mod array;
 mod bool;
@@ -140,7 +141,7 @@ use crate::{
 ///
 /// For structs, the default [`UnpackError`](Packable::UnpackError) type is the
 /// [`UnpackError`](Packable::UnpackError) of any of the fields type or
-/// [`Infallible`](core::convert::Infallible) in case the struct has no fields.
+/// [`Infallible`] in case the struct has no fields.
 ///
 /// For enums, the default  [`UnpackError`](Packable::UnpackError) type is
 /// [`UnknownTagError<T>`](crate::error::UnknownTagError) where `T` is the type specified according
@@ -180,7 +181,7 @@ use crate::{
 pub trait Packable: Sized + 'static {
     /// The error type that can be returned if some semantic error occurs while unpacking.
     ///
-    /// It is recommended to use [`Infallible`](core::convert::Infallible) if this kind of error is impossible or
+    /// It is recommended to use [`Infallible`] if this kind of error is impossible or
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
     type UnpackError: Debug + From<Infallible>;
     /// FIXME: docs
