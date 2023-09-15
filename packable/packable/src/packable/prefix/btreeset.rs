@@ -12,7 +12,10 @@ use core::{
 
 use crate::{
     error::UnpackError,
-    packable::{bounded::Bounded, set::UnpackSetError},
+    packable::{
+        bounded::Bounded,
+        set::{UnpackOrderedSetError, UnpackSetError},
+    },
     packer::Packer,
     unpacker::Unpacker,
     Packable,
@@ -93,7 +96,7 @@ where
     <B as TryFrom<usize>>::Error: fmt::Debug,
     Range<B::Bounds>: Iterator<Item = B::Bounds>,
 {
-    type UnpackError = UnpackSetError<T, T::UnpackError, B::UnpackError>;
+    type UnpackError = UnpackOrderedSetError<T, T::UnpackError, B::UnpackError>;
     type UnpackVisitor = T::UnpackVisitor;
 
     #[inline]
@@ -118,15 +121,25 @@ where
 
         // The length of any dynamically-sized sequence must be prefixed.
         let len = B::unpack::<_, VERIFY>(unpacker, &())
-            .map_packable_err(Self::UnpackError::Prefix)?
+            .map_packable_err(UnpackSetError::Prefix)
+            .map_packable_err(Self::UnpackError::from)?
             .into();
 
         let mut set = BTreeSet::new();
 
         for _ in B::Bounds::default()..len {
-            let item = T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
+            let item = T::unpack::<_, VERIFY>(unpacker, visitor)
+                .map_packable_err(UnpackSetError::Item)
+                .map_packable_err(Self::UnpackError::from)?;
+            if let Some(last) = set.last() {
+                if last > &item {
+                    return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                }
+            }
             if set.contains(&item) {
-                return Err(UnpackError::Packable(Self::UnpackError::DuplicateItem(item)));
+                return Err(UnpackError::Packable(Self::UnpackError::Set(
+                    UnpackSetError::DuplicateItem(item),
+                )));
             }
             set.insert(item);
         }

@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.8.3 - 2023-09-15
+
+### Added
+
+- `UnpackOrderedSetError`;
+
+### Fixed
+
+- `BTreeSet` impls and `BTreeSetPrefix` unpack now fails if the data is unordered;
+
 ## 0.8.2 - 2023-09-07
 
 ### Added

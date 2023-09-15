@@ -30,7 +30,7 @@ fn boxed_slice_prefix_from_boxed_slice_truncated_error() {
 }
 
 macro_rules! impl_packable_test_for_boxed_slice_prefix {
-    ($packable_boxed_slice_prefix:ident, $packable_boxed_slice_prefix_invalid_length:ident, $ty:ty) => {
+    ($packable_boxed_slice_prefix:ident, $ty:ty) => {
         #[test]
         fn $packable_boxed_slice_prefix() {
             assert_eq!(
@@ -85,26 +85,10 @@ macro_rules! impl_packable_test_for_bounded_boxed_slice_prefix {
     };
 }
 
-impl_packable_test_for_boxed_slice_prefix!(
-    packable_boxed_slice_prefix_u8,
-    packable_boxed_slice_prefix_invalid_length_u8,
-    u8
-);
-impl_packable_test_for_boxed_slice_prefix!(
-    packable_boxed_slice_prefix_u16,
-    packable_boxed_slice_prefix_invalid_length_u16,
-    u16
-);
-impl_packable_test_for_boxed_slice_prefix!(
-    packable_boxed_slice_prefix_u32,
-    packable_boxed_slice_prefix_invalid_length_u32,
-    u32
-);
-impl_packable_test_for_boxed_slice_prefix!(
-    packable_boxed_slice_prefix_u64,
-    packable_boxed_slice_prefix_invalid_length_u64,
-    u64
-);
+impl_packable_test_for_boxed_slice_prefix!(packable_boxed_slice_prefix_u8, u8);
+impl_packable_test_for_boxed_slice_prefix!(packable_boxed_slice_prefix_u16, u16);
+impl_packable_test_for_boxed_slice_prefix!(packable_boxed_slice_prefix_u32, u32);
+impl_packable_test_for_boxed_slice_prefix!(packable_boxed_slice_prefix_u64, u64);
 
 impl_packable_test_for_bounded_boxed_slice_prefix!(
     packable_boxed_slice_prefix_bounded_u8,
