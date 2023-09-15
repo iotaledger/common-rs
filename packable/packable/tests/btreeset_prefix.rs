@@ -34,8 +34,8 @@ fn btreeset_prefix_from_btreeset_truncated_error() {
 
 macro_rules! impl_packable_test_for_btreeset_prefix {
     (
-        $packable_btreeset_prefix:ident, 
-        $packable_btreeset_prefix_duplicate:ident, 
+        $packable_btreeset_prefix:ident,
+        $packable_btreeset_prefix_duplicate:ident,
         $packable_btreeset_prefix_unordered:ident,
         $ty:ty) => {
         #[test]
@@ -57,15 +57,19 @@ macro_rules! impl_packable_test_for_btreeset_prefix {
             const LEN: usize = 64;
             const LEN_AS_TY: $ty = LEN as $ty;
 
-            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(core::iter::repeat(0).take(LEN + 1)));
+            let mut bytes = (0u8..LEN as u8).collect::<Vec<_>>();
+            bytes[LEN - 1] = bytes[LEN - 3];
+            let dup = bytes[LEN - 1];
+
+            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
 
             let prefixed = BTreeSetPrefix::<u8, $ty>::unpack_verified(bytes, &());
 
             assert!(matches!(
                 prefixed,
                 Err(UnpackError::Packable(UnpackOrderedSetError::Set(
-                    UnpackSetError::DuplicateItem(0u8)
-                ))),
+                    UnpackSetError::DuplicateItem(d)
+                ))) if d == dup
             ));
         }
 
@@ -74,7 +78,10 @@ macro_rules! impl_packable_test_for_btreeset_prefix {
             const LEN: usize = 64;
             const LEN_AS_TY: $ty = LEN as $ty;
 
-            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain((0..LEN as u8).rev()));
+            let mut bytes = (0u8..LEN as u8).collect::<Vec<_>>();
+            bytes.swap(0, 1);
+
+            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
 
             let prefixed = BTreeSetPrefix::<u8, $ty>::unpack_verified(bytes, &());
 
@@ -88,14 +95,14 @@ macro_rules! impl_packable_test_for_btreeset_prefix {
 
 macro_rules! impl_packable_test_for_bounded_btreeset_prefix {
     (
-        $packable_btreeset_prefix:ident, 
-        $packable_btreeset_prefix_invalid_length:ident, 
-        $packable_btreeset_prefix_duplicate:ident, 
+        $packable_btreeset_prefix:ident,
+        $packable_btreeset_prefix_invalid_length:ident,
+        $packable_btreeset_prefix_duplicate:ident,
         $packable_btreeset_prefix_unordered:ident,
-        $ty:ty, 
-        $bounded:ident, 
-        $err:ident, 
-        $min:expr, 
+        $ty:ty,
+        $bounded:ident,
+        $err:ident,
+        $min:expr,
         $max:expr) => {
         #[test]
         fn $packable_btreeset_prefix() {
@@ -121,7 +128,6 @@ macro_rules! impl_packable_test_for_bounded_btreeset_prefix {
 
             let prefixed = BTreeSetPrefix::<u8, $bounded<$min, $max>>::unpack_verified(bytes, &());
 
-
             assert!(matches!(
                 prefixed,
                 Err(UnpackError::Packable(UnpackOrderedSetError::Set(
@@ -135,15 +141,19 @@ macro_rules! impl_packable_test_for_bounded_btreeset_prefix {
             const LEN: usize = $max;
             const LEN_AS_TY: $ty = LEN as $ty;
 
-            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(core::iter::repeat(0).take(LEN)));
+            let mut bytes = (0u8..LEN as u8).collect::<Vec<_>>();
+            bytes[LEN - 1] = bytes[LEN - 3];
+            let dup = bytes[LEN - 1];
+
+            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
 
             let prefixed = BTreeSetPrefix::<u8, $bounded<$min, $max>>::unpack_verified(bytes, &());
 
             assert!(matches!(
                 prefixed,
                 Err(UnpackError::Packable(UnpackOrderedSetError::Set(
-                    UnpackSetError::DuplicateItem(0u8)
-                ))),
+                    UnpackSetError::DuplicateItem(d)
+                ))) if d == dup
             ));
         }
 
@@ -152,7 +162,10 @@ macro_rules! impl_packable_test_for_bounded_btreeset_prefix {
             const LEN: usize = $max;
             const LEN_AS_TY: $ty = LEN as $ty;
 
-            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain((0..LEN as u8).rev()));
+            let mut bytes = (0u8..LEN as u8).collect::<Vec<_>>();
+            bytes.swap(0, 1);
+
+            let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
 
             let prefixed = BTreeSetPrefix::<u8, $bounded<$min, $max>>::unpack_verified(bytes, &());
 

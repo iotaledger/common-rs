@@ -131,15 +131,15 @@ where
             let item = T::unpack::<_, VERIFY>(unpacker, visitor)
                 .map_packable_err(UnpackSetError::Item)
                 .map_packable_err(Self::UnpackError::from)?;
-            if let Some(last) = set.last() {
-                if last > &item {
-                    return Err(UnpackError::Packable(Self::UnpackError::Unordered));
-                }
-            }
             if set.contains(&item) {
                 return Err(UnpackError::Packable(Self::UnpackError::Set(
                     UnpackSetError::DuplicateItem(item),
                 )));
+            }
+            if let Some(last) = set.last() {
+                if last > &item {
+                    return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                }
             }
             set.insert(item);
         }
