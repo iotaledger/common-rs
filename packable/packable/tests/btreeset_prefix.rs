@@ -58,7 +58,7 @@ macro_rules! impl_packable_test_for_btreeset_prefix {
             const LEN_AS_TY: $ty = LEN as $ty;
 
             let mut bytes = (0u8..LEN as u8).collect::<Vec<_>>();
-            bytes[LEN - 1] = bytes[LEN - 3];
+            bytes[LEN - 1] = bytes[LEN - 2];
             let dup = bytes[LEN - 1];
 
             let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
@@ -142,7 +142,7 @@ macro_rules! impl_packable_test_for_bounded_btreeset_prefix {
             const LEN_AS_TY: $ty = LEN as $ty;
 
             let mut bytes = (0u8..LEN as u8).collect::<Vec<_>>();
-            bytes[LEN - 1] = bytes[LEN - 3];
+            bytes[LEN - 1] = bytes[LEN - 2];
             let dup = bytes[LEN - 1];
 
             let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));

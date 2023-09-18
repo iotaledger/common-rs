@@ -125,20 +125,23 @@ where
             .map_packable_err(Self::UnpackError::from)?
             .into();
 
-        let mut set = BTreeSet::new();
+        let mut set = BTreeSet::<T>::new();
 
         for _ in B::Bounds::default()..len {
             let item = T::unpack::<_, VERIFY>(unpacker, visitor)
                 .map_packable_err(UnpackSetError::Item)
                 .map_packable_err(Self::UnpackError::from)?;
-            if set.contains(&item) {
-                return Err(UnpackError::Packable(Self::UnpackError::Set(
-                    UnpackSetError::DuplicateItem(item),
-                )));
-            }
             if let Some(last) = set.last() {
-                if last > &item {
-                    return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                match last.cmp(&item) {
+                    core::cmp::Ordering::Equal => {
+                        return Err(UnpackError::Packable(Self::UnpackError::Set(
+                            UnpackSetError::DuplicateItem(item),
+                        )));
+                    }
+                    core::cmp::Ordering::Greater => {
+                        return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                    }
+                    core::cmp::Ordering::Less => (),
                 }
             }
             set.insert(item);

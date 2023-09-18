@@ -23,7 +23,7 @@ fn packable_btreeset() {
 
 #[test]
 fn invalid_duplicate() {
-    let bytes = [1, 2, 3, 4, 3];
+    let bytes = [1, 2, 3, 3, 4];
     let bytes = Vec::from_iter(bytes.len().to_le_bytes().into_iter().chain(bytes));
 
     let prefixed = BTreeSet::<u8>::unpack_verified(bytes, &());
