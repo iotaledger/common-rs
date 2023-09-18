@@ -52,6 +52,52 @@ impl<T, I: fmt::Display, P: fmt::Display> fmt::Display for UnpackSetError<T, I, 
     }
 }
 
+/// Error type raised when a semantic error occurs while unpacking an ordered set.
+pub enum UnpackOrderedSetError<T, I, P> {
+    /// A set error.
+    Set(UnpackSetError<T, I, P>),
+    /// An unordered set.
+    Unordered,
+}
+
+impl<T, I, P> From<UnpackSetError<T, I, P>> for UnpackOrderedSetError<T, I, P> {
+    fn from(value: UnpackSetError<T, I, P>) -> Self {
+        Self::Set(value)
+    }
+}
+
+impl<T, I: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackOrderedSetError<T, I, P> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Set(arg0) => f.debug_tuple("Set").field(arg0).finish(),
+            Self::Unordered => f.debug_tuple("Unordered").finish(),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T, I, P> std::error::Error for UnpackOrderedSetError<T, I, P>
+where
+    I: std::error::Error,
+    P: std::error::Error,
+{
+}
+
+impl<T, I, P> From<Infallible> for UnpackOrderedSetError<T, I, P> {
+    fn from(err: Infallible) -> Self {
+        match err {}
+    }
+}
+
+impl<T, I: fmt::Display, P: fmt::Display> fmt::Display for UnpackOrderedSetError<T, I, P> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Set(s) => s.fmt(f),
+            Self::Unordered => write!(f, "unordered set"),
+        }
+    }
+}
+
 #[cfg(feature = "usize")]
 mod btreeset {
     use alloc::collections::BTreeSet;
@@ -60,7 +106,7 @@ mod btreeset {
     use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
     impl<T: Packable + Ord> Packable for BTreeSet<T> {
-        type UnpackError = UnpackSetError<T, T::UnpackError, <usize as Packable>::UnpackError>;
+        type UnpackError = UnpackOrderedSetError<T, T::UnpackError, <usize as Packable>::UnpackError>;
         type UnpackVisitor = T::UnpackVisitor;
 
         #[inline]
@@ -85,14 +131,26 @@ mod btreeset {
             let len = u64::unpack::<_, VERIFY>(unpacker, &())
                 .coerce()?
                 .try_into()
-                .map_err(|err| UnpackError::Packable(Self::UnpackError::Prefix(err)))?;
+                .map_err(|err| UnpackError::Packable(UnpackSetError::Prefix(err).into()))?;
 
-            let mut set = BTreeSet::new();
+            let mut set = BTreeSet::<T>::new();
 
             for _ in 0..len {
-                let item = T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
-                if set.contains(&item) {
-                    return Err(UnpackError::Packable(Self::UnpackError::DuplicateItem(item)));
+                let item = T::unpack::<_, VERIFY>(unpacker, visitor)
+                    .map_packable_err(UnpackSetError::Item)
+                    .map_packable_err(Self::UnpackError::from)?;
+                if let Some(last) = set.last() {
+                    match last.cmp(&item) {
+                        core::cmp::Ordering::Equal => {
+                            return Err(UnpackError::Packable(Self::UnpackError::Set(
+                                UnpackSetError::DuplicateItem(item),
+                            )));
+                        }
+                        core::cmp::Ordering::Greater => {
+                            return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                        }
+                        core::cmp::Ordering::Less => (),
+                    }
                 }
                 set.insert(item);
             }
