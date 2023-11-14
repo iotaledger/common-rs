@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.9.0 - 2023-11-14
 
+### Added
+
 - Struct-level `verify_with` attribute;
 
 ## 0.8.3 - 2023-09-18
