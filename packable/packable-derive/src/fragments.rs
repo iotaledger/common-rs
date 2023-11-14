@@ -3,7 +3,7 @@
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::Ident;
+use syn::{Ident, Path};
 
 use crate::record_info::RecordInfo;
 
@@ -12,12 +12,12 @@ pub(crate) struct Fragments {
     pub(crate) pattern: TokenStream,
     // An expression that packs the record.
     pub(crate) pack: TokenStream,
-    // An expresion that unpacks the record.
+    // An expression that unpacks the record.
     pub(crate) unpack: TokenStream,
 }
 
 impl Fragments {
-    pub(crate) fn new(info: RecordInfo, crate_name: &Ident) -> Self {
+    pub(crate) fn new(info: RecordInfo, verify_with: Option<Path>, crate_name: &Ident) -> Self {
         let RecordInfo {
             path,
             fields_unpack_error_with,
@@ -32,6 +32,13 @@ impl Fragments {
             None => quote!(),
         });
 
+        let verify_with = match verify_with {
+            Some(verify_with) => {
+                quote!(#verify_with::<VERIFY>(&unpacked, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;)
+            }
+            None => quote!(),
+        };
+
         Self {
             pattern: quote!(#path { #(#fields_pattern_ident: #fields_ident),* }),
             pack: quote! {
@@ -44,9 +51,13 @@ impl Fragments {
                     #fields_verification
                 )*
 
-                Ok(#path {
+                let unpacked = #path {
                     #(#fields_pattern_ident: #fields_ident,)*
-                })
+                };
+
+                #verify_with
+
+                Ok(unpacked)
             },
         }
     }

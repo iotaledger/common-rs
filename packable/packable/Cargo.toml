@@ -1,25 +1,27 @@
 [package]
 name = "packable"
-version = "0.8.3"
-authors = [ "IOTA Stiftung" ]
+version = "0.9.0"
+authors = ["IOTA Stiftung"]
 edition = "2021"
 description = "A crate for packing and unpacking binary representations."
 readme = "README.md"
 repository = "https://github.com/iotaledger/common-rs"
 license = "Apache-2.0"
-keywords = [ "binary", "no_std", "serialization", "packable" ]
+keywords = ["binary", "no_std", "serialization", "packable"]
 homepage = "https://www.iota.org"
 
 [features]
-io = [ "std" ]
-std = [ "serde?/std", "primitive-types?/std" ]
-usize = [ ]
+io = ["std"]
+std = ["serde?/std", "primitive-types?/std"]
+usize = []
 
 [build-dependencies]
 autocfg = { version = "1.1.0", default-features = false }
 
 [dependencies]
-packable-derive = { version = "=0.7.0", path = "../packable-derive", default-features = false }
+packable-derive = { version = "=0.8.0", path = "../packable-derive", default-features = false }
 
-primitive-types = { version = "0.12.0", default-features = false, optional = true }
-serde = { version = "1.0.145", default-features = false, features = [ "derive" ], optional = true }
+primitive-types = { version = "0.12.2", default-features = false, optional = true }
+serde = { version = "1.0.192", default-features = false, features = [
+    "derive",
+], optional = true }
