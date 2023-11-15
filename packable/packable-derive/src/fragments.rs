@@ -5,7 +5,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, Path};
 
-use crate::record_info::RecordInfo;
+use crate::{record_info::RecordInfo, unpack_visitor_info::UnpackVisitorInfo};
 
 pub(crate) struct Fragments {
     // The pattern used to destructure the record.
@@ -17,7 +17,12 @@ pub(crate) struct Fragments {
 }
 
 impl Fragments {
-    pub(crate) fn new(info: RecordInfo, verify_with: Option<Path>, crate_name: &Ident) -> Self {
+    pub(crate) fn new(
+        info: RecordInfo,
+        verify_with: Option<Path>,
+        unpack_visitor_info: &UnpackVisitorInfo,
+        crate_name: &Ident,
+    ) -> Self {
         let RecordInfo {
             path,
             fields_unpack_error_with,
@@ -28,13 +33,21 @@ impl Fragments {
         } = info;
 
         let fields_verification = fields_verify_with.into_iter().zip(fields_ident.iter()).map(|(verify_with, field_ident)| match verify_with {
-            Some(verify_with) => quote!(#verify_with::<VERIFY>(&#field_ident, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;),
+            Some(verify_with) => if unpack_visitor_info.provided {
+                quote!(#verify_with::<VERIFY>(&#field_ident, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;)
+            } else {
+                quote!(#verify_with::<VERIFY>(&#field_ident).map_err(#crate_name::error::UnpackError::from_packable)?;)
+            }
             None => quote!(),
         });
 
         let verify_with = match verify_with {
             Some(verify_with) => {
-                quote!(#verify_with::<VERIFY>(&unpacked, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;)
+                if unpack_visitor_info.provided {
+                    quote!(#verify_with::<VERIFY>(&unpacked, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;)
+                } else {
+                    quote!(#verify_with::<VERIFY>(&unpacked).map_err(#crate_name::error::UnpackError::from_packable)?;)
+                }
             }
             None => quote!(),
         };
