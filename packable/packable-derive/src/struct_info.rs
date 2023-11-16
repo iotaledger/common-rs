@@ -41,8 +41,22 @@ impl StructInfo {
         }
 
         let unpack_visitor = UnpackVisitorInfo::new(filtered_attrs, || match fields.iter().next() {
-            Some(Field { ty, .. }) => parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor),
-            None => parse_quote!(()),
+            Some(Field { attrs, ty, .. }) => {
+                let mut explicit = false;
+                for attr in attrs.clone() {
+                    if let Some(_) = attr.parse_args_with(|stream: ParseStream| {
+                        let opt = parse_kv::<Path>("unpack_visitor", stream)?;
+                        if opt.is_none() {
+                            skip_stream(stream)?;
+                        }
+                        Ok(opt)
+                    })? {
+                        explicit = true;
+                    }
+                }
+                Ok((parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), explicit))
+            }
+            None => Ok((parse_quote!(()), false)),
         })?;
 
         let inner = RecordInfo::new(path, fields, &unpack_error.with)?;

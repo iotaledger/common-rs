@@ -33,7 +33,7 @@ impl Fragments {
         } = info;
 
         let fields_verification = fields_verify_with.into_iter().zip(fields_ident.iter()).map(|(verify_with, field_ident)| match verify_with {
-            Some(verify_with) => if unpack_visitor_info.provided {
+            Some(verify_with) => if unpack_visitor_info.explicit {
                 quote!(#verify_with::<VERIFY>(&#field_ident, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;)
             } else {
                 quote!(#verify_with::<VERIFY>(&#field_ident).map_err(#crate_name::error::UnpackError::from_packable)?;)
@@ -43,7 +43,7 @@ impl Fragments {
 
         let verify_with = match verify_with {
             Some(verify_with) => {
-                if unpack_visitor_info.provided {
+                if unpack_visitor_info.explicit {
                     quote!(#verify_with::<VERIFY>(&unpacked, visitor).map_err(#crate_name::error::UnpackError::from_packable)?;)
                 } else {
                     quote!(#verify_with::<VERIFY>(&unpacked).map_err(#crate_name::error::UnpackError::from_packable)?;)

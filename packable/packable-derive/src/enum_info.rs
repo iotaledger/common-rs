@@ -40,8 +40,8 @@ impl EnumInfo {
                 .next()
                 .and_then(|variant| variant.fields.iter().next())
             {
-                Some(Field { ty, .. }) => parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor),
-                None => parse_quote!(()),
+                Some(Field { ty, .. }) => Ok((parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), true)),
+                None => Ok((parse_quote!(()), false)),
             }
         })?;
 
