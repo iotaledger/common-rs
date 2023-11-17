@@ -43,14 +43,17 @@ impl StructInfo {
         let unpack_visitor = UnpackVisitorInfo::new(filtered_attrs, || match fields.iter().next() {
             Some(Field { attrs, ty, .. }) => {
                 let mut explicit = false;
-                for attr in attrs.clone() {
-                    if let Some(_) = attr.parse_args_with(|stream: ParseStream| {
-                        let opt = parse_kv::<Path>("unpack_visitor", stream)?;
-                        if opt.is_none() {
-                            skip_stream(stream)?;
-                        }
-                        Ok(opt)
-                    })? {
+                for attr in filter_attrs(attrs) {
+                    if attr
+                        .parse_args_with(|stream: ParseStream| {
+                            let opt = parse_kv::<Path>("unpack_visitor", stream)?;
+                            if opt.is_none() {
+                                skip_stream(stream)?;
+                            }
+                            Ok(opt)
+                        })?
+                        .is_some()
+                    {
                         explicit = true;
                     }
                 }
