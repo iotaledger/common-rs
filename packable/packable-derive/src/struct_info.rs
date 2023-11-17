@@ -37,6 +37,7 @@ impl StructInfo {
                 Ok(opt)
             })? {
                 verify_with_opt = Some(verify_with);
+                break;
             }
         }
 
@@ -56,6 +57,7 @@ impl StructInfo {
                             .is_some()
                         {
                             explicit = true;
+                            break;
                         }
                     }
                     (parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), explicit)
