@@ -1,17 +1,17 @@
 error[E0308]: mismatched types
-  --> tests/fail/invalid_field_type_verify_with_field.rs:32:10
+  --> tests/fail/invalid_verify_with_struct_type.rs:32:10
    |
 32 | #[derive(Packable)]
    |          ^^^^^^^^
    |          |
-   |          expected `&u64`, found `&u8`
+   |          expected `&u64`, found `&Picky`
    |          arguments to this function are incorrect
    |
    = note: expected reference `&u64`
-              found reference `&u8`
+              found reference `&Picky`
 note: function defined here
-  --> tests/fail/invalid_field_type_verify_with_field.rs:24:4
+  --> tests/fail/invalid_verify_with_struct_type.rs:24:4
    |
-24 | fn verify_value<const VERIFY: bool>(&value: &u64, _: &()) -> Result<(), PickyError> {
-   |    ^^^^^^^^^^^^                     ------------
+24 | fn verify<const VERIFY: bool>(&value: &u64) -> Result<(), PickyError> {
+   |    ^^^^^^                     ------------
    = note: this error originates in the derive macro `Packable` (in Nightly builds, run with -Z macro-backtrace for more info)
