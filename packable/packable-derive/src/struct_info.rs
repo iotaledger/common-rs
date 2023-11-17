@@ -45,8 +45,9 @@ impl StructInfo {
             let (unpack_visitor, explicit) = match fields.iter().next() {
                 Some(Field { attrs, ty, .. }) => {
                     let mut explicit = false;
+
                     for attr in filter_attrs(attrs) {
-                        if attr
+                        explicit = attr
                             .parse_args_with(|stream: ParseStream| {
                                 let opt = parse_kv::<Path>("unpack_visitor", stream)?;
                                 if opt.is_none() {
@@ -54,12 +55,12 @@ impl StructInfo {
                                 }
                                 Ok(opt)
                             })?
-                            .is_some()
-                        {
-                            explicit = true;
+                            .is_some();
+                        if explicit {
                             break;
                         }
                     }
+
                     (parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), explicit)
                 }
                 None => (parse_quote!(()), false),
