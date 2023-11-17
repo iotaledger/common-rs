@@ -29,7 +29,7 @@ impl Parse for Type {
 impl UnpackVisitorInfo {
     pub(crate) fn new<'a>(
         filtered_attrs: impl Iterator<Item = &'a Attribute>,
-        default_unpack_visitor: impl FnOnce() -> Result<(syn::Type, bool)>,
+        default_unpack_visitor: impl FnOnce() -> Result<UnpackVisitorInfo>,
     ) -> Result<Self> {
         for attr in filtered_attrs {
             let opt_info =
@@ -51,11 +51,6 @@ impl UnpackVisitorInfo {
             }
         }
 
-        let (unpack_visitor, explicit) = default_unpack_visitor()?;
-
-        Ok(Self {
-            unpack_visitor,
-            explicit,
-        })
+        default_unpack_visitor()
     }
 }

@@ -40,26 +40,33 @@ impl StructInfo {
             }
         }
 
-        let unpack_visitor = UnpackVisitorInfo::new(filtered_attrs, || match fields.iter().next() {
-            Some(Field { attrs, ty, .. }) => {
-                let mut explicit = false;
-                for attr in filter_attrs(attrs) {
-                    if attr
-                        .parse_args_with(|stream: ParseStream| {
-                            let opt = parse_kv::<Path>("unpack_visitor", stream)?;
-                            if opt.is_none() {
-                                skip_stream(stream)?;
-                            }
-                            Ok(opt)
-                        })?
-                        .is_some()
-                    {
-                        explicit = true;
+        let unpack_visitor = UnpackVisitorInfo::new(filtered_attrs, || {
+            let (unpack_visitor, explicit) = match fields.iter().next() {
+                Some(Field { attrs, ty, .. }) => {
+                    let mut explicit = false;
+                    for attr in filter_attrs(attrs) {
+                        if attr
+                            .parse_args_with(|stream: ParseStream| {
+                                let opt = parse_kv::<Path>("unpack_visitor", stream)?;
+                                if opt.is_none() {
+                                    skip_stream(stream)?;
+                                }
+                                Ok(opt)
+                            })?
+                            .is_some()
+                        {
+                            explicit = true;
+                        }
                     }
+                    (parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), explicit)
                 }
-                Ok((parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), explicit))
-            }
-            None => Ok((parse_quote!(()), false)),
+                None => (parse_quote!(()), false),
+            };
+
+            Ok(UnpackVisitorInfo {
+                unpack_visitor,
+                explicit,
+            })
         })?;
 
         let inner = RecordInfo::new(path, fields, &unpack_error.with)?;
