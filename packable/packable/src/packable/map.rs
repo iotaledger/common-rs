@@ -8,9 +8,9 @@ extern crate alloc;
 use core::{convert::Infallible, fmt};
 
 /// Error type raised when a semantic error occurs while unpacking a map.
-pub enum UnpackMapError<K, V, KE, VE, P> {
+pub enum UnpackMapError<K, KE, VE, P> {
     /// A duplicate key.
-    OccupiedKey((K, V)),
+    DuplicateKey(K),
     /// Semantic error raised while unpacking a key of the map. Typically this is
     /// [`Packable::UnpackError`](crate::Packable::UnpackError).
     Key(KE),
@@ -21,10 +21,10 @@ pub enum UnpackMapError<K, V, KE, VE, P> {
     Prefix(P),
 }
 
-impl<K, V, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMapError<K, V, KE, VE, P> {
+impl<K, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMapError<K, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::OccupiedKey(_) => f.debug_tuple("OccupiedKey").finish(),
+            Self::DuplicateKey(_) => f.debug_tuple("OccupiDuplicateKeyedKey").finish(),
             Self::Key(arg0) => f.debug_tuple("Key").field(arg0).finish(),
             Self::Value(arg0) => f.debug_tuple("Value").field(arg0).finish(),
             Self::Prefix(arg0) => f.debug_tuple("Prefix").field(arg0).finish(),
@@ -33,7 +33,7 @@ impl<K, V, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackM
 }
 
 #[cfg(feature = "std")]
-impl<K, V, KE, VE, P> std::error::Error for UnpackMapError<K, V, KE, VE, P>
+impl<K, KE, VE, P> std::error::Error for UnpackMapError<K, KE, VE, P>
 where
     KE: std::error::Error,
     VE: std::error::Error,
@@ -41,19 +41,66 @@ where
 {
 }
 
-impl<K, V, KE, VE, P> From<Infallible> for UnpackMapError<K, V, KE, VE, P> {
+impl<K, KE, VE, P> From<Infallible> for UnpackMapError<K, KE, VE, P> {
     fn from(err: Infallible) -> Self {
         match err {}
     }
 }
 
-impl<K, V, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for UnpackMapError<K, V, KE, VE, P> {
+impl<K, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for UnpackMapError<K, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::OccupiedKey(_) => write!(f, "duplicate key in map"),
+            Self::DuplicateKey(_) => write!(f, "duplicate key in map"),
             Self::Key(err) => write!(f, "cannot unpack key: {}", err),
             Self::Value(err) => write!(f, "cannot unpack value: {}", err),
             Self::Prefix(err) => write!(f, "cannot unpack prefix: {}", err),
+        }
+    }
+}
+
+/// Error type raised when a semantic error occurs while unpacking an ordered set.
+pub enum UnpackOrderedMapError<K, KE, VE, P> {
+    /// A map error.
+    Map(UnpackMapError<K, KE, VE, P>),
+    /// An unordered set.
+    Unordered,
+}
+
+impl<K, KE, VE, P> From<UnpackMapError<K, KE, VE, P>> for UnpackOrderedMapError<K, KE, VE, P> {
+    fn from(value: UnpackMapError<K, KE, VE, P>) -> Self {
+        Self::Map(value)
+    }
+}
+
+impl<K, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackOrderedMapError<K, KE, VE, P> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Map(arg0) => f.debug_tuple("Map").field(arg0).finish(),
+            Self::Unordered => f.debug_tuple("Unordered").finish(),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl<K, KE, VE, P> std::error::Error for UnpackOrderedMapError<K, KE, VE, P>
+where
+    KE: std::error::Error,
+    VE: std::error::Error,
+    P: std::error::Error,
+{
+}
+
+impl<K, KE, VE, P> From<Infallible> for UnpackOrderedMapError<K, KE, VE, P> {
+    fn from(err: Infallible) -> Self {
+        match err {}
+    }
+}
+
+impl<K, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for UnpackOrderedMapError<K, KE, VE, P> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Map(s) => s.fmt(f),
+            Self::Unordered => write!(f, "unordered map"),
         }
     }
 }
@@ -70,7 +117,7 @@ mod btreemap {
     where
         V::UnpackVisitor: Borrow<K::UnpackVisitor>,
     {
-        type UnpackError = UnpackMapError<K, V, K::UnpackError, V::UnpackError, <usize as Packable>::UnpackError>;
+        type UnpackError = UnpackOrderedMapError<K, K::UnpackError, V::UnpackError, <usize as Packable>::UnpackError>;
         type UnpackVisitor = V::UnpackVisitor;
 
         #[inline]
@@ -104,16 +151,23 @@ mod btreemap {
                 let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
                     .map_packable_err(UnpackMapError::Key)
                     .map_packable_err(Self::UnpackError::from)?;
-                // TODO: fails here for the visitor: `expected `&<V as Packable>::UnpackVisitor`, found `&<K as
-                // Packable>::UnpackVisitor``
+                if let Some((last, _)) = map.last_key_value() {
+                    match last.cmp(&key) {
+                        core::cmp::Ordering::Equal => {
+                            return Err(UnpackError::Packable(Self::UnpackError::Map(
+                                UnpackMapError::DuplicateKey(key),
+                            )));
+                        }
+                        core::cmp::Ordering::Greater => {
+                            return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                        }
+                        core::cmp::Ordering::Less => (),
+                    }
+                }
                 let value = V::unpack::<_, VERIFY>(unpacker, &visitor)
                     .map_packable_err(UnpackMapError::Value)
                     .map_packable_err(Self::UnpackError::from)?;
-                if map.contains_key(&key) {
-                    return Err(UnpackError::Packable(Self::UnpackError::OccupiedKey((key, value))));
-                } else {
-                    map.insert(key, value);
-                }
+                map.insert(key, value);
             }
 
             Ok(map)
