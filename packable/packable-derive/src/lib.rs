@@ -24,7 +24,7 @@ use syn::{parse_macro_input, Ident};
 use self::trait_impl::TraitImpl;
 
 #[proc_macro_derive(Packable, attributes(packable))]
-pub fn packable(input: proc_macro::TokenStream) -> TokenStream {
+pub fn packable(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input);
 
     let crate_string = match crate_name("packable").expect("packable should be present in `Cargo.toml`") {
@@ -34,7 +34,7 @@ pub fn packable(input: proc_macro::TokenStream) -> TokenStream {
 
     match TraitImpl::new(input, Ident::new(&crate_string, Span::call_site())) {
         Ok(trait_impl) => trait_impl.into_token_stream(),
-        Err(err) => err.to_compile_error(),
+        Err(err) => err.into_compile_error(),
     }
     .into()
 }
