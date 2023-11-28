@@ -7,7 +7,7 @@ use syn::{
 };
 
 pub(crate) fn filter_attrs(attrs: &[Attribute]) -> impl Iterator<Item = &Attribute> + Clone {
-    attrs.iter().filter(|attr| attr.path.is_ident("packable"))
+    attrs.iter().filter(|attr| attr.path().is_ident("packable"))
 }
 
 pub(crate) fn skip_stream(stream: ParseStream) -> Result<()> {

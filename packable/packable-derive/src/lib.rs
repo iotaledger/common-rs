@@ -18,15 +18,13 @@ mod variant_info;
 use proc_macro::TokenStream;
 use proc_macro2::Span;
 use proc_macro_crate::{crate_name, FoundCrate};
-use proc_macro_error::{abort, proc_macro_error};
 use quote::ToTokens;
 use syn::{parse_macro_input, Ident};
 
 use self::trait_impl::TraitImpl;
 
-#[proc_macro_error]
 #[proc_macro_derive(Packable, attributes(packable))]
-pub fn packable(input: TokenStream) -> TokenStream {
+pub fn packable(input: proc_macro::TokenStream) -> TokenStream {
     let input = parse_macro_input!(input);
 
     let crate_string = match crate_name("packable").expect("packable should be present in `Cargo.toml`") {
@@ -35,7 +33,8 @@ pub fn packable(input: TokenStream) -> TokenStream {
     };
 
     match TraitImpl::new(input, Ident::new(&crate_string, Span::call_site())) {
-        Ok(trait_impl) => trait_impl.into_token_stream().into(),
-        Err(err) => abort!(err),
+        Ok(trait_impl) => trait_impl.into_token_stream(),
+        Err(err) => err.to_compile_error(),
     }
+    .into()
 }

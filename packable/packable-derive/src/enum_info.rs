@@ -19,7 +19,7 @@ impl EnumInfo {
     pub(crate) fn new(ident: Ident, data: DataEnum, attrs: &[Attribute], crate_name: &Ident) -> Result<Self> {
         let repr_type = attrs
             .iter()
-            .find(|attr| attr.path.is_ident("repr"))
+            .find(|attr| attr.path().is_ident("repr"))
             .map(Attribute::parse_args::<Type>)
             .transpose()?;
 
