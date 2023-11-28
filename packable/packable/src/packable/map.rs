@@ -8,20 +8,20 @@ extern crate alloc;
 use core::{convert::Infallible, fmt};
 
 /// Error type raised when a semantic error occurs while unpacking a map.
-pub enum UnpackMapError<K, V, I, J, P> {
+pub enum UnpackMapError<K, V, KE, VE, P> {
     /// A duplicate key.
     OccupiedKey((K, V)),
     /// Semantic error raised while unpacking a key of the map. Typically this is
     /// [`Packable::UnpackError`](crate::Packable::UnpackError).
-    Key(I),
+    Key(KE),
     /// Semantic error raised while unpacking a value of the map. Typically this is
     /// [`Packable::UnpackError`](crate::Packable::UnpackError).
-    Value(J),
+    Value(VE),
     /// Semantic error raised when the length prefix cannot be unpacked.
     Prefix(P),
 }
 
-impl<K, V, I: fmt::Debug, J: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMapError<K, V, I, J, P> {
+impl<K, V, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMapError<K, V, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::OccupiedKey(_) => f.debug_tuple("OccupiedKey").finish(),
@@ -33,20 +33,21 @@ impl<K, V, I: fmt::Debug, J: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMap
 }
 
 #[cfg(feature = "std")]
-impl<K, V, I, J, P> std::error::Error for UnpackMapError<K, V, I, J, P>
+impl<K, V, KE, VE, P> std::error::Error for UnpackMapError<K, V, KE, VE, P>
 where
-    I: std::error::Error,
+    KE: std::error::Error,
+    VE: std::error::Error,
     P: std::error::Error,
 {
 }
 
-impl<K, V, I, J, P> From<Infallible> for UnpackMapError<K, V, I, J, P> {
+impl<K, V, KE, VE, P> From<Infallible> for UnpackMapError<K, V, KE, VE, P> {
     fn from(err: Infallible) -> Self {
         match err {}
     }
 }
 
-impl<K, V, I: fmt::Display, J: fmt::Display, P: fmt::Display> fmt::Display for UnpackMapError<K, V, I, J, P> {
+impl<K, V, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for UnpackMapError<K, V, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::OccupiedKey(_) => write!(f, "duplicate key in map"),
@@ -60,13 +61,17 @@ impl<K, V, I: fmt::Display, J: fmt::Display, P: fmt::Display> fmt::Display for U
 #[cfg(feature = "usize")]
 mod btreemap {
     use alloc::collections::BTreeMap;
+    use core::borrow::Borrow;
 
     use super::*;
     use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
-    impl<K: Packable + Ord, V: Packable> Packable for BTreeMap<K, V> {
+    impl<K: Packable + Ord, V: Packable> Packable for BTreeMap<K, V>
+    where
+        V::UnpackVisitor: Borrow<K::UnpackVisitor>,
+    {
         type UnpackError = UnpackMapError<K, V, K::UnpackError, V::UnpackError, <usize as Packable>::UnpackError>;
-        type UnpackVisitor = K::UnpackVisitor;
+        type UnpackVisitor = V::UnpackVisitor;
 
         #[inline]
         fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
@@ -96,15 +101,18 @@ mod btreemap {
             let mut map = BTreeMap::<K, V>::new();
 
             for _ in 0..len {
-                let key = K::unpack::<_, VERIFY>(unpacker, visitor)
+                let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
                     .map_packable_err(UnpackMapError::Key)
                     .map_packable_err(Self::UnpackError::from)?;
-                // TODO: fails here for the visitor: `expected `&<V as Packable>::UnpackVisitor`, found `&<K as Packable>::UnpackVisitor``
-                let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+                // TODO: fails here for the visitor: `expected `&<V as Packable>::UnpackVisitor`, found `&<K as
+                // Packable>::UnpackVisitor``
+                let value = V::unpack::<_, VERIFY>(unpacker, &visitor)
                     .map_packable_err(UnpackMapError::Value)
                     .map_packable_err(Self::UnpackError::from)?;
-                if map.insert(key, value).is_some() {
+                if map.contains_key(&key) {
                     return Err(UnpackError::Packable(Self::UnpackError::OccupiedKey((key, value))));
+                } else {
+                    map.insert(key, value);
                 }
             }
 
