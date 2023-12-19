@@ -146,7 +146,7 @@ where
                     core::cmp::Ordering::Less => (),
                 }
             }
-            let value = V::unpack::<_, VERIFY>(unpacker, &visitor)
+            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
                 .map_packable_err(UnpackMapError::Value)
                 .map_packable_err(Self::UnpackError::from)?;
             map.insert(key, value);
