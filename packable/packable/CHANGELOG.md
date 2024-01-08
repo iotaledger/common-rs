@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.10.1 - 2024-01-08
+
+### Added
+
+- `Packable` impl for `HashMap` and `BTreeMap`;
+- `HashMapPrefix` and `BTreeMapPrefix` types;
+
 ## 0.10.0 - 2023-11-17
 
 ### Changed

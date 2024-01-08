@@ -7,7 +7,7 @@ use alloc::collections::BTreeSet;
 use core::{
     fmt,
     marker::PhantomData,
-    ops::{Deref, DerefMut, Range},
+    ops::{Deref, Range},
 };
 
 use crate::{
@@ -56,13 +56,6 @@ impl<T: Ord, B: Bounded> Deref for BTreeSetPrefix<T, B> {
 
     fn deref(&self) -> &Self::Target {
         &self.inner
-    }
-}
-
-/// This is fine as slices cannot be resized.
-impl<T: Ord, B: Bounded> DerefMut for BTreeSetPrefix<T, B> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
     }
 }
 
@@ -131,6 +124,7 @@ where
             let item = T::unpack::<_, VERIFY>(unpacker, visitor)
                 .map_packable_err(UnpackSetError::Item)
                 .map_packable_err(Self::UnpackError::from)?;
+
             if let Some(last) = set.last() {
                 match last.cmp(&item) {
                     core::cmp::Ordering::Equal => {
@@ -144,6 +138,7 @@ where
                     core::cmp::Ordering::Less => (),
                 }
             }
+
             set.insert(item);
         }
 

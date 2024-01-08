@@ -176,7 +176,7 @@ impl LogLayer {
                 let dest = match output_config.name() {
                     Self::STDOUT_NAME => LogDest::Stdout(output_config.color_enabled()),
                     name => {
-                        let file = OpenOptions::new().write(true).create(true).append(true).open(name)?;
+                        let file = OpenOptions::new().create(true).append(true).open(name)?;
                         LogDest::File(Mutex::new(file))
                     }
                 };
