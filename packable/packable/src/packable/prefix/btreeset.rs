@@ -131,6 +131,7 @@ where
             let item = T::unpack::<_, VERIFY>(unpacker, visitor)
                 .map_packable_err(UnpackSetError::Item)
                 .map_packable_err(Self::UnpackError::from)?;
+
             if let Some(last) = set.last() {
                 match last.cmp(&item) {
                     core::cmp::Ordering::Equal => {
@@ -144,6 +145,7 @@ where
                     core::cmp::Ordering::Less => (),
                 }
             }
+
             set.insert(item);
         }
 
