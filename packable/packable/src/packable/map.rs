@@ -19,10 +19,10 @@ pub enum UnpackMapError<K, KE, VE, P> {
     /// A duplicate key.
     DuplicateKey(K),
     /// Semantic error raised while unpacking a key of the map. Typically this is
-    /// [`Packable::UnpackError`](crate::Packable::UnpackError).
+    /// [`Packable::UnpackError`].
     Key(KE),
     /// Semantic error raised while unpacking a value of the map. Typically this is
-    /// [`Packable::UnpackError`](crate::Packable::UnpackError).
+    /// [`Packable::UnpackError`].
     Value(VE),
     /// Semantic error raised when the length prefix cannot be unpacked.
     Prefix(P),
