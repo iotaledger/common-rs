@@ -5,7 +5,11 @@
 
 extern crate alloc;
 
-use core::{convert::Infallible, fmt};
+use core::{borrow::Borrow, convert::Infallible, fmt};
+#[cfg(feature = "std")]
+use std::{collections::HashMap, hash::Hash};
+
+use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 /// Error type raised when a semantic error occurs while unpacking a map.
 pub enum UnpackMapError<K, KE, VE, P> {
@@ -105,13 +109,64 @@ impl<K, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for Un
     }
 }
 
-#[cfg(feature = "usize")]
+#[cfg(feature = "std")]
+impl<K: Packable + Ord + Hash, V: Packable> Packable for HashMap<K, V>
+where
+    V::UnpackVisitor: Borrow<K::UnpackVisitor>,
+{
+    type UnpackError = UnpackMapError<K, K::UnpackError, V::UnpackError, <usize as Packable>::UnpackError>;
+    type UnpackVisitor = V::UnpackVisitor;
+
+    #[inline]
+    fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
+        // This cast is fine because we know `usize` is not larger than `64` bits.
+        (self.len() as u64).pack(packer)?;
+
+        for (k, v) in self.iter() {
+            k.pack(packer)?;
+            v.pack(packer)?;
+        }
+
+        Ok(())
+    }
+
+    #[inline]
+    fn unpack<U: Unpacker, const VERIFY: bool>(
+        unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        use crate::error::UnpackErrorExt;
+
+        let len = u64::unpack::<_, VERIFY>(unpacker, &())
+            .coerce()?
+            .try_into()
+            .map_err(|err| UnpackError::Packable(UnpackMapError::Prefix(err).into()))?;
+
+        let mut map = HashMap::<K, V>::new();
+
+        for _ in 0..len {
+            let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
+                .map_packable_err(UnpackMapError::Key)
+                .map_packable_err(Self::UnpackError::from)?;
+            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+                .map_packable_err(UnpackMapError::Value)
+                .map_packable_err(Self::UnpackError::from)?;
+
+            if map.contains_key(&key) {
+                return Err(UnpackError::Packable(UnpackMapError::DuplicateKey(key)));
+            }
+
+            map.insert(key, value);
+        }
+
+        Ok(map)
+    }
+}
+
 mod btreemap {
     use alloc::collections::BTreeMap;
-    use core::borrow::Borrow;
 
     use super::*;
-    use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
     impl<K: Packable + Ord, V: Packable> Packable for BTreeMap<K, V>
     where
@@ -151,6 +206,7 @@ mod btreemap {
                 let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
                     .map_packable_err(UnpackMapError::Key)
                     .map_packable_err(Self::UnpackError::from)?;
+
                 if let Some((last, _)) = map.last_key_value() {
                     match last.cmp(&key) {
                         core::cmp::Ordering::Equal => {
@@ -164,9 +220,11 @@ mod btreemap {
                         core::cmp::Ordering::Less => (),
                     }
                 }
+
                 let value = V::unpack::<_, VERIFY>(unpacker, visitor)
                     .map_packable_err(UnpackMapError::Value)
                     .map_packable_err(Self::UnpackError::from)?;
+
                 map.insert(key, value);
             }
 
