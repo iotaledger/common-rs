@@ -14,12 +14,7 @@ use core::{
 use std::collections::HashMap;
 
 use crate::{
-    error::UnpackError,
-    map::{UnpackMapError, UnpackOrderedMapError},
-    packable::bounded::Bounded,
-    packer::Packer,
-    unpacker::Unpacker,
-    Packable,
+    error::UnpackError, map::UnpackMapError, packable::bounded::Bounded, packer::Packer, unpacker::Unpacker, Packable,
 };
 
 /// Wrapper type for `BTreeMap<K, V>` with a length prefix.
@@ -99,7 +94,7 @@ where
     Range<B::Bounds>: Iterator<Item = B::Bounds>,
     V::UnpackVisitor: Borrow<K::UnpackVisitor>,
 {
-    type UnpackError = UnpackOrderedMapError<K, K::UnpackError, V::UnpackError, B::UnpackError>;
+    type UnpackError = UnpackMapError<K, K::UnpackError, V::UnpackError, B::UnpackError>;
     type UnpackVisitor = V::UnpackVisitor;
 
     #[inline]
@@ -135,6 +130,11 @@ where
             let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
                 .map_packable_err(UnpackMapError::Key)
                 .map_packable_err(Self::UnpackError::from)?;
+
+            if map.contains_key(&key) {
+                return Err(UnpackError::Packable(UnpackMapError::DuplicateKey(key)));
+            }
+
             let value = V::unpack::<_, VERIFY>(unpacker, visitor)
                 .map_packable_err(UnpackMapError::Value)
                 .map_packable_err(Self::UnpackError::from)?;
