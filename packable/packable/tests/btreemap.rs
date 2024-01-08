@@ -36,8 +36,6 @@ fn invalid_duplicate() {
 
     let prefixed = BTreeMap::<u8, u8>::unpack_verified(bytes, &());
 
-    println!("{prefixed:?}");
-
     assert!(matches!(
         prefixed,
         Err(UnpackError::Packable(UnpackOrderedMapError::Map(
