@@ -143,7 +143,7 @@ where
         let len = u64::unpack::<_, VERIFY>(unpacker, &())
             .coerce()?
             .try_into()
-            .map_err(|err| UnpackError::Packable(UnpackMapError::Prefix(err).into()))?;
+            .map_err(|err| UnpackError::Packable(UnpackMapError::Prefix(err)))?;
 
         let mut map = HashMap::<K, V>::new();
 
