@@ -6,6 +6,8 @@
 extern crate alloc;
 
 #[cfg(feature = "usize")]
+use alloc::collections::BTreeMap;
+#[cfg(feature = "usize")]
 use core::{borrow::Borrow, hash::Hash};
 use core::{convert::Infallible, fmt};
 
@@ -169,72 +171,66 @@ where
 }
 
 #[cfg(feature = "usize")]
-mod btreemap {
-    use alloc::collections::BTreeMap;
+impl<K: Packable + Ord, V: Packable> Packable for BTreeMap<K, V>
+where
+    V::UnpackVisitor: Borrow<K::UnpackVisitor>,
+{
+    type UnpackError = UnpackOrderedMapError<K, K::UnpackError, V::UnpackError, <usize as Packable>::UnpackError>;
+    type UnpackVisitor = V::UnpackVisitor;
 
-    use super::*;
+    #[inline]
+    fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
+        // This cast is fine because we know `usize` is not larger than `64` bits.
+        (self.len() as u64).pack(packer)?;
 
-    impl<K: Packable + Ord, V: Packable> Packable for BTreeMap<K, V>
-    where
-        V::UnpackVisitor: Borrow<K::UnpackVisitor>,
-    {
-        type UnpackError = UnpackOrderedMapError<K, K::UnpackError, V::UnpackError, <usize as Packable>::UnpackError>;
-        type UnpackVisitor = V::UnpackVisitor;
-
-        #[inline]
-        fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
-            // This cast is fine because we know `usize` is not larger than `64` bits.
-            (self.len() as u64).pack(packer)?;
-
-            for (k, v) in self.iter() {
-                k.pack(packer)?;
-                v.pack(packer)?;
-            }
-
-            Ok(())
+        for (k, v) in self.iter() {
+            k.pack(packer)?;
+            v.pack(packer)?;
         }
 
-        #[inline]
-        fn unpack<U: Unpacker, const VERIFY: bool>(
-            unpacker: &mut U,
-            visitor: &Self::UnpackVisitor,
-        ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-            use crate::error::UnpackErrorExt;
+        Ok(())
+    }
 
-            let len = u64::unpack::<_, VERIFY>(unpacker, &())
-                .coerce()?
-                .try_into()
-                .map_err(|err| UnpackError::Packable(UnpackMapError::Prefix(err).into()))?;
+    #[inline]
+    fn unpack<U: Unpacker, const VERIFY: bool>(
+        unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        use crate::error::UnpackErrorExt;
 
-            let mut map = BTreeMap::<K, V>::new();
+        let len = u64::unpack::<_, VERIFY>(unpacker, &())
+            .coerce()?
+            .try_into()
+            .map_err(|err| UnpackError::Packable(UnpackMapError::Prefix(err).into()))?;
 
-            for _ in 0..len {
-                let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
-                    .map_packable_err(UnpackMapError::Key)
-                    .map_packable_err(Self::UnpackError::from)?;
+        let mut map = BTreeMap::<K, V>::new();
 
-                if let Some((last, _)) = map.last_key_value() {
-                    match last.cmp(&key) {
-                        core::cmp::Ordering::Equal => {
-                            return Err(UnpackError::Packable(Self::UnpackError::Map(
-                                UnpackMapError::DuplicateKey(key),
-                            )));
-                        }
-                        core::cmp::Ordering::Greater => {
-                            return Err(UnpackError::Packable(Self::UnpackError::Unordered));
-                        }
-                        core::cmp::Ordering::Less => (),
+        for _ in 0..len {
+            let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
+                .map_packable_err(UnpackMapError::Key)
+                .map_packable_err(Self::UnpackError::from)?;
+
+            if let Some((last, _)) = map.last_key_value() {
+                match last.cmp(&key) {
+                    core::cmp::Ordering::Equal => {
+                        return Err(UnpackError::Packable(Self::UnpackError::Map(
+                            UnpackMapError::DuplicateKey(key),
+                        )));
                     }
+                    core::cmp::Ordering::Greater => {
+                        return Err(UnpackError::Packable(Self::UnpackError::Unordered));
+                    }
+                    core::cmp::Ordering::Less => (),
                 }
-
-                let value = V::unpack::<_, VERIFY>(unpacker, visitor)
-                    .map_packable_err(UnpackMapError::Value)
-                    .map_packable_err(Self::UnpackError::from)?;
-
-                map.insert(key, value);
             }
 
-            Ok(map)
+            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+                .map_packable_err(UnpackMapError::Value)
+                .map_packable_err(Self::UnpackError::from)?;
+
+            map.insert(key, value);
         }
+
+        Ok(map)
     }
 }
