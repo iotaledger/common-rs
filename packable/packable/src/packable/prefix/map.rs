@@ -11,146 +11,141 @@ use core::{
     ops::{Deref, DerefMut, Range},
 };
 
+use hashbrown::HashMap;
+
 use crate::{
     error::UnpackError, map::UnpackMapError, packable::bounded::Bounded, packer::Packer, unpacker::Unpacker, Packable,
 };
 
-#[cfg(feature = "std")]
-pub mod hashmap {
-    use std::collections::HashMap;
+/// Wrapper type for `HashMapPrefix<K, V>` with a length prefix.
+/// The set's prefix bounds are provided by `B`, where `B` is a [`Bounded`] type.
+/// The prefix type is the `Bounds` type associated with `B`.
+#[derive(Clone, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[repr(transparent)]
+pub struct HashMapPrefix<K: Eq + Hash, V: PartialEq, B: Bounded> {
+    inner: HashMap<K, V>,
+    bounded: PhantomData<B>,
+}
 
-    use super::*;
-
-    /// Wrapper type for `HashMapPrefix<K, V>` with a length prefix.
-    /// The set's prefix bounds are provided by `B`, where `B` is a [`Bounded`] type.
-    /// The prefix type is the `Bounds` type associated with `B`.
-    #[derive(Clone, Eq, PartialEq)]
-    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-    #[repr(transparent)]
-    pub struct HashMapPrefix<K: Eq + Hash, V: PartialEq, B: Bounded> {
-        inner: HashMap<K, V>,
-        bounded: PhantomData<B>,
-    }
-
-    impl<K: Eq + Hash + fmt::Debug, V: PartialEq + fmt::Debug, B: Bounded> fmt::Debug for HashMapPrefix<K, V, B> {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            if f.alternate() {
-                write!(f, "{:#?}", self.inner)
-            } else {
-                write!(f, "{:?}", self.inner)
-            }
+impl<K: Eq + Hash + fmt::Debug, V: PartialEq + fmt::Debug, B: Bounded> fmt::Debug for HashMapPrefix<K, V, B> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if f.alternate() {
+            write!(f, "{:#?}", self.inner)
+        } else {
+            write!(f, "{:?}", self.inner)
         }
     }
+}
 
-    impl<K: Eq + Hash, V: PartialEq, B: Bounded> Default for HashMapPrefix<K, V, B> {
-        fn default() -> Self {
-            Self {
-                inner: Default::default(),
-                bounded: PhantomData,
-            }
+impl<K: Eq + Hash, V: PartialEq, B: Bounded> Default for HashMapPrefix<K, V, B> {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+            bounded: PhantomData,
         }
     }
+}
 
-    impl<K: Eq + Hash, V: PartialEq, B: Bounded> Deref for HashMapPrefix<K, V, B> {
-        type Target = HashMap<K, V>;
+impl<K: Eq + Hash, V: PartialEq, B: Bounded> Deref for HashMapPrefix<K, V, B> {
+    type Target = HashMap<K, V>;
 
-        fn deref(&self) -> &Self::Target {
-            &self.inner
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+/// This is fine as slices cannot be resized.
+impl<K: Eq + Hash, V: PartialEq, B: Bounded> DerefMut for HashMapPrefix<K, V, B> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.inner
+    }
+}
+
+impl<K: Eq + Hash, V: PartialEq, B: Bounded> From<HashMapPrefix<K, V, B>> for HashMap<K, V> {
+    fn from(prefix: HashMapPrefix<K, V, B>) -> Self {
+        prefix.inner
+    }
+}
+
+impl<K: Eq + Hash, V: PartialEq, B> TryFrom<HashMap<K, V>> for HashMapPrefix<K, V, B>
+where
+    B: Bounded,
+{
+    type Error = <B as TryFrom<usize>>::Error;
+
+    fn try_from(set: HashMap<K, V>) -> Result<Self, Self::Error> {
+        B::try_from(set.len())?;
+
+        Ok(Self {
+            inner: set,
+            bounded: PhantomData,
+        })
+    }
+}
+
+impl<K, V, B> Packable for HashMapPrefix<K, V, B>
+where
+    K: Packable + Eq + Hash,
+    V: Packable + PartialEq,
+    B: Bounded + Packable<UnpackVisitor = ()>,
+    <B::Bounds as TryInto<B>>::Error: fmt::Debug,
+    <B as TryFrom<usize>>::Error: fmt::Debug,
+    Range<B::Bounds>: Iterator<Item = B::Bounds>,
+    V::UnpackVisitor: Borrow<K::UnpackVisitor>,
+{
+    type UnpackError = UnpackMapError<K, K::UnpackError, V::UnpackError, B::UnpackError>;
+    type UnpackVisitor = V::UnpackVisitor;
+
+    #[inline]
+    fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
+        // The length of any dynamically-sized sequence must be prefixed. This unwrap is fine since
+        // the length of the inner slice has been validated while creating this `HashMapPrefix`.
+        B::try_from(self.len()).unwrap().pack(packer)?;
+
+        for (k, v) in self.iter() {
+            k.pack(packer)?;
+            v.pack(packer)?;
         }
+
+        Ok(())
     }
 
-    /// This is fine as slices cannot be resized.
-    impl<K: Eq + Hash, V: PartialEq, B: Bounded> DerefMut for HashMapPrefix<K, V, B> {
-        fn deref_mut(&mut self) -> &mut Self::Target {
-            &mut self.inner
-        }
-    }
+    #[inline]
+    fn unpack<U: Unpacker, const VERIFY: bool>(
+        unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        use crate::error::UnpackErrorExt;
 
-    impl<K: Eq + Hash, V: PartialEq, B: Bounded> From<HashMapPrefix<K, V, B>> for HashMap<K, V> {
-        fn from(prefix: HashMapPrefix<K, V, B>) -> Self {
-            prefix.inner
-        }
-    }
+        // The length of any dynamically-sized sequence must be prefixed.
+        let len = B::unpack::<_, VERIFY>(unpacker, &())
+            .map_packable_err(UnpackMapError::Prefix)
+            .map_packable_err(Self::UnpackError::from)?
+            .into();
 
-    impl<K: Eq + Hash, V: PartialEq, B> TryFrom<HashMap<K, V>> for HashMapPrefix<K, V, B>
-    where
-        B: Bounded,
-    {
-        type Error = <B as TryFrom<usize>>::Error;
+        let mut map = HashMap::<K, V>::new();
 
-        fn try_from(set: HashMap<K, V>) -> Result<Self, Self::Error> {
-            B::try_from(set.len())?;
+        for _ in B::Bounds::default()..len {
+            let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
+                .map_packable_err(UnpackMapError::Key)
+                .map_packable_err(Self::UnpackError::from)?;
 
-            Ok(Self {
-                inner: set,
-                bounded: PhantomData,
-            })
-        }
-    }
-
-    impl<K, V, B> Packable for HashMapPrefix<K, V, B>
-    where
-        K: Packable + Eq + Hash,
-        V: Packable + PartialEq,
-        B: Bounded + Packable<UnpackVisitor = ()>,
-        <B::Bounds as TryInto<B>>::Error: fmt::Debug,
-        <B as TryFrom<usize>>::Error: fmt::Debug,
-        Range<B::Bounds>: Iterator<Item = B::Bounds>,
-        V::UnpackVisitor: Borrow<K::UnpackVisitor>,
-    {
-        type UnpackError = UnpackMapError<K, K::UnpackError, V::UnpackError, B::UnpackError>;
-        type UnpackVisitor = V::UnpackVisitor;
-
-        #[inline]
-        fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error> {
-            // The length of any dynamically-sized sequence must be prefixed. This unwrap is fine since
-            // the length of the inner slice has been validated while creating this `HashMapPrefix`.
-            B::try_from(self.len()).unwrap().pack(packer)?;
-
-            for (k, v) in self.iter() {
-                k.pack(packer)?;
-                v.pack(packer)?;
-            }
-
-            Ok(())
-        }
-
-        #[inline]
-        fn unpack<U: Unpacker, const VERIFY: bool>(
-            unpacker: &mut U,
-            visitor: &Self::UnpackVisitor,
-        ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-            use crate::error::UnpackErrorExt;
-
-            // The length of any dynamically-sized sequence must be prefixed.
-            let len = B::unpack::<_, VERIFY>(unpacker, &())
-                .map_packable_err(UnpackMapError::Prefix)
-                .map_packable_err(Self::UnpackError::from)?
-                .into();
-
-            let mut map = HashMap::<K, V>::new();
-
-            for _ in B::Bounds::default()..len {
-                let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
-                    .map_packable_err(UnpackMapError::Key)
-                    .map_packable_err(Self::UnpackError::from)?;
-
-                if map.contains_key(&key) {
-                    return Err(UnpackError::Packable(UnpackMapError::DuplicateKey(key)));
-                }
-
-                let value = V::unpack::<_, VERIFY>(unpacker, visitor)
-                    .map_packable_err(UnpackMapError::Value)
-                    .map_packable_err(Self::UnpackError::from)?;
-
-                map.insert(key, value);
+            if map.contains_key(&key) {
+                return Err(UnpackError::Packable(UnpackMapError::DuplicateKey(key)));
             }
 
-            Ok(Self {
-                inner: map,
-                bounded: PhantomData,
-            })
+            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+                .map_packable_err(UnpackMapError::Value)
+                .map_packable_err(Self::UnpackError::from)?;
+
+            map.insert(key, value);
         }
+
+        Ok(Self {
+            inner: map,
+            bounded: PhantomData,
+        })
     }
 }
 

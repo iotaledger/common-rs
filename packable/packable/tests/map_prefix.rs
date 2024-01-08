@@ -3,8 +3,7 @@
 
 mod common;
 
-use std::collections::HashMap;
-
+use hashbrown::HashMap;
 use packable::{
     bounded::{
         BoundedU16, BoundedU32, BoundedU64, BoundedU8, InvalidBoundedU16, InvalidBoundedU32, InvalidBoundedU64,

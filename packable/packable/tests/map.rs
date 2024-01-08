@@ -1,8 +1,7 @@
 // Copyright 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use std::collections::HashMap;
-
+use hashbrown::HashMap;
 use packable::{error::UnpackError, map::UnpackMapError, PackableExt};
 
 mod common;
