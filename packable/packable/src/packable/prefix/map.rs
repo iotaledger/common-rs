@@ -9,7 +9,7 @@ use core::{
     fmt,
     hash::Hash,
     marker::PhantomData,
-    ops::{Deref, DerefMut, Range},
+    ops::{Deref, Range},
 };
 
 use hashbrown::HashMap;
@@ -58,13 +58,6 @@ impl<K: Eq + Hash, V: PartialEq, B: Bounded> Deref for HashMapPrefix<K, V, B> {
 
     fn deref(&self) -> &Self::Target {
         &self.inner
-    }
-}
-
-/// This is fine as slices cannot be resized.
-impl<K: Eq + Hash, V: PartialEq, B: Bounded> DerefMut for HashMapPrefix<K, V, B> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
     }
 }
 
@@ -190,13 +183,6 @@ impl<K: Ord, V, B: Bounded> Deref for BTreeMapPrefix<K, V, B> {
 
     fn deref(&self) -> &Self::Target {
         &self.inner
-    }
-}
-
-/// This is fine as slices cannot be resized.
-impl<K: Ord, V, B: Bounded> DerefMut for BTreeMapPrefix<K, V, B> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
     }
 }
 

@@ -7,7 +7,7 @@ use alloc::collections::BTreeSet;
 use core::{
     fmt,
     marker::PhantomData,
-    ops::{Deref, DerefMut, Range},
+    ops::{Deref, Range},
 };
 
 use crate::{
@@ -56,13 +56,6 @@ impl<T: Ord, B: Bounded> Deref for BTreeSetPrefix<T, B> {
 
     fn deref(&self) -> &Self::Target {
         &self.inner
-    }
-}
-
-/// This is fine as slices cannot be resized.
-impl<T: Ord, B: Bounded> DerefMut for BTreeSetPrefix<T, B> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
     }
 }
 
