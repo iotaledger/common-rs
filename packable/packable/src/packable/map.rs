@@ -146,7 +146,7 @@ where
             .try_into()
             .map_err(|err| UnpackError::Packable(UnpackMapError::Prefix(err)))?;
 
-        let mut map = HashMap::<K, V>::new();
+        let mut map = HashMap::<K, V>::with_capacity(len);
 
         for _ in 0..len {
             let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
