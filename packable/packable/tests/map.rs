@@ -3,7 +3,7 @@
 
 use std::collections::HashMap;
 
-use packable::{error::UnpackError, map::UnpackMapError};
+use packable::{error::UnpackError, map::UnpackMapError, PackableExt};
 
 mod common;
 
