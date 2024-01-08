@@ -24,7 +24,7 @@ pub enum UnpackMapError<K, KE, VE, P> {
 impl<K, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMapError<K, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::DuplicateKey(_) => f.debug_tuple("OccupiDuplicateKeyedKey").finish(),
+            Self::DuplicateKey(_) => f.debug_tuple("DuplicateKey").finish(),
             Self::Key(arg0) => f.debug_tuple("Key").field(arg0).finish(),
             Self::Value(arg0) => f.debug_tuple("Value").field(arg0).finish(),
             Self::Prefix(arg0) => f.debug_tuple("Prefix").field(arg0).finish(),
@@ -58,11 +58,11 @@ impl<K, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for Un
     }
 }
 
-/// Error type raised when a semantic error occurs while unpacking an ordered set.
+/// Error type raised when a semantic error occurs while unpacking an ordered map.
 pub enum UnpackOrderedMapError<K, KE, VE, P> {
     /// A map error.
     Map(UnpackMapError<K, KE, VE, P>),
-    /// An unordered set.
+    /// An unordered map.
     Unordered,
 }
 
