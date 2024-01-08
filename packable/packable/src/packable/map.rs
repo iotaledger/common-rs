@@ -151,13 +151,14 @@ where
             let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
                 .map_packable_err(UnpackMapError::Key)
                 .map_packable_err(Self::UnpackError::from)?;
-            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
-                .map_packable_err(UnpackMapError::Value)
-                .map_packable_err(Self::UnpackError::from)?;
 
             if map.contains_key(&key) {
                 return Err(UnpackError::Packable(UnpackMapError::DuplicateKey(key)));
             }
+
+            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+                .map_packable_err(UnpackMapError::Value)
+                .map_packable_err(Self::UnpackError::from)?;
 
             map.insert(key, value);
         }
