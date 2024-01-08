@@ -18,16 +18,16 @@ use packable::{
 
 #[test]
 fn btreemap_prefix_from_btreemap_invalid_error() {
-    let set = BTreeMap::from_iter((0..16).zip(4..20));
-    let prefixed = BTreeMapPrefix::<u8, u8, BoundedU32<1, 8>>::try_from(set);
+    let map = BTreeMap::from_iter((0..16).zip(4..20));
+    let prefixed = BTreeMapPrefix::<u8, u8, BoundedU32<1, 8>>::try_from(map);
 
     assert!(matches!(prefixed, Err(TryIntoBoundedU32Error::Invalid(16))));
 }
 
 #[test]
 fn btreemap_prefix_from_btreemap_truncated_error() {
-    let set = BTreeMap::from_iter((0..257).zip(0..257));
-    let prefixed = BTreeMapPrefix::<u16, u16, u8>::try_from(set);
+    let map = BTreeMap::from_iter((0..257).zip(0..257));
+    let prefixed = BTreeMapPrefix::<u16, u16, u8>::try_from(map);
 
     assert!(prefixed.is_err());
 }
