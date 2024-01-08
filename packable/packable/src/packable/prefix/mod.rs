@@ -13,7 +13,9 @@ use core::{convert::Infallible, fmt};
 
 pub use boxed::BoxedSlicePrefix;
 pub use btreeset::BTreeSetPrefix;
-pub use map::{btreemap::BTreeMapPrefix, HashMapPrefix};
+pub use map::btreemap::BTreeMapPrefix;
+#[cfg(feature = "std")]
+pub use map::hashmap::HashMapPrefix;
 pub use string::StringPrefix;
 pub use vec::VecPrefix;
 
