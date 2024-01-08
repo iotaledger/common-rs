@@ -92,7 +92,7 @@ impl<T, I, P> From<Infallible> for UnpackOrderedSetError<T, I, P> {
 impl<T, I: fmt::Display, P: fmt::Display> fmt::Display for UnpackOrderedSetError<T, I, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Set(s) => s.fmt(f),
+            Self::Set(err) => err.fmt(f),
             Self::Unordered => write!(f, "unordered set"),
         }
     }

@@ -106,7 +106,7 @@ impl<K, KE, VE, P> From<Infallible> for UnpackOrderedMapError<K, KE, VE, P> {
 impl<K, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for UnpackOrderedMapError<K, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Map(s) => s.fmt(f),
+            Self::Map(err) => err.fmt(f),
             Self::Unordered => write!(f, "unordered map"),
         }
     }
