@@ -22,8 +22,8 @@ impl<T, I: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackSetError<T, I, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::DuplicateItem(_) => f.debug_tuple("DuplicateItem").finish(),
-            Self::Item(arg0) => f.debug_tuple("Item").field(arg0).finish(),
-            Self::Prefix(arg0) => f.debug_tuple("Prefix").field(arg0).finish(),
+            Self::Item(err) => f.debug_tuple("Item").field(err).finish(),
+            Self::Prefix(err) => f.debug_tuple("Prefix").field(err).finish(),
         }
     }
 }
@@ -69,7 +69,7 @@ impl<T, I, P> From<UnpackSetError<T, I, P>> for UnpackOrderedSetError<T, I, P> {
 impl<T, I: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackOrderedSetError<T, I, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Set(arg0) => f.debug_tuple("Set").field(arg0).finish(),
+            Self::Set(err) => f.debug_tuple("Set").field(err).finish(),
             Self::Unordered => f.debug_tuple("Unordered").finish(),
         }
     }

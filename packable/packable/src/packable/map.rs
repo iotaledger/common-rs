@@ -32,9 +32,9 @@ impl<K, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackMapE
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::DuplicateKey(_) => f.debug_tuple("DuplicateKey").finish(),
-            Self::Key(arg0) => f.debug_tuple("Key").field(arg0).finish(),
-            Self::Value(arg0) => f.debug_tuple("Value").field(arg0).finish(),
-            Self::Prefix(arg0) => f.debug_tuple("Prefix").field(arg0).finish(),
+            Self::Key(err) => f.debug_tuple("Key").field(err).finish(),
+            Self::Value(err) => f.debug_tuple("Value").field(err).finish(),
+            Self::Prefix(err) => f.debug_tuple("Prefix").field(err).finish(),
         }
     }
 }
@@ -82,7 +82,7 @@ impl<K, KE, VE, P> From<UnpackMapError<K, KE, VE, P>> for UnpackOrderedMapError<
 impl<K, KE: fmt::Debug, VE: fmt::Debug, P: fmt::Debug> fmt::Debug for UnpackOrderedMapError<K, KE, VE, P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Map(arg0) => f.debug_tuple("Map").field(arg0).finish(),
+            Self::Map(err) => f.debug_tuple("Map").field(err).finish(),
             Self::Unordered => f.debug_tuple("Unordered").finish(),
         }
     }
