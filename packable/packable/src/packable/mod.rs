@@ -6,7 +6,6 @@
 extern crate alloc;
 
 pub mod bounded;
-#[cfg(feature = "usize")]
 pub mod map;
 pub mod option;
 pub mod prefix;

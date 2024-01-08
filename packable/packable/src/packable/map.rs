@@ -5,10 +5,13 @@
 
 extern crate alloc;
 
-use core::{borrow::Borrow, convert::Infallible, fmt};
+#[cfg(feature = "usize")]
+use core::borrow::Borrow;
+use core::{convert::Infallible, fmt};
 #[cfg(feature = "std")]
 use std::{collections::HashMap, hash::Hash};
 
+#[cfg(feature = "usize")]
 use crate::{error::UnpackError, packer::Packer, unpacker::Unpacker, Packable};
 
 /// Error type raised when a semantic error occurs while unpacking a map.
@@ -109,7 +112,7 @@ impl<K, KE: fmt::Display, VE: fmt::Display, P: fmt::Display> fmt::Display for Un
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "usize"))]
 impl<K: Packable + Ord + Hash, V: Packable> Packable for HashMap<K, V>
 where
     V::UnpackVisitor: Borrow<K::UnpackVisitor>,
@@ -163,6 +166,7 @@ where
     }
 }
 
+#[cfg(feature = "usize")]
 mod btreemap {
     use alloc::collections::BTreeMap;
 
