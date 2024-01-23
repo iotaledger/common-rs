@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.2.0 - 2024-01-23
+
+### Added
+
+- `is_unique_sorted_by` and `is_sorted_by`;
+
 ## 0.1.0 - 2022-01-17
 
 ### Added
