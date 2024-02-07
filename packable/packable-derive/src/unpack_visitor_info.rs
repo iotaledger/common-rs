@@ -10,6 +10,7 @@ use crate::parse::{parse_kv, skip_stream};
 
 pub(crate) struct UnpackVisitorInfo {
     pub(crate) unpack_visitor: syn::Type,
+    pub(crate) explicit: bool,
 }
 
 struct Type(syn::Type);
@@ -34,7 +35,10 @@ impl UnpackVisitorInfo {
             let opt_info =
                 attr.parse_args_with(
                     |stream: ParseStream| match parse_kv::<Type>("unpack_visitor", stream)? {
-                        Some(Type(unpack_visitor)) => Ok(Some(Self { unpack_visitor })),
+                        Some(Type(unpack_visitor)) => Ok(Some(Self {
+                            unpack_visitor,
+                            explicit: true,
+                        })),
                         None => {
                             skip_stream(stream)?;
                             Ok(None)

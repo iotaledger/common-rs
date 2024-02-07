@@ -115,7 +115,7 @@ where
         visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack(unpacker, None)
+        let len = B::unpack_inner(unpacker, visitor)
             .map_packable_err(UnpackPrefixError::Prefix)?
             .into();
 

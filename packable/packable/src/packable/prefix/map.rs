@@ -118,7 +118,7 @@ where
         use crate::error::UnpackErrorExt;
 
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack(unpacker, None)
+        let len = B::unpack_inner(unpacker, visitor)
             .map_packable_err(UnpackMapError::Prefix)
             .map_packable_err(Self::UnpackError::from)?
             .into();
@@ -126,7 +126,7 @@ where
         let mut map = HashMap::<K, V>::new();
 
         for _ in B::Bounds::default()..len {
-            let key = K::unpack(unpacker, visitor.map(Borrow::borrow))
+            let key = K::unpack_inner(unpacker, visitor)
                 .map_packable_err(UnpackMapError::Key)
                 .map_packable_err(Self::UnpackError::from)?;
 
@@ -243,7 +243,7 @@ where
         use crate::error::UnpackErrorExt;
 
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack(unpacker, None)
+        let len = B::unpack_inner(unpacker, visitor)
             .map_packable_err(UnpackMapError::Prefix)
             .map_packable_err(Self::UnpackError::from)?
             .into();
@@ -251,7 +251,7 @@ where
         let mut map = BTreeMap::<K, V>::new();
 
         for _ in B::Bounds::default()..len {
-            let key = K::unpack(unpacker, visitor.map(Borrow::borrow))
+            let key = K::unpack_inner(unpacker, visitor)
                 .map_packable_err(UnpackMapError::Key)
                 .map_packable_err(Self::UnpackError::from)?;
 

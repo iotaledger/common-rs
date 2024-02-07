@@ -128,7 +128,7 @@ mod btreeset {
         ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
             use crate::error::UnpackErrorExt;
 
-            let len = u64::unpack(unpacker, None)
+            let len = u64::unpack_inner(unpacker, visitor)
                 .coerce()?
                 .try_into()
                 .map_err(|err| UnpackError::Packable(UnpackSetError::Prefix(err).into()))?;

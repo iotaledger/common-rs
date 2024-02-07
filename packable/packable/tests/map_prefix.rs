@@ -61,7 +61,7 @@ macro_rules! impl_packable_test_for_map_prefix {
 
             let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
 
-            let prefixed = HashMapPrefix::<u8, u8, $ty>::unpack_verified(bytes, &());
+            let prefixed = HashMapPrefix::<u8, u8, $ty>::unpack_bytes_verified(bytes, &());
 
             assert!(matches!(
                 prefixed,
@@ -105,7 +105,7 @@ macro_rules! impl_packable_test_for_bounded_map_prefix {
 
             let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(core::iter::repeat(0).take(2 * (LEN + 1))));
 
-            let prefixed = HashMapPrefix::<u8, u8, $bounded<$min, $max>>::unpack_verified(bytes, &());
+            let prefixed = HashMapPrefix::<u8, u8, $bounded<$min, $max>>::unpack_bytes_verified(bytes, &());
 
             assert!(matches!(
                 prefixed,
@@ -126,7 +126,7 @@ macro_rules! impl_packable_test_for_bounded_map_prefix {
 
             let bytes = Vec::from_iter(LEN_AS_TY.to_le_bytes().into_iter().chain(bytes));
 
-            let prefixed = HashMapPrefix::<u8, u8, $bounded<$min, $max>>::unpack_verified(bytes, &());
+            let prefixed = HashMapPrefix::<u8, u8, $bounded<$min, $max>>::unpack_bytes_verified(bytes, &());
 
             assert!(matches!(
                 prefixed,

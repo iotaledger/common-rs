@@ -34,7 +34,7 @@ macro_rules! tuple_impls {
                 ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
                     Ok((
                             <$FirstT>::unpack(unpacker, visitor)?,
-                            $( (<$T>::unpack(unpacker, visitor.map(core::borrow::Borrow::borrow)).map_packable_err(Into::into))?,)*
+                            $( (<$T>::unpack_inner(unpacker, visitor).map_packable_err(Into::into))?,)*
                        ))
                 }
             }

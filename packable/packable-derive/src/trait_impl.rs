@@ -29,7 +29,8 @@ impl TraitImpl {
                 let unpack_error = info.unpack_error.unpack_error.clone().into_token_stream();
                 let unpack_visitor = info.unpack_visitor.unpack_visitor.clone().into_token_stream();
 
-                let Fragments { pattern, pack, unpack } = Fragments::new(info.inner, info.verify_with, &crate_name);
+                let Fragments { pattern, pack, unpack } =
+                    Fragments::new(info.inner, info.verify_with, &info.unpack_visitor, &crate_name);
 
                 Ok(Self {
                     ident: input.ident,
@@ -65,7 +66,8 @@ impl TraitImpl {
                 for (index, VariantInfo { tag, inner }) in info.variants_info.into_iter().enumerate() {
                     let variant_ident = inner.path.segments.last().unwrap().clone();
 
-                    let Fragments { pattern, pack, unpack } = Fragments::new(inner, None, &crate_name);
+                    let Fragments { pattern, pack, unpack } =
+                        Fragments::new(inner, None, &info.unpack_visitor, &crate_name);
 
                     // @pvdrz: The span here is very important, otherwise the compiler won't detect
                     // unreachable patterns in the generated code for some reason. I think this is related

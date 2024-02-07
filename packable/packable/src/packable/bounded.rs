@@ -41,8 +41,8 @@ macro_rules! bounded {
                 self.0
             }
 
-            fn verify(value: &$ty, visitor: Option<&()>) -> Result<(), $invalid_error<MIN, MAX>> {
-                if visitor.is_some() && !(MIN..=MAX).contains(value) {
+            fn verify(value: &$ty) -> Result<(), $invalid_error<MIN, MAX>> {
+                if !(MIN..=MAX).contains(value) {
                     Err($invalid_error(*value))
                 } else {
                     Ok(())
@@ -67,7 +67,7 @@ macro_rules! bounded {
             type Error = $invalid_error<MIN, MAX>;
 
             fn try_from(value: $ty) -> Result<Self, Self::Error> {
-                // Self::verify(&value, Some(&()))?;
+                Self::verify(&value)?;
                 Ok(Self(value))
             }
         }
@@ -113,7 +113,7 @@ macro_rules! bounded {
         }
 
         #[doc = concat!("Error encountered when attempting to convert a [`usize`] into a [`",
-                                                                stringify!($wrapper),"`].")]
+                                                                                        stringify!($wrapper),"`].")]
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub enum $try_error<const MIN: $ty, const MAX: $ty> {
             #[doc = concat!("The `usize` could be converted into a [`", stringify!($ty),"`] but it is not within the

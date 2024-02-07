@@ -113,7 +113,7 @@ where
         use crate::error::UnpackErrorExt;
 
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack(unpacker, None)
+        let len = B::unpack_inner(unpacker, visitor)
             .map_packable_err(UnpackSetError::Prefix)
             .map_packable_err(Self::UnpackError::from)?
             .into();

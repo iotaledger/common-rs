@@ -84,9 +84,9 @@ use crate::{
 ///         unpacker: &mut U,
 ///         visitor: Option<&Self::UnpackVisitor>,
 ///     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-///         match u8::unpack(unpacker, visitor).coerce()? {
+///         match u8::unpack_inner(unpacker, visitor).coerce()? {
 ///             0u8 => Ok(Self::Nothing),
-///             1u8 => Ok(Self::Just(i32::unpack(unpacker, visitor).coerce()?)),
+///             1u8 => Ok(Self::Just(i32::unpack_inner(unpacker, visitor).coerce()?)),
 ///             tag => Err(UnpackError::Packable(UnknownTagError(tag))),
 ///         }
 ///     }
@@ -172,10 +172,11 @@ use crate::{
 /// `#[packable(verify_with = ...)]` attribute which must receive a valid Rust path refering to a
 /// function with the signature
 /// ```ignore
-/// fn<P: Packable, F>(field: &F, visitor: Option<&P::UnpackVisitor>) -> Result<(), P::UnpackError>
+/// fn<P: Packable, F>(field: &F, visitor: &P::UnpackVisitor) -> Result<(), P::UnpackError>
 /// ```
 /// where `F` is the type of the field being verified, `P` is the type of the `struct` or `enum`.
-/// This verification function will be run immediately after unpacking the field.
+/// This verification function will be run immediately after unpacking the field. The `visitor`
+/// param can be excluded if it is not needed for verification.
 pub trait Packable: Sized + 'static {
     /// The error type that can be returned if some semantic error occurs while unpacking.
     ///
@@ -188,12 +189,33 @@ pub trait Packable: Sized + 'static {
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
 
-    /// Unpacks this value from the given [`Unpacker`]. The optional visitor can be used to skip additional
+    /// Unpacks this value from the given [`Unpacker`]. The optional visitor can be used to make additional
     /// syntactic checks.
     fn unpack<U: Unpacker>(
         unpacker: &mut U,
         visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>>;
+
+    /// Unpacks this value from the given [`Unpacker`] with a visitor for validation.
+    fn unpack_verified<U: Unpacker>(
+        unpacker: &mut U,
+        visitor: &Self::UnpackVisitor,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        Self::unpack(unpacker, Some(visitor))
+    }
+
+    /// Unpacks this value from the given [`Unpacker`] without validation.
+    fn unpack_unverified<U: Unpacker>(unpacker: &mut U) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        Self::unpack(unpacker, None)
+    }
+
+    /// Unpacks an inner value whose visitor type can be borrowed from the outer visitor.
+    fn unpack_inner<V: Borrow<Self::UnpackVisitor>, U: Unpacker>(
+        unpacker: &mut U,
+        visitor: Option<&V>,
+    ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
+        Self::unpack(unpacker, visitor.map(Borrow::borrow))
+    }
 }
 
 /// Extension trait for types that implement [`Packable`].
@@ -206,13 +228,13 @@ pub trait PackableExt: Packable {
     fn pack_to_vec(&self) -> Vec<u8>;
 
     /// Unpacks this value from a sequence of bytes doing syntactical checks.
-    fn unpack_verified<T: AsRef<[u8]>>(
+    fn unpack_bytes_verified<T: AsRef<[u8]>>(
         bytes: T,
         visitor: &Self::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 
     /// Unpacks this value from a sequence of bytes without doing syntactical checks.
-    fn unpack_unverified<T: AsRef<[u8]>>(
+    fn unpack_bytes_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>>;
 }
@@ -240,18 +262,18 @@ impl<P: Packable> PackableExt for P {
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`].
     #[inline]
-    fn unpack_verified<T: AsRef<[u8]>>(
+    fn unpack_bytes_verified<T: AsRef<[u8]>>(
         bytes: T,
         visitor: &P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack(&mut SliceUnpacker::new(bytes.as_ref()), Some(visitor))
+        Self::unpack_verified(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
     #[inline]
-    fn unpack_unverified<T: AsRef<[u8]>>(
+    fn unpack_bytes_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack(&mut SliceUnpacker::new(bytes.as_ref()), None)
+        Self::unpack_unverified(&mut SliceUnpacker::new(bytes.as_ref()))
     }
 }

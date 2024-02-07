@@ -44,7 +44,7 @@ where
         unpacker: &mut U,
         visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        let len = u64::unpack(unpacker, None)
+        let len = u64::unpack_inner(unpacker, visitor)
             .coerce()?
             .try_into()
             .map_err(|err| UnpackError::Packable(UnpackPrefixError::Prefix(err)))?;

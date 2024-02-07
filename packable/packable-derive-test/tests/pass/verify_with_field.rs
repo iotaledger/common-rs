@@ -21,12 +21,8 @@ impl From<Infallible> for PickyError {
     }
 }
 
-fn verify_value(value: &u8, visitor: Option<&()>) -> Result<(), PickyError> {
-    if visitor.is_none() || value == 42 {
-        Ok(())
-    } else {
-        Err(PickyError(value))
-    }
+fn verify_value(value: &u8) -> Result<(), PickyError> {
+    if value == 42 { Ok(()) } else { Err(PickyError(value)) }
 }
 
 #[derive(Packable)]
