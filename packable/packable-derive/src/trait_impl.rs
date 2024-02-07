@@ -29,8 +29,7 @@ impl TraitImpl {
                 let unpack_error = info.unpack_error.unpack_error.clone().into_token_stream();
                 let unpack_visitor = info.unpack_visitor.unpack_visitor.clone().into_token_stream();
 
-                let Fragments { pattern, pack, unpack } =
-                    Fragments::new(info.inner, info.verify_with, &info.unpack_visitor, &crate_name);
+                let Fragments { pattern, pack, unpack } = Fragments::new(info.inner, info.verify_with, &crate_name);
 
                 Ok(Self {
                     ident: input.ident,
@@ -66,8 +65,7 @@ impl TraitImpl {
                 for (index, VariantInfo { tag, inner }) in info.variants_info.into_iter().enumerate() {
                     let variant_ident = inner.path.segments.last().unwrap().clone();
 
-                    let Fragments { pattern, pack, unpack } =
-                        Fragments::new(inner, None, &info.unpack_visitor, &crate_name);
+                    let Fragments { pattern, pack, unpack } = Fragments::new(inner, None, &crate_name);
 
                     // @pvdrz: The span here is very important, otherwise the compiler won't detect
                     // unreachable patterns in the generated code for some reason. I think this is related
@@ -113,7 +111,7 @@ impl TraitImpl {
                         #(#tag_decls)*
                         #(#tag_asserts)*
 
-                        match <#tag_type as #crate_name::Packable>::unpack::<_, VERIFY>(unpacker, Borrow::<<#tag_type as #crate_name::Packable>::UnpackVisitor>::borrow(visitor)).coerce()? {
+                        match <#tag_type as #crate_name::Packable>::unpack(unpacker, visitor.map(Borrow::<<#tag_type as #crate_name::Packable>::UnpackVisitor>::borrow)).coerce()? {
                             #(#unpack_arms)*
                             tag => Err(#crate_name::error::UnpackError::from_packable(#tag_with_error(tag)))
                         }
@@ -153,7 +151,7 @@ impl ToTokens for TraitImpl {
                     #pack
                 }
 
-                fn unpack<U: #crate_name::unpacker::Unpacker, const VERIFY: bool>(unpacker: &mut U, visitor: &Self::UnpackVisitor) -> Result<Self, #crate_name::error::UnpackError<Self::UnpackError, U::Error>> {
+                fn unpack<U: #crate_name::unpacker::Unpacker>(unpacker: &mut U, visitor: Option<&Self::UnpackVisitor>) -> Result<Self, #crate_name::error::UnpackError<Self::UnpackError, U::Error>> {
                     use #crate_name::error::UnpackErrorExt;
                     use core::borrow::Borrow;
                     #unpack

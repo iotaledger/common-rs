@@ -122,13 +122,13 @@ mod btreeset {
         }
 
         #[inline]
-        fn unpack<U: Unpacker, const VERIFY: bool>(
+        fn unpack<U: Unpacker>(
             unpacker: &mut U,
-            visitor: &Self::UnpackVisitor,
+            visitor: Option<&Self::UnpackVisitor>,
         ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
             use crate::error::UnpackErrorExt;
 
-            let len = u64::unpack::<_, VERIFY>(unpacker, &())
+            let len = u64::unpack(unpacker, None)
                 .coerce()?
                 .try_into()
                 .map_err(|err| UnpackError::Packable(UnpackSetError::Prefix(err).into()))?;
@@ -136,7 +136,7 @@ mod btreeset {
             let mut set = BTreeSet::<T>::new();
 
             for _ in 0..len {
-                let item = T::unpack::<_, VERIFY>(unpacker, visitor)
+                let item = T::unpack(unpacker, visitor)
                     .map_packable_err(UnpackSetError::Item)
                     .map_packable_err(Self::UnpackError::from)?;
 

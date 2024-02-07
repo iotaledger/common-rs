@@ -60,7 +60,7 @@ where
     let mut packer = IoPacker::new(Vec::new());
     packable.pack(&mut packer).unwrap();
     let mut unpacker = IoUnpacker::new(packer.as_slice());
-    let unpacked = P::unpack::<_, true>(&mut unpacker, &()).unwrap();
+    let unpacked = P::unpack(&mut unpacker, None).unwrap();
     assert_eq!(packable, &unpacked);
 
     generic_test_pack_to_slice_unpack_verified(packable);

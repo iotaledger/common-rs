@@ -23,10 +23,7 @@ macro_rules! bounded {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Packable)]
         #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
         #[packable(unpack_error = $invalid_error<MIN, MAX>)]
-        pub struct $wrapper<const MIN: $ty, const MAX: $ty>(
-            #[packable(verify_with = Self::verify)]
-            $ty
-        );
+        pub struct $wrapper<const MIN: $ty, const MAX: $ty>(#[packable(verify_with = Self::verify)] $ty);
 
         impl<const MIN: $ty, const MAX: $ty> Bounded for $wrapper<MIN, MAX> {
             type Bounds = $ty;
@@ -44,9 +41,9 @@ macro_rules! bounded {
                 self.0
             }
 
-            fn verify<const VERIFY: bool>(&value: &$ty) -> Result<(), $invalid_error<MIN, MAX>> {
-                if VERIFY && !(MIN..=MAX).contains(&value) {
-                    Err($invalid_error(value))
+            fn verify(value: &$ty, visitor: Option<&()>) -> Result<(), $invalid_error<MIN, MAX>> {
+                if visitor.is_some() && !(MIN..=MAX).contains(value) {
+                    Err($invalid_error(*value))
                 } else {
                     Ok(())
                 }
@@ -70,7 +67,7 @@ macro_rules! bounded {
             type Error = $invalid_error<MIN, MAX>;
 
             fn try_from(value: $ty) -> Result<Self, Self::Error> {
-                Self::verify::<true>(&value)?;
+                // Self::verify(&value, Some(&()))?;
                 Ok(Self(value))
             }
         }
@@ -85,8 +82,9 @@ macro_rules! bounded {
             }
         }
 
-        #[doc = concat!("Error encountered when attempting to wrap a  [`", stringify!($ty),"`] that is not within the given bounds.")]
-        #[derive(Debug, Clone, Copy, PartialEq, Eq, )]
+        #[doc = concat!("Error encountered when attempting to wrap a  [`", stringify!($ty),"`] that is not within the
+        given bounds.")]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub struct $invalid_error<const MIN: $ty, const MAX: $ty>(pub $ty);
 
         #[cfg(feature = "std")]
@@ -94,7 +92,11 @@ macro_rules! bounded {
 
         impl<const MIN: $ty, const MAX: $ty> Display for $invalid_error<MIN, MAX> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "the integer `{}` is out of bounds (`{}..={}`)", self.0, MIN, MAX)
+                write!(
+                    f,
+                    "the integer `{}` is out of bounds (`{}..={}`)",
+                    self.0, MIN, MAX
+                )
             }
         }
 
@@ -110,10 +112,12 @@ macro_rules! bounded {
             }
         }
 
-        #[doc = concat!("Error encountered when attempting to convert a [`usize`] into a [`", stringify!($wrapper),"`].")]
+        #[doc = concat!("Error encountered when attempting to convert a [`usize`] into a [`",
+                                                                stringify!($wrapper),"`].")]
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub enum $try_error<const MIN: $ty, const MAX: $ty> {
-            #[doc = concat!("The `usize` could be converted into a [`", stringify!($ty),"`] but it is not within the given bounds.")]
+            #[doc = concat!("The `usize` could be converted into a [`", stringify!($ty),"`] but it is not within the
+        given bounds.")]
             Invalid($ty),
             #[doc = concat!("The `usize` could not be converted into a [`", stringify!($ty),"`].")]
             Truncated(usize),
@@ -123,13 +127,18 @@ macro_rules! bounded {
         impl<const MIN: $ty, const MAX: $ty> std::error::Error for $try_error<MIN, MAX> {}
 
         impl<const MIN: $ty, const MAX: $ty> Display for $try_error<MIN, MAX> {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            match self {
-                Self::Truncated(len) => write!(f, "the integer `{}` was truncated while casting it into a `{}`", len, core::any::type_name::<$ty>()),
-                Self::Invalid(err) => $invalid_error::<MIN, MAX>(*err).fmt(f),
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                match self {
+                    Self::Truncated(len) => write!(
+                        f,
+                        "the integer `{}` was truncated while casting it into a `{}`",
+                        len,
+                        core::any::type_name::<$ty>()
+                    ),
+                    Self::Invalid(err) => $invalid_error::<MIN, MAX>(*err).fmt(f),
+                }
             }
         }
-}
 
         impl<const MIN: $ty, const MAX: $ty> From<$invalid_error<MIN, MAX>> for $try_error<MIN, MAX> {
             fn from(err: $invalid_error<MIN, MAX>) -> Self {

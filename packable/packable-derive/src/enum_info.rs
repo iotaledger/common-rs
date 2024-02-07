@@ -34,20 +34,17 @@ impl EnumInfo {
         )?;
 
         let unpack_visitor = UnpackVisitorInfo::new(filtered_attrs, || {
-            let (unpack_visitor, explicit) = match data
+            let unpack_visitor = match data
                 .variants
                 .iter()
                 .next()
                 .and_then(|variant| variant.fields.iter().next())
             {
-                Some(Field { ty, .. }) => (parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor), true),
-                None => (parse_quote!(()), false),
+                Some(Field { ty, .. }) => parse_quote!(<#ty as #crate_name::Packable>::UnpackVisitor),
+                None => parse_quote!(()),
             };
 
-            Ok(UnpackVisitorInfo {
-                unpack_visitor,
-                explicit,
-            })
+            Ok(UnpackVisitorInfo { unpack_visitor })
         })?;
 
         let variants_info = data

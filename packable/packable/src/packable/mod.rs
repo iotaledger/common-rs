@@ -80,15 +80,13 @@ use crate::{
 ///         }
 ///     }
 ///
-///     fn unpack<U: Unpacker, const VERIFY: bool>(
+///     fn unpack<U: Unpacker>(
 ///         unpacker: &mut U,
-///         visitor: &Self::UnpackVisitor,
+///         visitor: Option<&Self::UnpackVisitor>,
 ///     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-///         match u8::unpack::<_, VERIFY>(unpacker, visitor).coerce()? {
+///         match u8::unpack(unpacker, visitor).coerce()? {
 ///             0u8 => Ok(Self::Nothing),
-///             1u8 => Ok(Self::Just(
-///                 i32::unpack::<_, VERIFY>(unpacker, visitor).coerce()?,
-///             )),
+///             1u8 => Ok(Self::Just(i32::unpack(unpacker, visitor).coerce()?)),
 ///             tag => Err(UnpackError::Packable(UnknownTagError(tag))),
 ///         }
 ///     }
@@ -174,11 +172,10 @@ use crate::{
 /// `#[packable(verify_with = ...)]` attribute which must receive a valid Rust path refering to a
 /// function with the signature
 /// ```ignore
-/// fn<const VERIFY: bool>(field: &F) -> Result<(), P::UnpackError>
+/// fn<P: Packable, F>(field: &F, visitor: Option<&P::UnpackVisitor>) -> Result<(), P::UnpackError>
 /// ```
-/// where `F` is the type of the field being verified, `P` is the type of the `struct` or `enum`
-/// and `VERIFY` is the same constant parameter used inside `Packable::unpack`. This verification
-/// function will be run immediately after unpacking the field.
+/// where `F` is the type of the field being verified, `P` is the type of the `struct` or `enum`.
+/// This verification function will be run immediately after unpacking the field.
 pub trait Packable: Sized + 'static {
     /// The error type that can be returned if some semantic error occurs while unpacking.
     ///
@@ -186,16 +183,16 @@ pub trait Packable: Sized + 'static {
     /// [`UnknownTagError`](crate::error::UnknownTagError) when implementing this trait for an enum.
     type UnpackError: Debug + From<Infallible>;
     /// FIXME: docs
-    type UnpackVisitor: Default + Borrow<()>;
+    type UnpackVisitor: Borrow<()>;
 
     /// Packs this value into the given [`Packer`].
     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
 
-    /// Unpacks this value from the given [`Unpacker`]. The `VERIFY` generic parameter can be used to skip additional
+    /// Unpacks this value from the given [`Unpacker`]. The optional visitor can be used to skip additional
     /// syntactic checks.
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>>;
 }
 
@@ -247,7 +244,7 @@ impl<P: Packable> PackableExt for P {
         bytes: T,
         visitor: &P::UnpackVisitor,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, true>(&mut SliceUnpacker::new(bytes.as_ref()), visitor)
+        Self::unpack(&mut SliceUnpacker::new(bytes.as_ref()), Some(visitor))
     }
 
     /// Unpacks this value from a type that implements [`AsRef<[u8]>`] skipping some syntatical checks.
@@ -255,9 +252,6 @@ impl<P: Packable> PackableExt for P {
     fn unpack_unverified<T: AsRef<[u8]>>(
         bytes: T,
     ) -> Result<Self, UnpackError<<Self as Packable>::UnpackError, UnexpectedEOF>> {
-        Self::unpack::<_, false>(
-            &mut SliceUnpacker::new(bytes.as_ref()),
-            &<P as Packable>::UnpackVisitor::default(),
-        )
+        Self::unpack(&mut SliceUnpacker::new(bytes.as_ref()), None)
     }
 }

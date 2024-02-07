@@ -28,13 +28,13 @@ macro_rules! tuple_impls {
                     Ok(())
                 }
 
-                fn unpack<U: Unpacker, const VERIFY: bool>(
+                fn unpack<U: Unpacker>(
                     unpacker: &mut U,
-                    visitor: &Self::UnpackVisitor,
+                    visitor: Option<&Self::UnpackVisitor>,
                 ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
                     Ok((
-                            <$FirstT>::unpack::<_, VERIFY>(unpacker, visitor)?,
-                            $( (<$T>::unpack::<_, VERIFY>(unpacker, visitor.borrow()).map_packable_err(Into::into))?,)*
+                            <$FirstT>::unpack(unpacker, visitor)?,
+                            $( (<$T>::unpack(unpacker, visitor.map(core::borrow::Borrow::borrow)).map_packable_err(Into::into))?,)*
                        ))
                 }
             }

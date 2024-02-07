@@ -106,14 +106,14 @@ where
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
 
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack::<_, VERIFY>(unpacker, &())
+        let len = B::unpack(unpacker, None)
             .map_packable_err(UnpackSetError::Prefix)
             .map_packable_err(Self::UnpackError::from)?
             .into();
@@ -121,7 +121,7 @@ where
         let mut set = BTreeSet::<T>::new();
 
         for _ in B::Bounds::default()..len {
-            let item = T::unpack::<_, VERIFY>(unpacker, visitor)
+            let item = T::unpack(unpacker, visitor)
                 .map_packable_err(UnpackSetError::Item)
                 .map_packable_err(Self::UnpackError::from)?;
 

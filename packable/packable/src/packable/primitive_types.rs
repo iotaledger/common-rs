@@ -17,10 +17,10 @@ impl Packable for U256 {
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        <[u64; 4]>::unpack::<_, VERIFY>(unpacker, visitor).map(Self)
+        <[u64; 4]>::unpack(unpacker, visitor).map(Self)
     }
 }

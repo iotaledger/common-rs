@@ -114,11 +114,11 @@ where
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        let vec: Vec<T> = VecPrefix::<T, B>::unpack::<_, VERIFY>(unpacker, visitor)?.into();
+        let vec: Vec<T> = VecPrefix::<T, B>::unpack(unpacker, visitor)?.into();
 
         Ok(Self {
             inner: vec.into_boxed_slice(),

@@ -19,7 +19,7 @@ fn option_counter() {
     let packer = packer.into_inner();
     let mut unpacker = CounterUnpacker::new(SliceUnpacker::new(packer.as_slice()));
 
-    let unpacked_value = Option::<u32>::unpack::<_, true>(&mut unpacker, &()).unwrap();
+    let unpacked_value = Option::<u32>::unpack(&mut unpacker, None).unwrap();
     assert_eq!(unpacked_value.packed_len(), unpacker.counter());
     assert_eq!(unpacker.counter(), unpacker.read_bytes().unwrap());
     assert_eq!(value, unpacked_value);

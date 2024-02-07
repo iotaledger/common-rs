@@ -111,14 +111,14 @@ where
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
 
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack::<_, VERIFY>(unpacker, &())
+        let len = B::unpack(unpacker, None)
             .map_packable_err(UnpackMapError::Prefix)
             .map_packable_err(Self::UnpackError::from)?
             .into();
@@ -126,7 +126,7 @@ where
         let mut map = HashMap::<K, V>::new();
 
         for _ in B::Bounds::default()..len {
-            let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
+            let key = K::unpack(unpacker, visitor.map(Borrow::borrow))
                 .map_packable_err(UnpackMapError::Key)
                 .map_packable_err(Self::UnpackError::from)?;
 
@@ -134,7 +134,7 @@ where
                 return Err(UnpackError::Packable(UnpackMapError::DuplicateKey(key)));
             }
 
-            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+            let value = V::unpack(unpacker, visitor)
                 .map_packable_err(UnpackMapError::Value)
                 .map_packable_err(Self::UnpackError::from)?;
 
@@ -236,14 +236,14 @@ where
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
 
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack::<_, VERIFY>(unpacker, &())
+        let len = B::unpack(unpacker, None)
             .map_packable_err(UnpackMapError::Prefix)
             .map_packable_err(Self::UnpackError::from)?
             .into();
@@ -251,7 +251,7 @@ where
         let mut map = BTreeMap::<K, V>::new();
 
         for _ in B::Bounds::default()..len {
-            let key = K::unpack::<_, VERIFY>(unpacker, visitor.borrow())
+            let key = K::unpack(unpacker, visitor.map(Borrow::borrow))
                 .map_packable_err(UnpackMapError::Key)
                 .map_packable_err(Self::UnpackError::from)?;
 
@@ -269,7 +269,7 @@ where
                 }
             }
 
-            let value = V::unpack::<_, VERIFY>(unpacker, visitor)
+            let value = V::unpack(unpacker, visitor)
                 .map_packable_err(UnpackMapError::Value)
                 .map_packable_err(Self::UnpackError::from)?;
 
