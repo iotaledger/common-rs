@@ -2,10 +2,10 @@ error[E0308]: mismatched types
   --> tests/fail/invalid_verify_with_field_type.rs:32:10
    |
 32 | #[derive(Packable)]
-   |          ^^^^^^^^
-   |          |
-   |          expected `&u64`, found `&u8`
-   |          arguments to this function are incorrect
+   |          ^^^^^^^^ expected `&u64`, found `&u8`
+33 | #[packable(unpack_error = PickyError)]
+34 | pub struct Picky(#[packable(verify_with = verify_value)] u8);
+   |                                           ------------ arguments to this function are incorrect
    |
    = note: expected reference `&u64`
               found reference `&u8`

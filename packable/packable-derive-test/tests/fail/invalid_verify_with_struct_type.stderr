@@ -2,10 +2,10 @@ error[E0308]: mismatched types
   --> tests/fail/invalid_verify_with_struct_type.rs:32:10
    |
 32 | #[derive(Packable)]
-   |          ^^^^^^^^
-   |          |
-   |          expected `&u64`, found `&Picky`
-   |          arguments to this function are incorrect
+   |          ^^^^^^^^ expected `&u64`, found `&Picky`
+33 | #[packable(unpack_error = PickyError)]
+34 | #[packable(verify_with = verify)]
+   |                          ------ arguments to this function are incorrect
    |
    = note: expected reference `&u64`
               found reference `&Picky`
