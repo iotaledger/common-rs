@@ -21,12 +21,8 @@ impl From<Infallible> for PickyError {
     }
 }
 
-fn verify_value(&value: &u64) -> Result<(), PickyError> {
-    if value == 42 {
-        Ok(())
-    } else {
-        Err(PickyError(value as u8))
-    }
+fn verify_value(&value: &u8, _: &()) -> Result<(), PickyError> {
+    if value == 42 { Ok(()) } else { Err(PickyError(value)) }
 }
 
 #[derive(Packable)]
