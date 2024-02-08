@@ -21,7 +21,7 @@ impl From<Infallible> for PickyError {
     }
 }
 
-fn verify(value: &Picky) -> Result<(), PickyError> {
+fn verify(value: &Picky, _: &()) -> Result<(), PickyError> {
     if value.0 == 42 {
         Ok(())
     } else {

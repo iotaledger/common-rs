@@ -12,6 +12,6 @@ error[E0308]: mismatched types
 note: function defined here
   --> tests/fail/invalid_verify_with_field_type.rs:24:4
    |
-24 | fn verify_value<const VERIFY: bool>(&value: &u64) -> Result<(), PickyError> {
-   |    ^^^^^^^^^^^^                     ------------
+24 | fn verify_value(&value: &u64) -> Result<(), PickyError> {
+   |    ^^^^^^^^^^^^ ------------
    = note: this error originates in the derive macro `Packable` (in Nightly builds, run with -Z macro-backtrace for more info)
