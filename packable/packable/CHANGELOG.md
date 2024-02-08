@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.11.0 - 2024-02-08
+
+### Added
+
+- `Packable::unpack_inner`, `Packable::unpack_verified`, and `Packable::unpack_unverified`;
+
+### Changed
+
+- Removed `Default` bound from `Packable::UnpackVisitor`;
+- Replaced `const VERIFY` in `Packable::unpack` with `Option<&Self::UnpackVisitor>`, which can be checked instead;
+- Renamed `PackableExt::unpack_verified` and `unpack_unverified` to `unpack_bytes_verified` and `unpack_bytes_unverified`;
+
 ## 0.10.1 - 2024-01-08
 
 ### Added
