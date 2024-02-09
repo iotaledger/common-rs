@@ -26,9 +26,3 @@ note: method defined here
    |     fn pack<P: Packer>(&self, packer: &mut P) -> Result<(), P::Error>;
    |        ^^^^
    = note: this error originates in the derive macro `Packable` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: could not evaluate constant pattern
-  --> tests/fail/incorrect_tag_enum.rs:14:22
-   |
-14 |     #[packable(tag = 0u32)]
-   |                      ^^^^

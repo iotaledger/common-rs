@@ -60,4 +60,4 @@ macro_rules! make_test {
 #[rustversion::stable]
 make_test!();
 #[rustversion::not(stable)]
-make_test!();
+make_test!(incorrect_tag_enum);
