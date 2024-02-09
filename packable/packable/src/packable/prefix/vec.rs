@@ -110,12 +110,12 @@ where
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         // The length of any dynamically-sized sequence must be prefixed.
-        let len = B::unpack::<_, VERIFY>(unpacker, &())
+        let len = B::unpack_inner(unpacker, visitor)
             .map_packable_err(UnpackPrefixError::Prefix)?
             .into();
 
@@ -143,7 +143,7 @@ where
             let mut inner = Vec::with_capacity(len.try_into().unwrap_or(0));
 
             for _ in B::Bounds::default()..len {
-                let item = T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
+                let item = T::unpack(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
                 inner.push(item);
             }
 

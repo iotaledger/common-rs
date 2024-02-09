@@ -17,9 +17,9 @@ macro_rules! impl_packable_for_num {
             }
 
             #[inline]
-            fn unpack<U: Unpacker, const VERIFY: bool>(
+            fn unpack<U: Unpacker>(
                 unpacker: &mut U,
-                (): &Self::UnpackVisitor,
+                _: Option<&Self::UnpackVisitor>,
             ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
                 let mut bytes = [0u8; core::mem::size_of::<Self>()];
                 unpacker.unpack_bytes(&mut bytes)?;
@@ -63,12 +63,12 @@ impl Packable for usize {
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
-        Self::try_from(u64::unpack::<_, VERIFY>(unpacker, visitor).coerce()?).map_err(UnpackError::Packable)
+        Self::try_from(u64::unpack(unpacker, visitor).coerce()?).map_err(UnpackError::Packable)
     }
 }
 
@@ -83,11 +83,11 @@ impl Packable for isize {
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         use crate::error::UnpackErrorExt;
-        Self::try_from(i64::unpack::<_, VERIFY>(unpacker, visitor).coerce()?).map_err(UnpackError::Packable)
+        Self::try_from(i64::unpack(unpacker, visitor).coerce()?).map_err(UnpackError::Packable)
     }
 }

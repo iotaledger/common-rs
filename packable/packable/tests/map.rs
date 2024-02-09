@@ -29,7 +29,7 @@ fn invalid_duplicate() {
             .chain(bytes.into_iter().flat_map(|(k, v)| [k, v])),
     );
 
-    let prefixed = HashMap::<u8, u8>::unpack_verified(bytes, &());
+    let prefixed = HashMap::<u8, u8>::unpack_bytes_verified(bytes, &());
 
     assert!(matches!(
         prefixed,

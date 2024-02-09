@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security -->
 
+## 0.10.0 - 2024-02-09
+
+### Changed
+
+- Updated to new `Packable` trait;
+- `verify_with` function is no longer called if the visitor is `None`;
+
 ## 0.9.0 - 2023-11-17
 
 ### Changed

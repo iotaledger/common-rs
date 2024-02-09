@@ -40,11 +40,11 @@ where
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        let len = u64::unpack::<_, VERIFY>(unpacker, &())
+        let len = u64::unpack_inner(unpacker, visitor)
             .coerce()?
             .try_into()
             .map_err(|err| UnpackError::Packable(UnpackPrefixError::Prefix(err)))?;
@@ -58,7 +58,7 @@ where
             let mut vec = Vec::with_capacity(len);
 
             for _ in 0..len {
-                let item = T::unpack::<_, VERIFY>(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
+                let item = T::unpack(unpacker, visitor).map_packable_err(Self::UnpackError::Item)?;
                 vec.push(item);
             }
 

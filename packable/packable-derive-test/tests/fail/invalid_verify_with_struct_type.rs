@@ -21,8 +21,8 @@ impl From<Infallible> for PickyError {
     }
 }
 
-fn verify<const VERIFY: bool>(&value: &u64) -> Result<(), PickyError> {
-    if !VERIFY || value == 42 {
+fn verify(&value: &u64) -> Result<(), PickyError> {
+    if value == 42 {
         Ok(())
     } else {
         Err(PickyError(value as u8))

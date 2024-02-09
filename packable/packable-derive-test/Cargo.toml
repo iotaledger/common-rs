@@ -16,7 +16,7 @@ name = "tests"
 path = "tests/lib.rs"
 
 [dev-dependencies]
-packable = { version = "=0.10.1", path = "../packable", default-features = false }
+packable = { version = "=0.11.0", path = "../packable", default-features = false }
 
 rustversion = { version = "1.0.14", default-features = false }
 trybuild = { version = "1.0.88", default-features = false, features = ["diff"] }

@@ -22,10 +22,10 @@ impl Packable for bool {
 
     /// Booleans are unpacked if the byte used to represent them is non-zero.
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
-        Ok(u8::unpack::<_, VERIFY>(unpacker, visitor).coerce()? != 0)
+        Ok(u8::unpack(unpacker, visitor).coerce()? != 0)
     }
 }

@@ -25,9 +25,9 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
     }
 
     #[inline]
-    fn unpack<U: Unpacker, const VERIFY: bool>(
+    fn unpack<U: Unpacker>(
         unpacker: &mut U,
-        visitor: &Self::UnpackVisitor,
+        visitor: Option<&Self::UnpackVisitor>,
     ) -> Result<Self, UnpackError<Self::UnpackError, U::Error>> {
         if TypeId::of::<T>() == TypeId::of::<u8>() {
             let mut bytes = [0u8; N];
@@ -40,7 +40,7 @@ impl<T: Packable, const N: usize> Packable for [T; N] {
             let mut array = unsafe { MaybeUninit::<[MaybeUninit<T>; N]>::uninit().assume_init() };
 
             for item in array.iter_mut() {
-                let unpacked = T::unpack::<_, VERIFY>(unpacker, visitor)?;
+                let unpacked = T::unpack(unpacker, visitor)?;
 
                 // Safety: each `item` is only visited once so we are never overwriting nor dropping values that are
                 // already initialized.
